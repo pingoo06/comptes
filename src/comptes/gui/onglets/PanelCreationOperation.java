@@ -95,8 +95,14 @@ public class PanelCreationOperation extends Box {
 			public void actionPerformed(ActionEvent e) {
 				TiersFacade myTiersFacade = new TiersFacade();
 				int idTiers = myTiersFacade.findLib(comboTiers.getSelectedItem().toString());
+				if(idTiers != 0 ) {
 				Tiers myTiers = myTiersFacade.find(idTiers);
-				comboCategorie.setSelectedItem(myTiers.getDerCategDeTiers());
+				String derCategDeTiers = myTiers.getDerCategDeTiers();
+					comboCategorie.setSelectedItem(derCategDeTiers);
+				}else {
+					comboCategorie.setSelectedIndex(0);
+				}
+				
 			}
 		});
 		comboTypeOpe.addActionListener(new ActionListener() {

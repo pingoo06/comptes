@@ -36,7 +36,7 @@ public class Fenetre extends JFrame {
 		container.setLayout(new BorderLayout());
 		onglets = new JTabbedPane(JTabbedPane.LEFT);
 
-		OngletOperation operationPanel = (OngletOperation)getOperationPanel();
+		OngletOperation operationPanel = new OngletOperation();
 		onglets.add("Opérations", operationPanel);
 		onglets.add("Echeancier", getEcheancierPanel());
 		onglets.add("Rappro", getRapproPanel());
@@ -46,8 +46,6 @@ public class Fenetre extends JFrame {
 				JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
 				int index = sourceTabbedPane.getSelectedIndex();
 				if(index==0) {
-					
-					OngletOperation operationPanel = (OngletOperation)getOperationPanel();
 					operationPanel.refresh();
 				}
 			}
@@ -62,12 +60,6 @@ public class Fenetre extends JFrame {
 		setLocation(0, 0);
 		pack();
 	}
-
-	// onglet operation
-	public Component getOperationPanel() {
-		return new OngletOperation();
-	}
-
 
 
 	// ECHEANCIER
