@@ -23,6 +23,7 @@ import comptes.gui.listener.DateDocumentListener;
 import comptes.gui.tableaux.OperationTableau;
 import comptes.model.services.GestionOperation;
 import comptes.util.DateUtil;
+import comptes.util.log.LogOperation;
 
 public class OngletOperation extends JSplitPane {
 
@@ -56,7 +57,7 @@ public class OngletOperation extends JSplitPane {
 	private String valFiltreTiers = "";
 	private String valFiltreDuree = "";
 	private String valFiltreRappro = "";
-
+	private OperationTableau operationTableau;
 	String whereClause = "";
 
 	public OngletOperation() {
@@ -104,7 +105,8 @@ public class OngletOperation extends JSplitPane {
 
 		vTop.add(pFilters, BorderLayout.NORTH);
 		// Taleau des opérations
-		tableOperation = new JTable(new OperationTableau());
+		operationTableau = new OperationTableau();
+		tableOperation = new JTable(operationTableau);
 		vTop.add(new JScrollPane(tableOperation), BorderLayout.CENTER);
 		tableOperation.setAutoCreateRowSorter(true);
 		vBottom.add(panelCreationOperation);
@@ -170,6 +172,7 @@ public class OngletOperation extends JSplitPane {
 			}
 			switch (valFiltreDuree) {
 			case "Tout":
+				where2 = "";
 				break;
 			case "1 mois":
 				dateLimite = dateJour.minusMonths(1);
@@ -198,6 +201,7 @@ public class OngletOperation extends JSplitPane {
 			}
 			switch (valFiltreRappro) {
 			case "Tout":
+				where3 = "";
 				break;
 			case "Non rapproches":
 				where3 = "o.etatOpe != 'X'";
@@ -209,9 +213,9 @@ public class OngletOperation extends JSplitPane {
 				throw new IllegalArgumentException(
 						"Dans BoutonFiltreListener de fenetre: default du case valFiltrerappro" + valFiltreRappro);
 			}
-			System.out.println("dans BoutonFiltreListener de fenetre : valFiltreTiers: " + valFiltreTiers);
-			System.out.println("dans BoutonFiltreListener de fenetre : valFiltreDuree: " + valFiltreDuree);
-			System.out.println("dans BoutonFiltreListener de fenetre : valFiltreRappro: " + valFiltreRappro);
+			LogOperation.logDebug("dans BoutonFiltreListener de fenetre : valFiltreTiers: " + valFiltreTiers);
+			LogOperation.logDebug("dans BoutonFiltreListener de fenetre : valFiltreDuree: " + valFiltreDuree);
+			LogOperation.logDebug("dans BoutonFiltreListener de fenetre : valFiltreRappro: " + valFiltreRappro);
 			if (!where1.isEmpty() || !where2.isEmpty() || !where3.isEmpty()) {
 				if (!where1.isEmpty()) {
 					whereClause = "where " + where1;
@@ -233,6 +237,8 @@ public class OngletOperation extends JSplitPane {
 						whereClause = "where " + where3;
 				}
 
+			}else {
+				whereClause = "";
 			}
 			System.out.println("Dans BoutonFiltreListener de Fenetre : whereClause : " + whereClause);
 			OperationTableau model = ((OperationTableau) tableOperation.getModel());
@@ -241,10 +247,11 @@ public class OngletOperation extends JSplitPane {
 	}
 
 	public void refresh() {
-		System.out.println("refresh");
-		OperationTableau model = ((OperationTableau) tableOperation.getModel());
-		model.filters(whereClause);
-		model.fireTableDataChanged();
+		LogOperation.logInfo("refresh operation tableau avec la whereclause= "+whereClause);
+		operationTableau.filters(whereClause);
 	}
+
+	
+	
 	
 }

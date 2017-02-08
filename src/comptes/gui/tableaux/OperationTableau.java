@@ -12,6 +12,7 @@ import comptes.model.facade.CategorieFacade;
 import comptes.model.facade.OperationFacade;
 import comptes.model.facade.TiersFacade;
 import comptes.util.DateUtil;
+import comptes.util.log.LogOperation;
 public class OperationTableau extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private String[] columnNames = { "Type Ope", "Date Ope", "Tiers", "Categorie", "Détail opé", "Débit", "Crédit",
@@ -22,7 +23,7 @@ public class OperationTableau extends AbstractTableModel {
 
 	// Remplit le tableau avec toutes les opérations
 	public OperationTableau() {
-		System.out.println("Début : constructeur operation tableau");
+		LogOperation.logDebug("Début : constructeur operation tableau");
 		listOperationBO = new OperationDAO().findAllOpeBO();
 		this.operationFacade = new OperationFacade();
 	}
@@ -215,12 +216,12 @@ public class OperationTableau extends AbstractTableModel {
 //	}
 	
 	public void filters(String whereClause) {
-		System.out.println("Début : filters de Operation Tableau");
-		System.out.println("dans operation tableau dans filters : longueur liste avant clear :" +listOperationBO.size()); 
+		LogOperation.logInfo("Début : filters de Operation Tableau");
+		LogOperation.logInfo("dans operation tableau dans filters : longueur liste avant clear :" +listOperationBO.size()); 
 		listOperationBO.clear();
 	//	System.out.println("dans operation tableau dans filters : longueur liste apres clear :" +listOperationBO.size()); 
 		listOperationBO=new OperationDAO().findOpeBOFiltre(whereClause);
-		System.out.println("dans operation tableau dans filters : longueur liste aprsè remplissage:" +listOperationBO.size()); 
+		LogOperation.logInfo("dans operation tableau dans filters : longueur liste aprsè remplissage:" +listOperationBO.size()); 
 		this.operationFacade = new OperationFacade();
 		fireTableDataChanged();
 	}
