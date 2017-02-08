@@ -1,7 +1,7 @@
 package comptes.gui.onglets;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -14,6 +14,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import comptes.gui.combo.CategorieCombo;
@@ -132,6 +133,9 @@ public class PanelCreationOperation extends Box {
 		jtfDebit.setFont(police);
 		jtfDebit.setPreferredSize(new Dimension(100, 20));
 		jtfDebit.setForeground(Color.BLUE);
+		
+		JPanel jp = new JPanel();
+		jp.add(jtfDebit);
 		jtfCredit.setFont(police);
 		jtfCredit.setPreferredSize(new Dimension(100, 20));
 		jtfCredit.setForeground(Color.BLUE);
@@ -143,20 +147,22 @@ public class PanelCreationOperation extends Box {
 		jtfDetailOpe.setFont(police);
 		jtfDetailOpe.setForeground(Color.RED);
 
-		b1.add(labelDateOpe);
-		b1.add(jtfDateOpe);
+//		b1.add(labelDateOpe);
+		b1.add(wrap(labelDateOpe,jtfDateOpe));
 		b1.add(labelTypeOpe);
 		b1.add(comboTypeOpe);
 		b1.add(labelTiers);
 		b1.add(comboTiers);
 		b1.add(labelCategOpe);
 		b1.add(comboCategorie);
-		b2.add(labelDebit);
-		b2.add(jtfDebit);
-		b2.add(labelCredit);
-		b2.add(jtfCredit);
-		b2.add(labelDetailOpe);
-		b2.add(jtfDetailOpe);
+//		b2.add(labelDebit);
+		JPanel jpB2 = new JPanel();
+		jpB2.add(wrap(labelDebit,jtfDebit));
+//		b2.add(labelCredit);
+		jpB2.add(wrap(labelCredit,jtfCredit));
+//		b2.add(labelDetailOpe);
+		jpB2.add(wrap(labelDetailOpe,jtfDetailOpe));
+		b2.add(jpB2);
 		b3.add(boutonAnnulOpe);
 		b3.add(boutonOKOpe);
 
@@ -169,6 +175,13 @@ public class PanelCreationOperation extends Box {
 		add(b3);
 	}
 
+	private JPanel wrap(JLabel label,JTextField tf) {
+		JPanel jp = new JPanel();
+		jp.add(label);
+		jp.add(tf);
+		return jp;
+	}
+	
 	public OperationDTO getDto() {
 		OperationDTO myOperationDTO  = new OperationDTO();
 		myOperationDTO.setTypeOpe(comboTypeOpe.getSelectedItem().toString());
