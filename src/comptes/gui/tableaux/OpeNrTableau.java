@@ -3,7 +3,6 @@ package comptes.gui.tableaux;
 import comptes.gui.manager.RapproManager;
 import comptes.model.db.entity.Operation;
 import comptes.model.services.GestionRappro;
-import comptes.util.DateUtil;
 import comptes.util.log.LogRappro;
 
 public class OpeNrTableau extends CheckableTableau {

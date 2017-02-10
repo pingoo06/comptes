@@ -9,6 +9,7 @@ public class MyDate implements Comparable<MyDate> {
 	public static final String DB_FORMAT = "yyyy-MM-dd";
 	public static final String FRENCH_FORMAT = "dd/MM/yyyy";
 	public static final String SHORT_FRENCH_FORMAT = "dd/MM/yy";
+	public static final String BNP_FORMAT = "ddMMyy";
 
 	private LocalDate date;
 
@@ -44,6 +45,8 @@ public class MyDate implements Comparable<MyDate> {
 			this.date = DateUtil.parse(date, SHORT_FRENCH_FORMAT);
 		} else if (date.matches("[0-9]{4}-[01][0-9]-[0123][0-9]")) {
 			this.date = DateUtil.parse(date, DB_FORMAT);
+		} else if (date.matches("[0123][0-9][01][0-9][0-9]{2}")) {
+			this.date = DateUtil.parse(date, BNP_FORMAT);
 		} else {
 			Logger.logError("DateFormat not detected for date: " + date);
 		}
@@ -110,5 +113,6 @@ public class MyDate implements Comparable<MyDate> {
 		System.out.println(new MyDate("24/05/1990"));
 		System.out.println(new MyDate("01/11/20"));
 		System.out.println(new MyDate("2006-12-31"));
+		System.out.println(new MyDate("010417"));
 	}
 }

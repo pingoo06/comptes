@@ -131,7 +131,7 @@ public class EcheancierDAO extends DAO<Echeancier> {
 							+ myEcheancier.getDateEch().toDbFormat() + "',montantEch=" + myEcheancier.getMontantEch() + ", nbEch='"
 							+ myEcheancier.getNbEch() + "',dateEchLong=" + myEcheancier.getDateEch().toLongValue()  
 							+ " where Id=" +myEcheancier.getId());
-					 System.out.println("dans try update echeancier : Update : UPDATE echeancier SET typeEch='" + myEcheancier.getTypeEch() + "',tiersEchId='"
+					Logger.logDebug("dans try update echeancier : Update : UPDATE echeancier SET typeEch='" + myEcheancier.getTypeEch() + "',tiersEchId='"
 								+ myEcheancier.getTiersEchId() + "',categEchId=" + myEcheancier.getCategEchId() + ",dateEch="
 								+ myEcheancier.getDateEch().toDbFormat() + ",montantEch=" + myEcheancier.getMontantEch() + ", nbEch='"
 								+ myEcheancier.getNbEch() + "',dateEchLong=" + myEcheancier.getDateEch().toLongValue()  

@@ -7,9 +7,6 @@ import javax.swing.JComboBox;
 //nico faut il enlever l'action listener dans fenetre ?
 public class TypeOpeCombo extends JComboBox<String> implements ActionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private static final String[] typeStrings = {"CB", "CHQ", "PRLV", "RETRAIT", "VIR_EMIS", "VIR_RECU"};
 	public TypeOpeCombo() {

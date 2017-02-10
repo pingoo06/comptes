@@ -1,6 +1,5 @@
 package comptes.model.facade;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import comptes.model.csvParser.MyCsvParser;
@@ -8,7 +7,6 @@ import comptes.model.db.dao.DAO;
 import comptes.model.db.dao.OperationDAO;
 import comptes.model.db.entity.Operation;
 import comptes.model.db.entity.Tiers;
-import comptes.util.DateUtil;
 import comptes.util.MyDate;
 import comptes.util.log.Logger;
 

@@ -28,7 +28,7 @@ public class GestionEcheancier {
 	}
 
 	public Echeancier DTOToEcheancier(EcheancierDTO myEcheancierDTO) {
-		System.out.println("Début BOToEcheancier dans gestion operationO");
+		LogEcheancier.logDebug("Début BOToEcheancier dans gestion operationO");
 		Echeancier myEcheancier = new Echeancier();
 		myEcheancier.setId(myEcheancierDTO.getId());
 		myEcheancier.setTypeEch(myEcheancierDTO.getTypeEch());

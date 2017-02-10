@@ -1,8 +1,5 @@
  package comptes.model.db.entity;
 
-import java.time.LocalDate;
-
-import comptes.util.DateUtil;
 import comptes.util.MyDate;
 
 public class Operation {

@@ -8,7 +8,6 @@ import comptes.model.db.entity.Tiers;
 import comptes.model.facade.CategorieFacade;
 import comptes.model.facade.OperationFacade;
 import comptes.model.facade.TiersFacade;
-import comptes.util.DateUtil;
 import comptes.util.MyDate;
 import comptes.util.log.Logger;
 

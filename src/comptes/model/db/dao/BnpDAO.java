@@ -5,14 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import comptes.model.bo.RapproBO;
 import comptes.model.db.entity.Bnp;
-import comptes.model.db.entity.Operation;
 import comptes.model.db.entity.Bnp.OperationType;
-import comptes.model.facade.BnpFacade;
-import comptes.util.DateUtil;
+import comptes.util.MyDate;
 import comptes.util.log.LogBnp;
 
 public class BnpDAO extends DAO<Bnp> {
@@ -22,14 +18,14 @@ public class BnpDAO extends DAO<Bnp> {
 			statement = connection.prepareStatement(
 					"INSERT INTO bnp (id, dateBnp, libCourtBnp,  libTypeOpeBnp,  libOpeBnp,  montantBnp,etatBnp,typeOpeBnp,"
 							+ "dateBnpCalc,chqNumberBnp)VALUES(?,?,?,?,?,?,?,?,?,?)");
-			statement.setString(2, DateUtil.convertDate(myBnp.getDateBnp(), "dd/MM/yyyy", "yyyy-MM-dd"));
+			statement.setString(2, myBnp.getDateBnp().toDbFormat());
 			statement.setString(3, myBnp.getLibCourtBnp());
 			statement.setString(4, myBnp.getLibTypeOpeBnp());
 			statement.setString(5, myBnp.getLibOpeBnp());
 			statement.setDouble(6, myBnp.getMontantBnp());
 			statement.setString(7, myBnp.getEtatBnp());
 			statement.setString(8, myBnp.getTypeOpeBnp().toString());
-			statement.setLong(9, myBnp.getDateBnpCalc());
+			statement.setLong(9, myBnp.getDateBnpCalc().toLongValue());
 			statement.setString(10, myBnp.getChqNumberBnp());
 			statement.executeUpdate();
 		} catch (SQLException e) {
@@ -52,10 +48,10 @@ public class BnpDAO extends DAO<Bnp> {
 			ResultSet rs = statement.executeQuery("SELECT * FROM bnp WHERE id = '" + id + "'");
 			LogBnp.logDebug("rs = " + rs.getInt("id"));
 			if (rs.next()) {
-				myBnp = new Bnp(rs.getInt("id"), rs.getString("dateBnp"), rs.getString("libCourtBnp"),
+				myBnp = new Bnp(rs.getInt("id"), new MyDate(rs.getString("dateBnp")), rs.getString("libCourtBnp"),
 						rs.getString("libTypeOpeBnp"), rs.getString("libOpeBnp"), rs.getDouble("montantBnp"),
 						rs.getString("etatBnp"), OperationType.valueOf(rs.getString("typeOpeBnp")),
-						rs.getLong("dateBnpCalc"), rs.getString("chqNumberBnp"));
+						new MyDate(rs.getLong("dateBnpCalc")), rs.getString("chqNumberBnp"));
 			}
 		} catch (SQLException e) {
 			LogBnp.logError("failed to create BNP", e);
@@ -73,10 +69,10 @@ public class BnpDAO extends DAO<Bnp> {
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT * FROM bnp");
 			while (rs.next()) {
-				myBnp = new Bnp(rs.getInt("id"), rs.getString("dateBnp"), rs.getString("libCourtBnp"),
+				myBnp = new Bnp(rs.getInt("id"), new MyDate(rs.getString("dateBnp")), rs.getString("libCourtBnp"),
 						rs.getString("libTypeOpeBnp"), rs.getString("libOpeBnp"), rs.getDouble("montantBnp"),
 						rs.getString("etatBnp"), OperationType.valueOf(rs.getString("typeOpeBnp")),
-						rs.getLong("dateBnpCalc"), rs.getString("chqNumberBnp"));
+						new MyDate(rs.getLong("dateBnpCalc")), rs.getString("chqNumberBnp"));
 				myBnpList.add(myBnp);
 			}
 			statement.close();
@@ -93,10 +89,10 @@ public class BnpDAO extends DAO<Bnp> {
 		Statement statement = null;
 		try {
 			statement = connection.createStatement();
-			statement.executeUpdate("UPDATE bnp SET dateBnp ='" + myBnp.getDateBnp() + "', libCourtBnp='"
+			statement.executeUpdate("UPDATE bnp SET dateBnp ='" + myBnp.getDateBnp().toDbFormat() + "', libCourtBnp='"
 					+ myBnp.getLibCourtBnp() + "',libTypeOpeBnp='" + myBnp.getLibTypeOpeBnp() + "',libOpeBnp='"
 					+ myBnp.getLibOpeBnp() + "',montantBnp=" + myBnp.getMontantBnp() + ",etatBnp='" + myBnp.getEtatBnp()
-					+ "typeOpeBnp" + myBnp.getTypeOpeBnp() + "dateBnpCalc" + myBnp.getDateBnpCalc() + "chqNumberBnp"
+					+ "typeOpeBnp" + myBnp.getTypeOpeBnp() + "dateBnpCalc" + myBnp.getDateBnpCalc().toLongValue() + "chqNumberBnp"
 					+ myBnp.getChqNumberBnp() + "' where Id=" + myBnp.getId());
 		} catch (SQLException e) {
 			LogBnp.logError("failed to create BNP", e);

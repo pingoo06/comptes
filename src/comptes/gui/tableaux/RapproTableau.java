@@ -1,11 +1,8 @@
 package comptes.gui.tableaux;
 
-import java.time.LocalDate;
-
 import comptes.gui.manager.RapproManager;
 import comptes.model.bo.RapproBO;
 import comptes.model.services.GestionRappro;
-import comptes.util.DateUtil;
 import comptes.util.log.LogRappro;
 
 public class RapproTableau extends CheckableTableau {
@@ -42,8 +39,7 @@ public class RapproTableau extends CheckableTableau {
 		LogRappro.logDebug("Dans GetValueAt de echeancierTableau : RapproBO :  : " + current);
 		switch (columnIndex) {
 		case 0:
-			LocalDate date = LocalDate.ofEpochDay(current.getBnp().getDateBnpCalc());
-			return DateUtil.format(date, "dd/MM/yyyy");
+			return current.getBnp();
 		case 1:
 			return current.getOperation().getDateOpe();
 		case 2:

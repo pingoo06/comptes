@@ -9,6 +9,7 @@ import comptes.model.bo.RapproBO;
 import comptes.model.db.entity.Bnp;
 import comptes.model.db.entity.Bnp.OperationType;
 import comptes.model.db.entity.Operation;
+import comptes.util.MyDate;
 import comptes.util.log.LogRappro;
 
 public class RapproDAO extends DAO<RapproBO> {
@@ -31,8 +32,8 @@ public class RapproDAO extends DAO<RapproBO> {
 			ResultSet rs = statement.executeQuery("SELECT * FROM  operation as o INNER JOIN bnp as b INNER JOIN tiers as t  on o.tiersId=t.id and o.etatOpe='NR' and " + whereClause );
 			while (rs.next()) {
 				myOperation = OperationDAO.operationFromRow(rs);
-				myBnp = new Bnp (rs.getInt(11),rs.getString(12),rs.getString(13),rs.getString(14), rs.getString(15),
-						rs.getDouble(16),rs.getString(17),OperationType.valueOf(rs.getString(18)),rs.getLong(19),rs.getString(20));
+				myBnp = new Bnp (rs.getInt(11), new MyDate(rs.getString(12)),rs.getString(13),rs.getString(14), rs.getString(15),
+						rs.getDouble(16),rs.getString(17),OperationType.valueOf(rs.getString(18)),new MyDate(rs.getLong(19)),rs.getString(20));
 				myLibTiers=rs.getString(22);
 				RapproBO myRapproBo = new RapproBO(myBnp,myOperation,myLibTiers);
 				myRapproBOList.add(myRapproBo);

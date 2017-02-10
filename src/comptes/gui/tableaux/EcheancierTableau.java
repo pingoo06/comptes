@@ -11,7 +11,6 @@ import comptes.model.db.entity.Tiers;
 import comptes.model.facade.CategorieFacade;
 import comptes.model.facade.EcheancierFacade;
 import comptes.model.facade.TiersFacade;
-import comptes.util.DateUtil;
 import comptes.util.log.LogEcheancier;
 
 public class EcheancierTableau extends AbstractTableModel {
@@ -22,7 +21,7 @@ public class EcheancierTableau extends AbstractTableModel {
 
 	// Remplit le tableau avec toutes les opérations
 	public EcheancierTableau() {
-		System.out.println("Début : constructeur echeancier tableau");
+		LogEcheancier.logDebug("Début : constructeur echeancier tableau");
 		listEcheancierBO = new EcheancierDAO().findAllEchBO();
 		this.echeancierFacade = new EcheancierFacade();
 	}
@@ -46,10 +45,10 @@ public class EcheancierTableau extends AbstractTableModel {
 	// renvoie le contenu de chaque colonne de la liste
 	public Object getValueAt(int rowIndex, int columnIndex) {
 //		 System.out.println("Début : getValueAt de echeancierTableau");
-		 System.out.println("Dans GetValueAt de echeancierTableau :  columnIndex " + columnIndex + "RowIndex" + rowIndex  );
+		LogEcheancier.logDebug("Dans GetValueAt de echeancierTableau :  columnIndex " + columnIndex + "RowIndex" + rowIndex  );
 
 		EcheancierBO current = listEcheancierBO.get(rowIndex);
-		System.out.println("Dans GetValueAt de echeancierTableau : EcheancierBO : " + current);
+		LogEcheancier.logDebug("Dans GetValueAt de echeancierTableau : EcheancierBO : " + current);
 		switch (columnIndex) {
 		case 0:
 			return current.getTypeEch();
@@ -75,9 +74,9 @@ public class EcheancierTableau extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		System.out.println("Début : Set ValueAt de echeancierTableau");
+		LogEcheancier.logDebug("Début : Set ValueAt de echeancierTableau");
 		EcheancierBO current = listEcheancierBO.get(rowIndex);
-		System.out.println("Dans SetValueAt de EcheancierTableau  row: " + rowIndex + " colIdx: " + columnIndex + "valeur " + aValue.toString());
+		LogEcheancier.logDebug("Dans SetValueAt de EcheancierTableau  row: " + rowIndex + " colIdx: " + columnIndex + "valeur " + aValue.toString());
 		TiersFacade myTiersFacade = new TiersFacade();
 		String libTiers = aValue.toString();
 		String libCateg = aValue.toString();
@@ -128,7 +127,7 @@ public class EcheancierTableau extends AbstractTableModel {
 			myTiers.setDerCategDeTiers(libCateg);
 			myTiersFacade.update(myTiers);
 			// Fin mise à jour de la dernière catégorie dans le tiers
-			System.out.println("dans case 2 de getValueAt de EcheancierTableau : (myCategorieFacade.find(idCategorie): "
+			LogEcheancier.logDebug("dans case 2 de getValueAt de EcheancierTableau : (myCategorieFacade.find(idCategorie): "
 					+ myCategorieFacade.find(idCategorie));
 			echeancierFacade.update(current);
 			break;
@@ -150,7 +149,7 @@ public class EcheancierTableau extends AbstractTableModel {
 		default:
 			throw new IllegalArgumentException("Invalid column index");
 		}
-		System.out.println("Dans SetValueAt de Echeancier Tableau : fire");
+		LogEcheancier.logDebug("Dans SetValueAt de Echeancier Tableau : fire");
 		fireTableRowsUpdated(rowIndex, rowIndex);
 	}
 
@@ -160,9 +159,9 @@ public class EcheancierTableau extends AbstractTableModel {
 		if (listEcheancierBO.isEmpty()) {
 			return Object.class;
 		}
-		 System.out.println("Dans set value At de echeancier tableau : column	 index " + columnIndex);
+		LogEcheancier.logDebug("Dans set value At de echeancier tableau : column	 index " + columnIndex);
 		Object val = getValueAt(0, columnIndex);
-		 System.out.println("Dans set value At de echeancier tableau : val " +
+		LogEcheancier.logDebug("Dans set value At de echeancier tableau : val " +
 		 val);
 		if (val == null) {
 			if (columnIndex <= 3) {
@@ -185,21 +184,21 @@ public class EcheancierTableau extends AbstractTableModel {
 
 	// supression de ligne
 	public void deleteRow(int idx) {
-		System.out.println("Début : deleteRow de echeancier Tableau");
+		LogEcheancier.logDebug("Début : deleteRow de echeancier Tableau");
 		EcheancierBO echeancierBO = listEcheancierBO.get(idx);
 		listEcheancierBO.remove(idx);
 		fireTableRowsDeleted(idx, idx);
-		System.out.println(echeancierBO);
+		LogEcheancier.logDebug(echeancierBO.toString());
 		echeancierFacade.delete(echeancierBO);
 	}
 
 	public List<EcheancierBO> getListEcheancierBO() {
-		System.out.println("Début : getListEcheancierBO de echeancierTableau ");
+		LogEcheancier.logDebug("Début : getListEcheancierBO de echeancierTableau ");
 		return listEcheancierBO;
 	}
 
 	public void setListEcheancierBO(List<EcheancierBO> listEcheancierBO) {
-		System.out.println("Début : setListEcheancierBo de EcheancierTableau");
+		LogEcheancier.logDebug("Début : setListEcheancierBo de EcheancierTableau");
 		this.listEcheancierBO = listEcheancierBO;
 	}
 

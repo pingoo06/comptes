@@ -1,6 +1,5 @@
 package comptes.model.services;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import comptes.model.bo.EcheancierBO;

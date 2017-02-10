@@ -1,11 +1,8 @@
 package comptes.gui.tableaux;
 
-import java.time.LocalDate;
-
 import comptes.gui.manager.RapproManager;
 import comptes.model.db.entity.Bnp;
 import comptes.model.services.GestionRappro;
-import comptes.util.DateUtil;
 import comptes.util.log.LogRappro;
 
 public class BnpNrTableau extends CheckableTableau {
@@ -41,8 +38,7 @@ public class BnpNrTableau extends CheckableTableau {
 		LogRappro.logDebug("Bnp : " + current);
 		switch (columnIndex) {
 		case 0:
-			LocalDate date = LocalDate.ofEpochDay(current.getDateBnpCalc());
-			return DateUtil.format(date, "dd/MM/yyyy");
+			return current.getDateBnpCalc();
 		case 1:
 			return current.getLibOpeBnp();
 		case 2:

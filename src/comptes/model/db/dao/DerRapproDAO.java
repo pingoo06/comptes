@@ -4,34 +4,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
-import comptes.model.bo.EcheancierBO;
-import comptes.model.db.entity.Categorie;
 import comptes.model.db.entity.DerRappro;
-import comptes.model.db.entity.Echeancier;
-import comptes.model.db.entity.Tiers;
-import comptes.util.DateUtil;
+import comptes.util.MyDate;
 import comptes.util.log.LogRappro;
-import comptes.util.log.Logger;
 
 public class DerRapproDAO extends DAO<DerRappro> {
 	public void create(DerRappro myDerRappro) {
-		String datetmp="";
-		long dateDerRapproLong;
 		PreparedStatement statement=null;
 		LogRappro.logDebug("derRappro ; '" +myDerRappro	+"'");
 		try {
-			datetmp=myDerRappro.getDateDerRappro();
-			LocalDate date = DateUtil.parse(datetmp, "yyyy-MM-dd");
 
-			dateDerRapproLong = date.toEpochDay();
 			statement = connection.prepareStatement("INSERT INTO der_rappro (id , derSolde , dateDerRappro , dateDerRapproLong ) VALUES(?,?,?,?)");
 
 			statement.setDouble(2, myDerRappro.getDerSolde());
-			statement.setString(3, datetmp);
-			statement.setLong(4, dateDerRapproLong);
+			statement.setString(3, myDerRappro.getDateDerRappro().toDbFormat());
+			statement.setLong(4, myDerRappro.getDateDerRappro().toLongValue());
 			statement.executeUpdate();
 			LogRappro.logDebug(" DAO create derrappro");	
 		} catch (SQLException e) {
@@ -54,7 +43,7 @@ public class DerRapproDAO extends DAO<DerRappro> {
 			ResultSet rs = statement.executeQuery("SELECT * FROM der_rappro WHERE id = '" + id + "'");
 			LogRappro.logDebug("rs = " + rs.getInt("id"));
 			if (rs.next()) {
-				myDerRappro = new DerRappro(rs.getInt("id"), rs.getDouble("derSolde"),rs.getString("dateDerRappro"),rs.getLong("dateDerRapproLong"));
+				myDerRappro = new DerRappro(rs.getInt("id"), rs.getDouble("derSolde"), new MyDate(rs.getString("dateDerRappro")),rs.getLong("dateDerRapproLong"));
 			}
 		} catch (SQLException e) {
 			LogRappro.logError("SQL Exception dans DerRappro DAO find", e);
@@ -69,10 +58,10 @@ public class DerRapproDAO extends DAO<DerRappro> {
 			LogRappro.logDebug("myDerRappro" + myDerRappro);
 			statement = connection.createStatement();
 			statement.executeUpdate("UPDATE der_rappro SET derSolde='" + myDerRappro.getDerSolde()
-			+ "',dateDerRappro='" + myDerRappro.getDateDerRappro() + "',dateDerRapproLong=" + myDerRappro.getDateDerRapproLong()
+			+ "',dateDerRappro='" + myDerRappro.getDateDerRappro() + "',dateDerRapproLong=" + myDerRappro.getDateDerRappro().toLongValue()
 					+ " where Id=" +myDerRappro.getId());
 			LogRappro.logDebug("dans try update DerRappro : Update : UPDATE der_rappro SET derSolde='" + myDerRappro.getDerSolde()
-			+ "',dateDerRappro='" + myDerRappro.getDateDerRappro() + "',dateDerRapproLong=" + myDerRappro.getDateDerRapproLong()
+			+ "',dateDerRappro='" + myDerRappro.getDateDerRappro() + "',dateDerRapproLong=" + myDerRappro.getDateDerRappro().toLongValue()
 					+ " where Id=" +myDerRappro.getId());
 		} catch (SQLException e) {
 			LogRappro.logError("SQL Exception dans DerRappro DAO update", e);
