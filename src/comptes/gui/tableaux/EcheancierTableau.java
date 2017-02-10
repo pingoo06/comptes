@@ -12,6 +12,7 @@ import comptes.model.facade.CategorieFacade;
 import comptes.model.facade.EcheancierFacade;
 import comptes.model.facade.TiersFacade;
 import comptes.util.DateUtil;
+import comptes.util.log.LogEcheancier;
 
 public class EcheancierTableau extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
@@ -57,7 +58,7 @@ public class EcheancierTableau extends AbstractTableModel {
 		case 2:
 			return current.getCategorieBo().getLibCateg();
 		case 3:
-			return DateUtil.format(DateUtil.parse(current.getDateEch(),"yyyy-MM-dd"), "dd/MM/yyyy");
+			return current.getDateEch();
 		case 4:
 			if (current.getMontantEch() > 0) {
 				return current.getMontantEch();
@@ -132,8 +133,11 @@ public class EcheancierTableau extends AbstractTableModel {
 			echeancierFacade.update(current);
 			break;
 		case 3:
-			current.setDateEch(DateUtil.format(DateUtil.parse(aValue.toString(),"dd/MM/yyyy"),"yyyy-MM-dd"));
+			LogEcheancier.logWarning("before : "+current.getDateEch()+" to "+aValue.toString());
+			current.getDateEch().update(aValue.toString());
+			LogEcheancier.logWarning("after : "+current.getDateEch());
 			echeancierFacade.update(current);
+			
 			break;
 		case 4:
 			current.setMontantEch((Double) aValue * -1);
@@ -174,10 +178,8 @@ public class EcheancierTableau extends AbstractTableModel {
 		return val.getClass();
 	}
 
-	// seules les lignes non pointées sont modifiables
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		EcheancierBO current = listEcheancierBO.get(rowIndex);
 		return true;
 	}
 

@@ -40,7 +40,7 @@ public class OpeNrTableau extends CheckableTableau {
 		LogRappro.logDebug("operation : " + current);
 		switch (columnIndex) {
 		case 0:
-			return DateUtil.format(DateUtil.parse(current.getDateOpe(), "yyyy-MM-dd"), "dd/MM/yyyy");
+			return current.getDateOpe();
 		case 1:
 			return myGestionRappro.getLibTiersFromOpe(current);
 		case 2:

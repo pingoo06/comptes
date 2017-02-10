@@ -4,36 +4,32 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import comptes.model.bo.EcheancierBO;
 import comptes.model.db.entity.Categorie;
 import comptes.model.db.entity.Echeancier;
 import comptes.model.db.entity.Tiers;
-import comptes.util.DateUtil;
+import comptes.util.MyDate;
+import comptes.util.log.LogEcheancier;
 import comptes.util.log.Logger;
 
 public class EcheancierDAO extends DAO<Echeancier> {
+	
 	public void create(Echeancier myEcheancier) {
-		String datetmp="";
-		long dateEchLong;
 		PreparedStatement statement=null;
-		System.out.println("Dans try dans create echeancier dans DAO echeancier : ECHEANCIER ; '" +myEcheancier	+"'");
+		LogEcheancier.logDebug("Dans try dans create echeancier dans DAO echeancier : ECHEANCIER ; '" +myEcheancier	+"'");
 		try {
-			datetmp=myEcheancier.getDateEch();
-			LocalDate date = DateUtil.parse(datetmp, "yyyy-MM-dd");
 			
-			dateEchLong = date.toEpochDay();
 			statement = connection.prepareStatement("INSERT INTO echeancier (id,typeEch, tiersEchId, categEchId,  montantEch,dateEch, nbEch,dateEchLong ) VALUES(?,?,?,?,?,?,?,?)");
 		
 			statement.setString(2, myEcheancier.getTypeEch());
 			statement.setInt(3, myEcheancier.getTiersEchId());
 			statement.setInt(4, myEcheancier.getCategEchId());
 			statement.setDouble(5, myEcheancier.getMontantEch());
-			statement.setString(6, datetmp);
+			statement.setString(6, myEcheancier.getDateEch().toDbFormat());
 			statement.setInt(7, myEcheancier.getNbEch());
-			statement.setLong(8, dateEchLong);
+			statement.setLong(8, myEcheancier.getDateEch().toLongValue());
 			
 			statement.executeUpdate();
 //			System.out.println("dans Echeancier DAO create arrive après execute statement de create echeancier");	
@@ -60,7 +56,7 @@ public class EcheancierDAO extends DAO<Echeancier> {
 					ResultSet rs = statement.executeQuery("SELECT * FROM echeancier WHERE id = '" + id + "'");
 					// System.out.println("rs = " + rs.getInt("id"));
 					if (rs.next()) {
-						myEcheancier = new Echeancier(rs.getInt("id"), rs.getString("typeEch"),rs.getInt("tiersEchId"), rs.getInt("categEchId") ,rs.getString("dateEch") ,rs.getDouble("montantEch"),rs.getInt("nbEchrs"),rs.getLong("dateEchLong"));
+						myEcheancier = new Echeancier(rs.getInt("id"), rs.getString("typeEch"),rs.getInt("tiersEchId"), rs.getInt("categEchId") ,new MyDate(rs.getString("dateEch")) ,rs.getDouble("montantEch"),rs.getInt("nbEchrs"));
 					}
 				} catch (SQLException e) {
 					System.out.println("SQL Exception dans Operation DAO find  ");
@@ -80,7 +76,7 @@ public class EcheancierDAO extends DAO<Echeancier> {
 					ResultSet rs = statement.executeQuery("SELECT * FROM echeancier");
 					// System.out.println("rs = " + rs.getInt("id"));
 					while (rs.next()) {
-						myEcheancier = new Echeancier(rs.getInt("id"), rs.getString("typeEch"),rs.getInt("tiersEchId"), rs.getInt("categEchId") ,rs.getString("dateEch") ,rs.getDouble("montantEch"),rs.getInt("nbEchrs"),rs.getLong("dateEchLong"));
+						myEcheancier = new Echeancier(rs.getInt("id"), rs.getString("typeEch"),rs.getInt("tiersEchId"), rs.getInt("categEchId") , new MyDate(rs.getString("dateEch")) ,rs.getDouble("montantEch"),rs.getInt("nbEchrs"));
 						myEcheancierList.add(myEcheancier);
 					}
 					statement.close();
@@ -106,7 +102,7 @@ public class EcheancierDAO extends DAO<Echeancier> {
 					Statement statement = connection.createStatement();
 					ResultSet rs = statement.executeQuery("SELECT * FROM echeancier as e INNER JOIN tiers as t on e.tiersEchId = t.id INNER JOIN categorie as c on e.categEchId = c.id");
 					while (rs.next()) {
-						myEcheancier = new Echeancier(rs.getInt(1), rs.getString(2),rs.getInt(3), rs.getInt(4) ,rs.getString(5) ,rs.getDouble(6),rs.getInt(7),rs.getLong(8));
+						myEcheancier = new Echeancier(rs.getInt(1), rs.getString(2),rs.getInt(3), rs.getInt(4) , new MyDate(rs.getString(5)) ,rs.getDouble(6),rs.getInt(7));
 						myEcheancierBO = new EcheancierBO(myEcheancier);
 						myTiers=new Tiers(rs.getInt(9),rs.getString(10),rs.getString(11));
 						myEcheancierBO.setTiersBo(myTiers);
@@ -132,13 +128,13 @@ public class EcheancierDAO extends DAO<Echeancier> {
 					statement = connection.createStatement();
 					statement.executeUpdate("UPDATE echeancier SET typeEch='" + myEcheancier.getTypeEch() + "',tiersEchId='"
 							+ myEcheancier.getTiersEchId() + "',categEchId=" + myEcheancier.getCategEchId() + ",dateEch= '"
-							+ myEcheancier.getDateEch() + "',montantEch=" + myEcheancier.getMontantEch() + ", nbEch='"
-							+ myEcheancier.getNbEch() + "',dateEchLong=" + myEcheancier.getDateEchLong()  
+							+ myEcheancier.getDateEch().toDbFormat() + "',montantEch=" + myEcheancier.getMontantEch() + ", nbEch='"
+							+ myEcheancier.getNbEch() + "',dateEchLong=" + myEcheancier.getDateEch().toLongValue()  
 							+ " where Id=" +myEcheancier.getId());
 					 System.out.println("dans try update echeancier : Update : UPDATE echeancier SET typeEch='" + myEcheancier.getTypeEch() + "',tiersEchId='"
 								+ myEcheancier.getTiersEchId() + "',categEchId=" + myEcheancier.getCategEchId() + ",dateEch="
-								+ myEcheancier.getDateEch() + ",montantEch=" + myEcheancier.getMontantEch() + ", nbEch='"
-								+ myEcheancier.getNbEch() + "',dateEchLong=" + myEcheancier.getDateEchLong()  
+								+ myEcheancier.getDateEch().toDbFormat() + ",montantEch=" + myEcheancier.getMontantEch() + ", nbEch='"
+								+ myEcheancier.getNbEch() + "',dateEchLong=" + myEcheancier.getDateEch().toLongValue()  
 								+ " where Id=" +myEcheancier.getId());
 				} catch (SQLException e) {
 					e.printStackTrace();

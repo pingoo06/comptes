@@ -10,17 +10,9 @@ public class EcheancierBO extends Echeancier{
 
 	public EcheancierBO() {
 		id = 0;
-		super.typeEch = "";
-		super.tiersEchId = 0;
-		super.categEchId = 0;
-		super.dateEch = "";
-		super.montantEch = 0;
-		super.nbEch = 0;
-		super.dateEchLong = 0;
 	}
 
 	public EcheancierBO(Echeancier ech) {
-		// TODO Auto-generated constructor stub
 		id = ech.getId();
 		super.typeEch = ech.getTypeEch();
 		super.tiersEchId = ech.getTiersEchId();
@@ -28,7 +20,6 @@ public class EcheancierBO extends Echeancier{
 		super.dateEch=ech.getDateEch();
 		super.montantEch = ech.getMontantEch();
 		super.nbEch = ech.getNbEch();
-		super.dateEchLong = ech.getDateEchLong();
 	}
 
 	public Categorie getCategorieBo() {

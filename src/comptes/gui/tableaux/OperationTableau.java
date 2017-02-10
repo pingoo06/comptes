@@ -11,7 +11,6 @@ import comptes.model.db.entity.Tiers;
 import comptes.model.facade.CategorieFacade;
 import comptes.model.facade.OperationFacade;
 import comptes.model.facade.TiersFacade;
-import comptes.util.DateUtil;
 import comptes.util.log.LogOperation;
 public class OperationTableau extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
@@ -55,7 +54,7 @@ public class OperationTableau extends AbstractTableModel {
 		case 0:
 			return current.getTypeOpe();
 		case 1:
-			return DateUtil.format(DateUtil.parse(current.getDateOpe(),"yyyy-MM-dd"), "dd/MM/yyyy");
+			return current.getDateOpe();
 		case 2:
 			return current.getTiersBO().getLibTiers();
 		case 3:
@@ -89,9 +88,9 @@ public class OperationTableau extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		System.out.println("Début : Set ValueAt de operationTableau");
+//		System.out.println("Début : Set ValueAt de operationTableau");
 		OperationBO current = listOperationBO.get(rowIndex);
-		System.out.println("row: " + rowIndex + " colIdx: " + columnIndex);
+//		System.out.println("row: " + rowIndex + " colIdx: " + columnIndex);
 		TiersFacade myTiersFacade= new TiersFacade();
 		String libTiers = aValue.toString();
 		String libCateg = aValue.toString();
@@ -101,7 +100,7 @@ public class OperationTableau extends AbstractTableModel {
 			operationFacade.update(current);
 			break;
 		case 1:
-			current.setDateOpe(DateUtil.format(DateUtil.parse(aValue.toString(),"dd/MM/yyyy"),"yyyy-MM-dd"));
+			current.getDateOpe().update(aValue.toString());
 			operationFacade.update(current);
 			break;
 		case 2:
@@ -235,5 +234,7 @@ public class OperationTableau extends AbstractTableModel {
 		System.out.println("Début : setListOperationBo de OperationTableau");
 		this.listOperationBO = listOperationBO;
 	}
+	
+	
 	
 }

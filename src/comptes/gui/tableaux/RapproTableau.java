@@ -45,7 +45,7 @@ public class RapproTableau extends CheckableTableau {
 			LocalDate date = LocalDate.ofEpochDay(current.getBnp().getDateBnpCalc());
 			return DateUtil.format(date, "dd/MM/yyyy");
 		case 1:
-			return DateUtil.format(DateUtil.parse(current.getOperation().getDateOpe(), "yyyy-MM-dd"), "dd/MM/yyyy");
+			return current.getOperation().getDateOpe();
 		case 2:
 			return current.getBnp().getLibOpeBnp();
 		case 3:
