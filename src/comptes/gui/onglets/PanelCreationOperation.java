@@ -22,6 +22,7 @@ import comptes.gui.combo.TypeOpeCombo;
 import comptes.gui.dto.OperationDTO;
 import comptes.gui.listener.DateDocumentListener;
 import comptes.model.db.entity.Tiers;
+import comptes.model.facade.OperationFacade;
 import comptes.model.facade.TiersFacade;
 import comptes.util.DateUtil;
 import comptes.util.log.LogRappro;
@@ -30,6 +31,7 @@ public class PanelCreationOperation extends Box {
 
 	private static final long serialVersionUID = 1084560641919471528L;
 	private JLabel labelTypeOpe;
+	private JLabel labelNumChq;
 	private JLabel labelTiers;
 	private JLabel labelDateOpe;
 	private JLabel labelDebit;
@@ -40,6 +42,7 @@ public class PanelCreationOperation extends Box {
 	private JButton boutonOKOpe;
 	private JButton boutonAnnulOpe;
 	private JTextField jtfDateOpe;
+	private JTextField jtfNumChq;
 	private JTextField jtfDetailOpe;
 	private JTextField jtfDebit;
 	private JTextField jtfCredit;
@@ -50,9 +53,9 @@ public class PanelCreationOperation extends Box {
 	private CategorieCombo comboCategorie;
 
 	private Box b1;
-	private Box b2 ;
+	private Box b2;
 	private Box b3;
-	
+
 	public PanelCreationOperation() {
 		super(BoxLayout.PAGE_AXIS);
 		b1 = Box.createHorizontalBox();
@@ -62,6 +65,7 @@ public class PanelCreationOperation extends Box {
 		LocalDate dateJour = LocalDate.now();
 		String dateJourStr = DateUtil.format(dateJour, "dd/MM/yyyy");
 		jtfDateOpe = new JTextField(dateJourStr);
+		jtfNumChq = new JTextField("");
 		jtfDetailOpe = new JTextField("");
 		jtfDebit = new JTextField("");
 		jtfCredit = new JTextField("");
@@ -74,6 +78,7 @@ public class PanelCreationOperation extends Box {
 		labelTypeOpe = new JLabel("TypeOpe");
 		labelTiers = new JLabel("Tiers");
 		labelDateOpe = new JLabel("Date Ope");
+		labelNumChq = new JLabel("N° cheque");
 		labelDebit = new JLabel("Debit");
 		labelCredit = new JLabel("Credit");
 		labelCategOpe = new JLabel("Categorie");
@@ -89,20 +94,20 @@ public class PanelCreationOperation extends Box {
 				clearSaisieOpe();
 			}
 		});
-		
+
 		comboTiers.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				TiersFacade myTiersFacade = new TiersFacade();
 				int idTiers = myTiersFacade.findLib(comboTiers.getSelectedItem().toString());
-				if(idTiers != 0 ) {
-				Tiers myTiers = myTiersFacade.find(idTiers);
-				String derCategDeTiers = myTiers.getDerCategDeTiers();
+				if (idTiers != 0) {
+					Tiers myTiers = myTiersFacade.find(idTiers);
+					String derCategDeTiers = myTiers.getDerCategDeTiers();
 					comboCategorie.setSelectedItem(derCategDeTiers);
-				}else {
+				} else {
 					comboCategorie.setSelectedIndex(0);
 				}
-				
+
 			}
 		});
 		comboTypeOpe.addActionListener(new ActionListener() {
@@ -112,14 +117,20 @@ public class PanelCreationOperation extends Box {
 				String libType = comboTypeOpe.getSelectedItem().toString();
 				if (libType == "RETRAIT") {
 					comboTiers.setSelectedItem("RETRAIT");
-					// jtfTiers.setText("RETRAIT");
 					comboCategorie.setSelectedItem("Retrait d especes");
-					// jtfCategOpe.setText("Retrait d especes");
 					jtfDebit.requestFocus();
+				} else if (libType == "DEPOT") {
+					comboTiers.setSelectedItem("Depot");
+					comboCategorie.setSelectedItem("Depot");
+					jtfCredit.requestFocus();
+				} else if (libType == "CHQ") {
+					OperationFacade myOperationFacade = new OperationFacade();
+					String tmp = new Long(myOperationFacade.findDerChq() + 1).toString();
+					jtfNumChq.setText(tmp);
+					jtfCredit.requestFocus();
 				}
 			}
 		});
-
 
 		jtfDateOpe.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
@@ -132,12 +143,15 @@ public class PanelCreationOperation extends Box {
 		jtfDebit.setFont(police);
 		jtfDebit.setPreferredSize(new Dimension(100, 20));
 		jtfDebit.setForeground(Color.BLUE);
-		
+
 		JPanel jp = new JPanel();
 		jp.add(jtfDebit);
 		jtfCredit.setFont(police);
 		jtfCredit.setPreferredSize(new Dimension(100, 20));
 		jtfCredit.setForeground(Color.BLUE);
+		jtfNumChq.setFont(police);
+		jtfNumChq.setPreferredSize(new Dimension(100, 20));
+		jtfNumChq.setForeground(Color.BLUE);
 		jtfDateOpe.setFont(police);
 		jtfDateOpe.setPreferredSize(new Dimension(100, 20));
 		jtfDateOpe.setForeground(Color.GREEN);
@@ -146,44 +160,50 @@ public class PanelCreationOperation extends Box {
 		jtfDetailOpe.setFont(police);
 		jtfDetailOpe.setForeground(Color.RED);
 
-//		b1.add(labelDateOpe);
-		b1.add(wrap(labelDateOpe,jtfDateOpe));
+		// b1.add(labelDateOpe);
+		b1.add(wrap(labelDateOpe, jtfDateOpe));
 		b1.add(labelTypeOpe);
 		b1.add(comboTypeOpe);
+		b1.add(labelNumChq);
+		b1.add(jtfNumChq);
 		b1.add(labelTiers);
 		b1.add(comboTiers);
 		b1.add(labelCategOpe);
 		b1.add(comboCategorie);
-//		b2.add(labelDebit);
+		// b2.add(labelDebit);
 		JPanel jpB2 = new JPanel();
-		jpB2.add(wrap(labelDebit,jtfDebit));
-//		b2.add(labelCredit);
-		jpB2.add(wrap(labelCredit,jtfCredit));
-//		b2.add(labelDetailOpe);
-		jpB2.add(wrap(labelDetailOpe,jtfDetailOpe));
+		jpB2.add(wrap(labelDebit, jtfDebit));
+		// b2.add(labelCredit);
+		jpB2.add(wrap(labelCredit, jtfCredit));
+		// b2.add(labelDetailOpe);
+		jpB2.add(wrap(labelDetailOpe, jtfDetailOpe));
 		b2.add(jpB2);
 		b3.add(boutonAnnulOpe);
 		b3.add(boutonOKOpe);
 
 		b3.add(boutonAnnulOpe);
 		b3.add(boutonOKOpe);
-		
-		
+
 		add(b1);
 		add(b2);
 		add(b3);
 	}
 
-	private JPanel wrap(JLabel label,JTextField tf) {
+	private JPanel wrap(JLabel label, JTextField tf) {
 		JPanel jp = new JPanel();
 		jp.add(label);
 		jp.add(tf);
 		return jp;
 	}
-	
+
 	public OperationDTO getDto() {
-		OperationDTO myOperationDTO  = new OperationDTO();
-		myOperationDTO.setTypeOpe(comboTypeOpe.getSelectedItem().toString());
+		OperationDTO myOperationDTO = new OperationDTO();
+		String choixTypeOpe = comboTypeOpe.getSelectedItem().toString();
+		if ("CHQ".equals(choixTypeOpe)) {
+			myOperationDTO.setTypeOpe(jtfNumChq.getText());
+		} else {
+			myOperationDTO.setTypeOpe(choixTypeOpe);
+		}
 		myOperationDTO.setDateOpe(jtfDateOpe.getText());
 		myOperationDTO.setTiers(comboTiers.getSelectedItem().toString());
 		myOperationDTO.setCategOpe(comboCategorie.getSelectedItem().toString());
@@ -192,7 +212,7 @@ public class PanelCreationOperation extends Box {
 			try {
 				myOperationDTO.setDebitOpe(Double.parseDouble(jtfDebit.getText()));
 			} catch (NumberFormatException e1) {
-				LogRappro.logError("Montant DEBIT KO : " + jtfDebit.getText(),e1);
+				LogRappro.logError("Montant DEBIT KO : " + jtfDebit.getText(), e1);
 			}
 		} else {
 			myOperationDTO.setDebitOpe(0);
@@ -201,7 +221,7 @@ public class PanelCreationOperation extends Box {
 			try {
 				myOperationDTO.setCreditOpe(Double.parseDouble(jtfCredit.getText()));
 			} catch (NumberFormatException e1) {
-				LogRappro.logError("Montant Credit KO : " + jtfCredit.getText(),e1);
+				LogRappro.logError("Montant Credit KO : " + jtfCredit.getText(), e1);
 			}
 		} else {
 			myOperationDTO.setCreditOpe(0);
@@ -210,23 +230,23 @@ public class PanelCreationOperation extends Box {
 		LogRappro.logDebug("debit d'operation DTO :  " + myOperationDTO.getCreditOpe());
 
 		myOperationDTO.setDetailOpe(jtfDetailOpe.getText());
-		myOperationDTO.setEtatOpe("NR"); 
+		myOperationDTO.setEtatOpe("NR");
 		myOperationDTO.setEchId(0);
 
 		return myOperationDTO;
 	}
-	
+
 	public void clearSaisieOpe() {
 		comboTiers.setSelectedIndex(0);
 		comboCategorie.setSelectedIndex(0);
 		comboTypeOpe.setSelectedIndex(0);
 		jtfDateOpe.requestFocus();
+		jtfNumChq.setText("");
 		jtfDetailOpe.setText("");
 		jtfDebit.setText("");
 		jtfCredit.setText("");
 	}
-	
-	
+
 	public JButton getBoutonOKOpe() {
 		return boutonOKOpe;
 	}
@@ -274,7 +294,12 @@ public class PanelCreationOperation extends Box {
 	public Box getB3() {
 		return b3;
 	}
-	
-	
 
+	public JTextField getJtfNumChq() {
+		return jtfNumChq;
+	}
+
+	public void setJtfNumChq(JTextField jtfNumChq) {
+		this.jtfNumChq = jtfNumChq;
+	}
 }

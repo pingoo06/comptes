@@ -4,12 +4,14 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 import comptes.util.MyDate;
 import comptes.util.log.LogBnp;
 
 public class Bnp {
 	public enum OperationType {
-		CHQ, PRLV, CB, RETRAIT, VIR_EMIS, VIR_RECU, ECH_PRET, OTHER
+		CHQ, PRLV, CB, RETRAIT, VIR_EMIS, VIR_RECU, ECH_PRET, REMISE_CHQ, DEPOT, OTHER
 	}
 
 	private int id = 0;
@@ -23,15 +25,16 @@ public class Bnp {
 	private MyDate dateBnpCalc;
 	private String chqNumberBnp;
 
-	// public Bnp(int id,java.sql.dateBnpCalc dateBnp, String libCourtBnp ,String libTypeOpeBnp ,
+	// public Bnp(int id,java.sql.dateBnpCalc dateBnp, String libCourtBnp
+	// ,String libTypeOpeBnp ,
 	// String libOpeBnp , double montantBnp ) {
 
 	public Bnp() {
 
 	}
 
-	public Bnp(int id, MyDate dateBnp, String libCourtBnp, String libTypeOpeBnp, String libOpeBnp,
-			double montantBnp, String etatBnp) {
+	public Bnp(int id, MyDate dateBnp, String libCourtBnp, String libTypeOpeBnp, String libOpeBnp, double montantBnp,
+			String etatBnp) {
 		this.id = id;
 		this.dateBnp = dateBnp;
 		this.libCourtBnp = libCourtBnp;
@@ -41,8 +44,6 @@ public class Bnp {
 		this.etatBnp = etatBnp;
 		update();
 	}
-	
-	
 
 	public Bnp(int id, MyDate dateBnp, String libCourtBnp, String libTypeOpeBnp, String libOpeBnp, double montantBnp,
 			String etatBnp, OperationType typeOpeBnp, MyDate dateBnpCalc, String chqNumberBnp) {
@@ -104,14 +105,30 @@ public class Bnp {
 			typeOpeBnp = OperationType.VIR_RECU;
 			dateBnpCalc = dateBnp;
 		}
-		//Echeance pret
+		// Echeance pret
 		else if (libTypeOpeBnp.equals("ECHEANCE PRET")) {
 			typeOpeBnp = OperationType.ECH_PRET;
 			dateBnpCalc = dateBnp;
-		} else {
-			typeOpeBnp = OperationType.OTHER;
+		}
+		// DEPOT A REVOIR QUAND J EN AURAI FAIT UN
+		else if (libTypeOpeBnp.equals("DEPOT")) {
+			typeOpeBnp = OperationType.DEPOT;
 			dateBnpCalc = dateBnp;
-			LogBnp.logWarning("Type operation inconnu : "+libTypeOpeBnp);
+		}
+		// REMISE DE CHEQUE A REVOIR QUAND J EN AURAI FAIT UN
+		else if (libTypeOpeBnp.equals("REMISE CHEQUES")) {
+			typeOpeBnp = OperationType.REMISE_CHQ;
+			dateBnpCalc = dateBnp;
+		}
+
+		else {
+			typeOpeBnp = OperationType.OTHER;
+			final JOptionPane frame;
+			frame = new JOptionPane();
+			JOptionPane.showMessageDialog(frame, libTypeOpeBnp, "Type opération inconnu dans le fichier de la BNP",
+					JOptionPane.WARNING_MESSAGE);
+			dateBnpCalc = dateBnp;
+			LogBnp.logWarning("Type operation inconnu : " + libTypeOpeBnp);
 		}
 	}
 
@@ -175,7 +192,6 @@ public class Bnp {
 		return dateBnpCalc;
 	}
 
-
 	public String getChqNumberBnp() {
 		return chqNumberBnp;
 	}
@@ -188,12 +204,11 @@ public class Bnp {
 		return id;
 	}
 
-
 	@Override
 	public String toString() {
 		return "Bnp [id=" + id + ", dateBnp=" + dateBnp + ", libCourt=" + libCourtBnp + ", libTypeOpe=" + libTypeOpeBnp
-				+ ", libOpe=" + libOpeBnp + ", montantBnp=" + montantBnp + ", etatBnp=" + etatBnp + ", type=" + typeOpeBnp
-				+ ", dateBnpCalc=" + dateBnpCalc + ", chqNumber=" + chqNumberBnp + "]";
+				+ ", libOpe=" + libOpeBnp + ", montantBnp=" + montantBnp + ", etatBnp=" + etatBnp + ", type="
+				+ typeOpeBnp + ", dateBnpCalc=" + dateBnpCalc + ", chqNumber=" + chqNumberBnp + "]";
 	}
 
 	@Override
@@ -264,5 +279,5 @@ public class Bnp {
 			return false;
 		return true;
 	}
-	
+
 }

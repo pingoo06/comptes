@@ -6,9 +6,6 @@ public class OperationDTO {
 	private String  dateOpe = "";
 	private double debitOpe = 0;
 	private double creditOpe = 0;
-//	private double montantOpe = 0;
-	//private int categOpeId = 0;
-	//private int tiersId = 0;
 	private String detailOpe = "";
 	private String etatOpe = "";
 	private String categOpe= "";
@@ -21,9 +18,6 @@ public class OperationDTO {
 		this. dateOpe = "";
 		this.debitOpe = 0;
 		this.creditOpe = 0;
-//		this.montantOpe = 0;
-//		this.categOpeId = 0;
-//		this.tiersId = 0;
 		this.detailOpe = "";
 		this.etatOpe = "";
 		this.categOpe= "";
@@ -37,10 +31,7 @@ public class OperationDTO {
 		this.dateOpe = dateOpe;
 		this.debitOpe = debitOpe;
 		this.creditOpe = creditOpe;
-//		this.montantOpe = montantOpe;
-//		this.categOpeId = categOpeId;
 		this.setCategOpe(categOpe);
-//		this.tiersId = tiersId;
 		this.setTiers(tiers);
 		this.detailOpe = detailOpe;
 		this.etatOpe = etatOpe;
@@ -52,9 +43,6 @@ public class OperationDTO {
 		this. dateOpe = "";
 		this.debitOpe = 0;
 		this.creditOpe = 0;
-//		this.montantOpe = 0;
-//		this.categOpeId = 0;
-//		this.tiersId = 0;
 		this.detailOpe = "";
 		this.etatOpe = "";
 		this.categOpe= "";
@@ -78,12 +66,6 @@ public class OperationDTO {
 	public void setDateOpe(String dateOpe) {
 		this.dateOpe = dateOpe;
 	}
-//	public double getMontantOpe() {
-//		return montantOpe;
-//	}
-//	public void setMontantOpe(double montantOpe) {
-//		this.montantOpe = montantOpe;
-//	}
 	public double getDebitOpe() {
 		return debitOpe;
 	}
@@ -96,18 +78,6 @@ public class OperationDTO {
 	public void setCreditOpe(double creditOpe) {
 		this.creditOpe = creditOpe;
 	}
-//	public int getCategOpeId() {
-//		return categOpeId;
-//	}
-//	public void setCategOpeId(int categOpeId) {
-//		this.categOpeId = categOpeId;
-//	}
-//	public int getTiersId() {
-//		return tiersId;
-//	}
-//	public void setTiersId(int tiersId) {
-//		this.tiersId = tiersId;
-//	}
 	public String getDetailOpe() {
 		return detailOpe;
 	}
@@ -126,8 +96,6 @@ public class OperationDTO {
 	public void setEchId(int echId) {
 		this.echId = echId;
 	}
-
-
 	public String getCategOpe() {
 		return categOpe;
 	}

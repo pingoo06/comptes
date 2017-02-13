@@ -28,7 +28,9 @@ public class OperationFacade {
 	public ArrayList<Operation> findAll() {
 		return operationDAO.findAll();
 	}
-
+	public long findDerChq() {
+		return operationDAO.findDerChq();
+	}
 	public void update(Operation myOperation) {
 		operationDAO.update(myOperation);
 	}
@@ -55,7 +57,7 @@ public class OperationFacade {
 		Operation myOperation = new Operation();
 		while (moneyParser.next()) {
 			myOperation = new Operation();
-			myOperation.setDateOpe(new MyDate(moneyParser.getString("Date")));
+			myOperation.setDateOpe(new MyDate(moneyParser.getString("Date"), "dd/MM/yyyy hh:mm:ss"));
 			Logger.logDebug("dateOpe" + myOperation.getDateOpe());
 			myMontant = moneyParser.getDouble("Payment");
 			if (myMontant > 0) {

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -62,7 +63,7 @@ public class OngletOperation extends JSplitPane {
 
 	public OngletOperation() {
 
-		// Gestion des filtres 
+		// Gestion des filtres
 		setTopComponent(vTop);
 		panelCreationOperation = new PanelCreationOperation();
 		setBottomComponent(vBottom);
@@ -111,7 +112,7 @@ public class OngletOperation extends JSplitPane {
 		tableOperation.setAutoCreateRowSorter(true);
 		vBottom.add(panelCreationOperation);
 		panelCreationOperation.getBoutonOKOpe().addActionListener(new BoutonOKListener());
-		
+
 		// Bouton Supprimer
 		JButton boutonSuppr = new JButton("Supprimer");
 		panelCreationOperation.getB3().add(boutonSuppr);
@@ -124,7 +125,6 @@ public class OngletOperation extends JSplitPane {
 				model.deleteRow(modelIdx);
 			}
 		});
-
 
 		// AJOUT TESTS SUR DATEOPE
 		jtfDateOpe.addPropertyChangeListener(new PropertyChangeListener() {
@@ -140,15 +140,74 @@ public class OngletOperation extends JSplitPane {
 	// Execution du bouton OK Operation
 	class BoutonOKListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			final JOptionPane frame;
+			LogOperation.logDebug("Dans Bouton OK listener");
 			OperationDTO myOperationDTO = panelCreationOperation.getDto();
-			GestionOperation myGestionOperation = new GestionOperation();
-			myGestionOperation.create(myOperationDTO);
-			panelCreationOperation.clearSaisieOpe();
-			OperationTableau model = ((OperationTableau) tableOperation.getModel());
-			model.filters(whereClause);
+			String res = validateSaisieOpe();
+			if (res != "") {
+				frame = new JOptionPane();
+				JOptionPane.showMessageDialog(frame, res, "Saisie erronée", JOptionPane.WARNING_MESSAGE);
+			} else {
+				LogOperation.logDebug("montant débit" + panelCreationOperation.getJtfDebit().getText());
+				GestionOperation myGestionOperation = new GestionOperation();
+				myGestionOperation.create(myOperationDTO);
+				panelCreationOperation.clearSaisieOpe();
+				OperationTableau model = ((OperationTableau) tableOperation.getModel());
+				model.filters(whereClause);
+			}
 
 		}
 
+		public String validateSaisieOpe() {
+
+			String res = "";
+			LogOperation.logDebug("Debut validateSaisieOpe");
+
+			// Date présente et correcte
+			if (panelCreationOperation.getJtfDateOpe().getText().length() == 0) {
+				res = "Saisir une date";
+			} else {
+				String dateSaisie = panelCreationOperation.getJtfDateOpe().getText();
+				if (!dateSaisie.matches("[0123][0-9]/[01][0-9]/[0-9]{4}")) {
+					res = "Saisir une date au format jj/mm/aaaa";
+				}
+			}
+
+			// Tiers choisi
+			if (panelCreationOperation.getComboTiers().getSelectedItem().toString().length() == 0
+					|| panelCreationOperation.getComboTiers().getSelectedItem().toString() == "Tout") {
+				res = "Saisir un tiers";
+			}
+
+			// categorie choisie
+			if (panelCreationOperation.getComboCategorie().getSelectedItem().toString().length() == 0) {
+				res = "Saisir une categorie";
+			}
+
+			// Au moins un montant
+			if (panelCreationOperation.getJtfDebit().getText().length() == 0
+					&& panelCreationOperation.getJtfCredit().getText().length() == 0) {
+				res = "saisir un montant";
+			}
+
+			// Un seul montant
+			if (panelCreationOperation.getJtfDebit().getText().length() != 0
+					&& panelCreationOperation.getJtfCredit().getText().length() != 0) {
+				res = "Saisir un seul montant";
+			}
+
+			// cohérence type Ope montant choisi
+			if ("VIR_RECU".equals(panelCreationOperation.getComboTypeOpe().getSelectedItem().toString())
+					|| "REMISE_CHQ".equals(panelCreationOperation.getComboTypeOpe().getSelectedItem().toString())
+					|| "DEPOT".equals(panelCreationOperation.getComboTypeOpe().getSelectedItem().toString())) {
+				if (panelCreationOperation.getJtfCredit().getText().length() == 0) {
+					res = "Saisir un crédit et non un débit";
+				}
+			} else if (panelCreationOperation.getJtfDebit().getText().length() == 0) {
+				res = "Saisir un débit et non un crédit";
+			}
+			return res;
+		}
 	}
 
 	// Execution du bouton Filtrer
@@ -237,7 +296,7 @@ public class OngletOperation extends JSplitPane {
 						whereClause = "where " + where3;
 				}
 
-			}else {
+			} else {
 				whereClause = "";
 			}
 			System.out.println("Dans BoutonFiltreListener de Fenetre : whereClause : " + whereClause);
@@ -247,11 +306,8 @@ public class OngletOperation extends JSplitPane {
 	}
 
 	public void refresh() {
-		LogOperation.logInfo("refresh operation tableau avec la whereclause= "+whereClause);
+		LogOperation.logInfo("refresh operation tableau avec la whereclause= " + whereClause);
 		operationTableau.filters(whereClause);
 	}
 
-	
-	
-	
 }

@@ -108,6 +108,21 @@ public class OperationDAO extends DAO<Operation> {
 		}
 		return myOperationList;
 	}
+	
+	public long findDerChq() {
+		long derNumChqLong=0;
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet rs;
+			rs = statement.executeQuery("select operation.typeOpe from operation where operation.typeOpe > 0 and operation.typeOpe  < 999999999999 and operation.id in (select max (operation.id) from operation where operation.typeOpe > 0 and operation.typeOpe < 999999999999) ");
+			while (rs.next()) {
+				derNumChqLong = Long.parseLong(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			LogOperation.logError("findDerChq sql error", e);
+		}
+		return derNumChqLong;
+	}
 
 	// nico est ce ici qu'il fallait créer cette fonction ?
 	public ArrayList<OperationBO> findAllOpeBO() {
@@ -138,53 +153,6 @@ public class OperationDAO extends DAO<Operation> {
 		}
 		return myOperationBOList;
 	}
-
-	// //nico est ce ici qu'il fallait créer cette fonction ?
-	// public ArrayList<OperationBO> findOpeBOTiers(String libTiersParam) {
-	// OperationBO myOperationBO = null;
-	// Operation myOperation=null;
-	// Tiers myTiers = null;
-	// Categorie myCategorie = null;
-	// ArrayList<OperationBO> myOperationBOList = null;
-	// try {
-	// myOperationBOList = new ArrayList<OperationBO>();
-	// // System.out.println("select all Operation début try");
-	// Statement statement = connection.createStatement();
-	// System.out.println("dans operationDAO findOpeBOTiers : le libTiers à
-	// filtrer: "+ libTiersParam );
-	// ResultSet rs = statement.executeQuery("SELECT * FROM operation as o INNER
-	// JOIN tiers as t on o.tiersId "
-	// + "= t.id INNER JOIN categorie as c on o.categOpeId = c.id where
-	// t.libTiers='"+libTiersParam+"'");
-	// // System.out.println("rs = " + rs.getInt("id"));
-	// while (rs.next()) {
-	// myOperation = new Operation(rs.getInt(1), rs.getString(2),
-	// rs.getString(3),
-	// rs.getDouble(4), rs.getInt(5), rs.getInt(6),
-	// rs.getString(7), rs.getString(8), rs.getInt(9), rs.getLong(10));
-	// myOperationBO = new OperationBO(myOperation);
-	// myTiers=new Tiers(rs.getInt(11),rs.getString(12),rs.getInt(13));
-	// myOperationBO.setTiersBO(myTiers);
-	// System.out.println("dans operationDAO findOpeBOTiers : le tiers : " +
-	// myTiers);
-	// myCategorie=new Categorie(rs.getInt("id"), rs.getString("libCateg"),
-	// rs.getString("libSousCateg"), rs.getInt("derOpeId"));
-	// myOperationBO.setCategorieBo(myCategorie);
-	// myOperationBOList.add(myOperationBO);
-	// }
-	// statement.close();
-	//
-	// } catch (SQLException e) {
-	// System.out.println("dans operationDAO findOpeBOTiers : findOpeBOTiers
-	// KO");
-	// e.printStackTrace();
-	// }
-	// return myOperationBOList;
-	// }
-	//
-	// //moi si cette fonction marche, supprimer findOpeBOTiers
-
-	// nico est ce ici qu'il fallait créer cette fonction ?
 
 	public ArrayList<OperationBO> findOpeBOFiltre(String whereClause) {
 		OperationBO myOperationBO = null;

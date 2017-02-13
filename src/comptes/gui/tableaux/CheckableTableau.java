@@ -15,7 +15,7 @@ public abstract class CheckableTableau extends AbstractTableModel {
 
 	// Remplit le tableau
 	public CheckableTableau(RapproManager rapproMngr, GestionRappro gestionRappro) {
-		LogRappro.logInfo("Début : constructeur RapproTableau tableau");
+		LogRappro.logDebug("Début : constructeur RapproTableau tableau");
 		tabSelected=-1;
 		this.myRapproMngr=rapproMngr;
 		this.myGestionRappro = gestionRappro;

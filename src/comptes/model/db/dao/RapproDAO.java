@@ -15,7 +15,7 @@ import comptes.util.log.LogRappro;
 public class RapproDAO extends DAO<RapproBO> {
 	public ArrayList<RapproBO> rapproAuto() {
 		ArrayList<RapproBO> myRapproBOList = new ArrayList<>();
-		rapproche(myRapproBOList, "b.typeOpeBnp in ('ECH_PRET', 'PRLV') and  o.typeOpe = b.typeOpeBnp and o.montantOpe=b.montantBnp;");
+		rapproche(myRapproBOList, "b.typeOpeBnp in ('ECH_PRET', 'PRLV', 'DEPOT','REMISE_CHQ') and  o.typeOpe = b.typeOpeBnp and o.montantOpe=b.montantBnp;");
 		rapproche(myRapproBOList, "b.typeOpeBnp in ('VIR_EMIS', 'CB','RETRAIT') and  o.typeOpe = b.typeOpeBnp and o.montantOpe=b.montantBnp and b.dateBnpCalc = o.dateOpeLong");
 		rapproche(myRapproBOList, "b.typeOpeBnp ='CHQ' and b.chqNumberBnp= o.typeOpe and  o.montantOpe=b.montantBnp");
 		return myRapproBOList;

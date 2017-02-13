@@ -8,7 +8,7 @@ import javax.swing.JComboBox;
 public class TypeOpeCombo extends JComboBox<String> implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String[] typeStrings = {"CB", "CHQ", "PRLV", "RETRAIT", "VIR_EMIS", "VIR_RECU"};
+	private static final String[] typeStrings = {"CB", "CHQ", "PRLV","REMISE_CHQ", "RETRAIT","DEPOT", "VIR_EMIS", "VIR_RECU"};
 	public TypeOpeCombo() {
 		super(typeStrings);
 		setSelectedIndex(0);
