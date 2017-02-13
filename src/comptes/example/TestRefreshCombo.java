@@ -32,6 +32,7 @@ public class TestRefreshCombo {
 				c.addItem("Pouet" + (new Random()).nextInt(40250));
 			}
 		});
+		
 		jp.add(b);
 		f.getContentPane().add(jp);
 		f.pack();
