@@ -1,21 +1,22 @@
 package comptes.model.db.entity;
 
+import comptes.util.MyDate;
+
 public class Echeancier {
 	protected int id = 0;
 	protected String typeEch = "";
-	protected int tiersEchId = 0;
-	protected int categEchId = 0;
-	protected String dateEch="";
-	protected double montantEch = 0;
-	protected int nbEch = 0;
-	protected long dateEchLong = 0;
+	protected int tiersEchId;
+	protected int categEchId;
+	protected MyDate dateEch;
+	protected double montantEch;
+	protected int nbEch;
 	
 	public Echeancier() {
 		super();
 	};
 
-	public Echeancier(int id, String typeEch, int tiersEchId, int categEchId, String dateEch, double montantEch,
-			int nbEch, long dateEchLong) {
+	public Echeancier(int id, String typeEch, int tiersEchId, int categEchId, MyDate dateEch, double montantEch,
+			int nbEch) {
 		super();
 		this.id = id;
 		this.typeEch = typeEch;
@@ -24,7 +25,6 @@ public class Echeancier {
 		this.dateEch = dateEch;
 		this.montantEch = montantEch;
 		this.nbEch = nbEch;
-		this.dateEchLong = dateEchLong;
 	}
 
 	public int getId() {
@@ -59,14 +59,6 @@ public class Echeancier {
 		this.categEchId = categEchId;
 	}
 
-	public String getDateEch() {
-		return dateEch;
-	}
-
-	public void setDateEch(String dateEch) {
-		this.dateEch = dateEch;
-	}
-
 	public double getMontantEch() {
 		return montantEch;
 	}
@@ -83,13 +75,15 @@ public class Echeancier {
 		this.nbEch = nbEch;
 	}
 
-	public long getDateEchLong() {
-		return dateEchLong;
+	
+	public MyDate getDateEch() {
+		return dateEch;
 	}
 
-	public void setDateEchLong(long dateEchLong) {
-		this.dateEchLong=dateEchLong;
+	public void setDateEch(MyDate dateEch) {
+		this.dateEch = dateEch;
 	}
+
 	public String toString() {
 		String str = "\n............Operation.........................\n";
 		 str += "Echeancier ID : " + this.getId() + "\n";
@@ -99,7 +93,6 @@ public class Echeancier {
 		 str += "Echeancier dateEch : " +this.getDateEch() + "\n";
 		 str += "Echeancier :montantEch " +this.getMontantEch() + "\n";
 		 str += "Echeancier nbEch : " +this.getNbEch() + "\n";
-		 str += "Echeancier dateEchLong : " +this.getDateEchLong() + "\n";
 		str += "\n.....................................\n";
 		return str;
 	}

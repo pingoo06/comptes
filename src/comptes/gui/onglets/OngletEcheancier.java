@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.time.LocalDate;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -28,7 +27,7 @@ import comptes.model.bo.EcheancierBO;
 import comptes.model.db.entity.Tiers;
 import comptes.model.facade.TiersFacade;
 import comptes.model.services.GestionEcheancier;
-import comptes.util.DateUtil;
+import comptes.util.MyDate;
 
 public class OngletEcheancier extends JSplitPane {
 
@@ -38,11 +37,8 @@ public class OngletEcheancier extends JSplitPane {
 	JPanel saisieEchPan = new JPanel();
 
 
-	LocalDate dateJour = LocalDate.now();
-	String dateJourStr = DateUtil.format(dateJour,"dd/MM/yyyy");
-
 	// Pour echeancier
-	private JTextField jtfDateEch = new JTextField(dateJourStr);
+	private JTextField jtfDateEch = new JTextField(new MyDate().toString());
 	private JTextField jtfNbEch = new JTextField();
 	private JTextField jtfTypeEch = new JTextField("Prelevement");
 	private JTextField jtfCategEch = new JTextField();

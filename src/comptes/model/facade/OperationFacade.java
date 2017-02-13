@@ -1,6 +1,5 @@
 package comptes.model.facade;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import comptes.model.csvParser.MyCsvParser;
@@ -8,7 +7,7 @@ import comptes.model.db.dao.DAO;
 import comptes.model.db.dao.OperationDAO;
 import comptes.model.db.entity.Operation;
 import comptes.model.db.entity.Tiers;
-import comptes.util.DateUtil;
+import comptes.util.MyDate;
 import comptes.util.log.Logger;
 
 public class OperationFacade {
@@ -53,15 +52,11 @@ public class OperationFacade {
 		
 		double myMontant = 0;
 		MyCsvParser moneyParser = MyCsvParser.getMoneyParser("res/money.csv");
-		Operation myOperation = new Operation(0, null, null, 0, 0, 0, null, null, 0, 0);
+		Operation myOperation = new Operation();
 		while (moneyParser.next()) {
-			myOperation = new Operation(0, null, null, 0, 0, 0, null, null, 0, 0);
-			LocalDate date =  DateUtil.parse(moneyParser.getString("Date"), "dd/MM/yyyy hh:mm:ss");
-			String dateStr=date.toString();
-			myOperation.setDateOpe(dateStr);
+			myOperation = new Operation();
+			myOperation.setDateOpe(new MyDate(moneyParser.getString("Date")));
 			Logger.logDebug("dateOpe" + myOperation.getDateOpe());
-//			System.out.println("Payment : " + moneyParser.getDouble("Payment"));
-//			System.out.println("Deposit : " + moneyParser.getDouble("Deposit"));
 			myMontant = moneyParser.getDouble("Payment");
 			if (myMontant > 0) {
 				myMontant = myMontant * -1;

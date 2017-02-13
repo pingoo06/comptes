@@ -3,7 +3,6 @@ package comptes.gui.tableaux;
 import comptes.gui.manager.RapproManager;
 import comptes.model.db.entity.Operation;
 import comptes.model.services.GestionRappro;
-import comptes.util.DateUtil;
 import comptes.util.log.LogRappro;
 
 public class OpeNrTableau extends CheckableTableau {
@@ -40,7 +39,7 @@ public class OpeNrTableau extends CheckableTableau {
 		LogRappro.logDebug("operation : " + current);
 		switch (columnIndex) {
 		case 0:
-			return DateUtil.format(DateUtil.parse(current.getDateOpe(), "yyyy-MM-dd"), "dd/MM/yyyy");
+			return current.getDateOpe();
 		case 1:
 			return myGestionRappro.getLibTiersFromOpe(current);
 		case 2:

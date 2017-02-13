@@ -1,16 +1,11 @@
 package comptes.model.facade;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import comptes.model.csvParser.MyCsvParser;
-import comptes.model.db.SqliteConnector;
 import comptes.model.db.dao.DAO;
 import comptes.model.db.dao.TiersDAO;
 import comptes.model.db.entity.Tiers;
@@ -53,16 +48,6 @@ import comptes.model.db.entity.Tiers;
 	}
 
 	public void initTiers() {
-//		//ajout à enlever
-		final Connection connection;
-		 final String FILE_PATH = "res/mydatabase.db";
-		try {
-			connection = DriverManager.getConnection("jdbc:sqlite:" + FILE_PATH);
-		} catch (SQLException e) {
-			System.out.println("mon ajout idiot");
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		Set<String> set = new HashSet<>();
 		int nbLines = 0;

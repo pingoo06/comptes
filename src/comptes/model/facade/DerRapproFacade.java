@@ -1,11 +1,9 @@
 package comptes.model.facade;
 
-import java.time.LocalDate;
-
 import comptes.model.db.dao.DAO;
 import comptes.model.db.dao.DerRapproDAO;
 import comptes.model.db.entity.DerRappro;
-import comptes.util.DateUtil;
+import comptes.util.MyDate;
 import comptes.util.log.LogRappro;
 
 public class DerRapproFacade {
@@ -39,9 +37,8 @@ public class DerRapproFacade {
 		LogRappro.logInfo(" init de la table DerRapro");
 		DAO<DerRappro> myDerRapproDAO = new DerRapproDAO();
 		DerRappro myDerRappro;
-		LocalDate date = DateUtil.parse("2015-01-01", "yyyy-MM-dd");
-		long dateLong = date.toEpochDay();
-		myDerRappro = new DerRappro (0,(double) 0,"2015-01-01",dateLong);
+		MyDate dateDerRappro = new MyDate("2015-01-01");
+		myDerRappro = new DerRappro (0,(double) 0, dateDerRappro,dateDerRappro.toLongValue());
 		LogRappro.logDebug(myDerRappro.toString());
 		myDerRapproDAO.create(myDerRappro);
 		LogRappro.logInfo(" init de la table DerRapro");

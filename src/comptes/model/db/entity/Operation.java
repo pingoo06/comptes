@@ -1,27 +1,23 @@
  package comptes.model.db.entity;
 
-import java.time.LocalDate;
-
-import comptes.util.DateUtil;
+import comptes.util.MyDate;
 
 public class Operation {
 	protected int id = 0;
 	protected String typeOpe = "";
-	protected String  dateOpe;
+	protected MyDate dateOpe;
 	protected double montantOpe = 0;
 	protected int categOpeId = 0;
 	protected int tiersId = 0;
 	protected String detailOpe = "";
 	protected String etatOpe = "";
 	protected int echId = 0;
-	protected long dateOpeLong=0;
 	
 	public Operation(){
 		super();
 	};
-	public Operation(int id, String typeOpe, String dateOpe, double montantOpe,int categOpeId, int tiersId, String detailOpe, String etatOpe,
-			int echId, long dateOpeLong) {
-		// TODO Auto-generated constructor stub
+	public Operation(int id, String typeOpe, MyDate dateOpe, double montantOpe,int categOpeId, int tiersId, String detailOpe, String etatOpe,
+			int echId) {
 		this.id = id;
 		this.typeOpe = typeOpe;
 		this.dateOpe = dateOpe;
@@ -31,20 +27,9 @@ public class Operation {
 		this.detailOpe = detailOpe;
 		this.etatOpe = etatOpe;
 		this.echId = echId;
-		this.dateOpeLong = dateOpeLong;
 	}
 
-	public long getDateOpeLong() {
-		return dateOpeLong;
-	}
-
-	public void setDateOpeLong(long dateOpeLong) {
-		this.dateOpeLong = dateOpeLong;
-	}
-	public void setDateOpeLong(String dateOpe) {
-		LocalDate date = DateUtil.parse(dateOpe, "yyyy-MM-dd");
-		this.dateOpeLong = date.toEpochDay();
-	}
+	
 	public int getId() {
 		return id;
 	}
@@ -61,14 +46,13 @@ public class Operation {
 		this.typeOpe = typeOpe;
 	}
 
-	public String getDateOpe() {
+	
+	public MyDate getDateOpe() {
 		return dateOpe;
 	}
-
-	public void setDateOpe(String dateOpe) {
+	public void setDateOpe(MyDate dateOpe) {
 		this.dateOpe = dateOpe;
 	}
-
 	public double getMontantOpe() {
 		return montantOpe;
 	}
@@ -123,7 +107,6 @@ public class Operation {
 		 str += "OperationgetTiersId : " +this.getTiersId() + "\n";
 		 str += "Operation EtatOpe : " +this.getEtatOpe() + "\n";
 		 str += "Operation EchId : " +this.getEchId() + "\n";
-		 str += "Operation dateOpeLong : " +this.getDateOpeLong() + "\n";
 		 
 		// str += this.langage.toString();
 		str += "\n.....................................\n";
@@ -135,7 +118,6 @@ public class Operation {
 		int result = 1;
 		result = prime * result + categOpeId;
 		result = prime * result + ((dateOpe == null) ? 0 : dateOpe.hashCode());
-		result = prime * result + (int) (dateOpeLong ^ (dateOpeLong >>> 32));
 		result = prime * result + ((detailOpe == null) ? 0 : detailOpe.hashCode());
 		result = prime * result + echId;
 		result = prime * result + ((etatOpe == null) ? 0 : etatOpe.hashCode());
@@ -162,8 +144,6 @@ public class Operation {
 			if (other.dateOpe != null)
 				return false;
 		} else if (!dateOpe.equals(other.dateOpe))
-			return false;
-		if (dateOpeLong != other.dateOpeLong)
 			return false;
 		if (detailOpe == null) {
 			if (other.detailOpe != null)
