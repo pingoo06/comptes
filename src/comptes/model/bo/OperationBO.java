@@ -9,12 +9,11 @@ public class OperationBO extends Operation {
 	private Tiers tiersBo;
 	private double debitBO;
 	private double creditBO;
-	private long dateOpeLong;
 
 	public OperationBO() {
 		id = 0;
 		super.typeOpe = "";
-		super.dateOpe = "";
+		super.dateOpe = null;
 		super.montantOpe = 0;
 		super.categOpeId = 0;
 		super.tiersId = 0;
@@ -28,7 +27,6 @@ public class OperationBO extends Operation {
 		} else {
 			creditBO = montantOpe;
 		}
-		dateOpeLong=0;
 	}
 
 	public OperationBO(Operation ope) {
@@ -42,7 +40,6 @@ public class OperationBO extends Operation {
 		super.detailOpe = ope.getDetailOpe();
 		super.etatOpe = ope.getEtatOpe();
 		super.echId = ope.getEchId();
-		super.dateOpeLong = ope.getDateOpeLong();
 		debitBO = 0;
 		creditBO = 0;
 		if (montantOpe < 0) {

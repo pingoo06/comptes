@@ -8,7 +8,8 @@ import comptes.model.db.entity.Tiers;
 import comptes.model.facade.CategorieFacade;
 import comptes.model.facade.EcheancierFacade;
 import comptes.model.facade.TiersFacade;
-import comptes.util.DateUtil;
+import comptes.util.MyDate;
+import comptes.util.log.LogEcheancier;
 
 public class GestionEcheancier {
 	private TiersFacade myTiersFacade = new TiersFacade();
@@ -18,20 +19,20 @@ public class GestionEcheancier {
 	// Constructeur
 	public GestionEcheancier() {
 		super();
-		System.out.println("Début : constructeur gestion echeancier ");
+		LogEcheancier.logDebug("Début : constructeur gestion echeancier ");
 	}
 
 	public void create(EcheancierDTO myEcheancierDTO) {
-		System.out.println("Début create echeancier BO dans gestion echeancier");
+		LogEcheancier.logDebug("Début create echeancier BO dans gestion echeancier");
 		myEcheancierFacade.create(DTOToEcheancier(myEcheancierDTO));
 	}
 
 	public Echeancier DTOToEcheancier(EcheancierDTO myEcheancierDTO) {
-		System.out.println("Début BOToEcheancier dans gestion operationO");
+		LogEcheancier.logDebug("Début BOToEcheancier dans gestion operationO");
 		Echeancier myEcheancier = new Echeancier();
 		myEcheancier.setId(myEcheancierDTO.getId());
 		myEcheancier.setTypeEch(myEcheancierDTO.getTypeEch());
-		myEcheancier.setDateEch(DateUtil.format(DateUtil.parse(myEcheancierDTO.getDateEch()),"yyyy-MM-dd"));
+		myEcheancier.setDateEch(new MyDate(myEcheancierDTO.getDateEch()));
 		myEcheancier.setMontantEch(myEcheancierDTO.getMontantEch());
 		myEcheancier.setNbEch(myEcheancierDTO.getNbEch());
 		String libCateg = myEcheancierDTO.getCategEch();
@@ -62,7 +63,7 @@ public class GestionEcheancier {
 	}
 
 	public EcheancierBO buildEcheancierBo(EcheancierDTO ech) {
-		System.out.println("Début : buildEcheanciernBO");
+		LogEcheancier.logDebug("Début : buildEcheanciernBO");
 		int idTiers = myTiersFacade.findLib(ech.getTiersEch());
 		EcheancierBO res = new EcheancierBO(DTOToEcheancier(ech));
 		Tiers myTiers = myTiersFacade.find(idTiers);
@@ -76,13 +77,12 @@ public class GestionEcheancier {
 		public static Echeancier boToEcheancier(EcheancierBO myEcheancierBO) {
 			TiersFacade myTiersFacade = new TiersFacade();
 			CategorieFacade myCategorieFacade = new CategorieFacade();
-			System.out.println("Début : BoToEcheancier");
+			LogEcheancier.logDebug("Début : BoToEcheancier");
 			Echeancier myEcheancier = new Echeancier();
 			myEcheancier.setId(myEcheancierBO.getId());
 			myEcheancier.setTypeEch(myEcheancierBO.getTypeEch());
 			myEcheancier.setDateEch(myEcheancierBO.getDateEch());
-			myEcheancier.setDateEchLong(myEcheancierBO.getDateEchLong());
-			System.out.println("Dans BoToEcheancier myEcheancier.getDateEch" + myEcheancier.getDateEch()); 
+			LogEcheancier.logDebug("Dans BoToEcheancier myEcheancier.getDateEch" + myEcheancier.getDateEch()); 
 			myEcheancier.setMontantEch(myEcheancierBO.getMontantEch());
 			myEcheancier.setNbEch(myEcheancierBO.getNbEch());
 			String libCateg = myEcheancierBO.getCategorieBo().getLibCateg();

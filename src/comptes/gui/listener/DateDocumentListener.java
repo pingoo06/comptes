@@ -8,6 +8,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import comptes.util.DateUtil;
+import comptes.util.log.Logger;
 
 public class DateDocumentListener implements DocumentListener {
 
@@ -28,7 +29,7 @@ public class DateDocumentListener implements DocumentListener {
 	@Override
 	public void insertUpdate(DocumentEvent arg0) {
 		String dateStr = jtf.getText();
-		System.out.println(dateStr);
+		Logger.logDebug(dateStr);
 
 		final String newText;
 		if (dateStr.matches("[0-9]{2}/[0-9]{2}")) {
@@ -57,12 +58,12 @@ public class DateDocumentListener implements DocumentListener {
 			LocalDate date = DateUtil.parse(dateStr.substring(0, dateStr.length() - 1));
 			date = date.plusDays(1);
 			newText = DateUtil.format(date, "dd/MM/yyyy");
-			System.out.println("plus: " + dateStr);
+			Logger.logDebug("plus: " + dateStr);
 		} else if (dateStr.endsWith("-") || dateStr.startsWith("-")) {
 			LocalDate date = DateUtil.parse(dateStr.substring(0, dateStr.length() - 1));
 			date = date.minusDays(1);
 			newText = DateUtil.format(date, "dd/MM/yyyy");
-			System.out.println("moins: " + dateStr);
+			Logger.logDebug("moins: " + dateStr);
 		} else {
 			return;
 		}

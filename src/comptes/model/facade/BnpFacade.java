@@ -6,6 +6,7 @@ import comptes.model.csvParser.MyCsvParser;
 import comptes.model.db.dao.BnpDAO;
 import comptes.model.db.dao.DAO;
 import comptes.model.db.entity.Bnp;
+import comptes.util.MyDate;
 import comptes.util.log.LogBnp;
 
 public class BnpFacade {
@@ -43,7 +44,7 @@ public class BnpFacade {
 		Bnp myBnp;
 		int nbLines = 0;
 		while (myBnpParser.next()) {
-			myBnp = new Bnp(0, myBnpParser.getString(0), myBnpParser.getString(1), myBnpParser.getString(2), 
+			myBnp = new Bnp(0, new MyDate(myBnpParser.getString(0)), myBnpParser.getString(1), myBnpParser.getString(2), 
 					myBnpParser.getString(3), myBnpParser.getDouble(4), "NR");
 			LogBnp.logDebug(myBnp.toString());
 			myBnpDAO.create(myBnp);

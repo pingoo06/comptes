@@ -7,6 +7,7 @@ import javax.swing.JComboBox;
 
 public class FiltreDateCombo extends JComboBox<String> implements ActionListener {
 
+	private static final long serialVersionUID = 7420481981522553028L;
 	private static final String[] typeStrings = { "Tout", "1 mois", "3 mois", "1 an" };
 
 	public FiltreDateCombo() {

@@ -4,7 +4,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import comptes.util.DateUtil;
+import comptes.util.MyDate;
 import comptes.util.log.LogBnp;
 
 public class Bnp {
@@ -13,14 +13,14 @@ public class Bnp {
 	}
 
 	private int id = 0;
-	private String dateBnp;
+	private MyDate dateBnp;
 	private String libCourtBnp = "";
 	private String libTypeOpeBnp = "";
 	private String libOpeBnp = "";
 	private double montantBnp = 0;
 	private String etatBnp = "";
 	private OperationType typeOpeBnp;
-	private long dateBnpCalc;
+	private MyDate dateBnpCalc;
 	private String chqNumberBnp;
 
 	// public Bnp(int id,java.sql.dateBnpCalc dateBnp, String libCourtBnp ,String libTypeOpeBnp ,
@@ -30,7 +30,7 @@ public class Bnp {
 
 	}
 
-	public Bnp(int id, String dateBnp, String libCourtBnp, String libTypeOpeBnp, String libOpeBnp,
+	public Bnp(int id, MyDate dateBnp, String libCourtBnp, String libTypeOpeBnp, String libOpeBnp,
 			double montantBnp, String etatBnp) {
 		this.id = id;
 		this.dateBnp = dateBnp;
@@ -44,8 +44,8 @@ public class Bnp {
 	
 	
 
-	public Bnp(int id, String dateBnp, String libCourtBnp, String libTypeOpeBnp, String libOpeBnp, double montantBnp,
-			String etatBnp, OperationType typeOpeBnp, long dateBnpCalc, String chqNumberBnp) {
+	public Bnp(int id, MyDate dateBnp, String libCourtBnp, String libTypeOpeBnp, String libOpeBnp, double montantBnp,
+			String etatBnp, OperationType typeOpeBnp, MyDate dateBnpCalc, String chqNumberBnp) {
 		super();
 		this.id = id;
 		this.dateBnp = dateBnp;
@@ -64,12 +64,12 @@ public class Bnp {
 		if ("CHEQUE".equals(libTypeOpeBnp)) {
 			typeOpeBnp = OperationType.CHQ;
 			chqNumberBnp = libOpeBnp.substring(2);
-			dateBnpCalc = DateUtil.dateToLong(DateUtil.parse(dateBnp));
+			dateBnpCalc = dateBnp;
 		}
 		// prelevement
 		else if ("COMMISSIONS".equals(libTypeOpeBnp) || "PRLV SEPA".equals(libTypeOpeBnp)) {
 			typeOpeBnp = OperationType.PRLV;
-			dateBnpCalc = DateUtil.dateToLong(DateUtil.parse(dateBnp));
+			dateBnpCalc = dateBnp;
 		}
 		// prelevement
 		else if ("FACTURE CARTE".equals(libTypeOpeBnp)) {
@@ -79,7 +79,7 @@ public class Bnp {
 			if (m.matches()) {
 				MatchResult matchResult = m.toMatchResult();
 				String extractedDate = matchResult.group(1);
-				dateBnpCalc = DateUtil.dateToLong(DateUtil.parse(extractedDate, "ddMMyy"));
+				dateBnpCalc = new MyDate(extractedDate);
 			}
 		}
 		// retrait
@@ -91,35 +91,35 @@ public class Bnp {
 			if (m.matches()) {
 				MatchResult matchResult = m.toMatchResult();
 				String extractedDate = matchResult.group(1);
-				dateBnpCalc = DateUtil.dateToLong(DateUtil.parse(extractedDate, "dd/MM/yy"));
+				dateBnpCalc = new MyDate(extractedDate);
 			}
 		}
 		// virement emis
 		else if (libTypeOpeBnp.matches("VIR.*EMIS.*")) {
 			typeOpeBnp = OperationType.VIR_EMIS;
-			dateBnpCalc = DateUtil.dateToLong(DateUtil.parse(dateBnp));
+			dateBnpCalc = dateBnp;
 		}
 		// virement recu
 		else if (libTypeOpeBnp.matches("VIR.*RECU.*")) {
 			typeOpeBnp = OperationType.VIR_RECU;
-			dateBnpCalc = DateUtil.dateToLong(DateUtil.parse(dateBnp));
+			dateBnpCalc = dateBnp;
 		}
 		//Echeance pret
 		else if (libTypeOpeBnp.equals("ECHEANCE PRET")) {
 			typeOpeBnp = OperationType.ECH_PRET;
-			dateBnpCalc = DateUtil.dateToLong(DateUtil.parse(dateBnp));
+			dateBnpCalc = dateBnp;
 		} else {
 			typeOpeBnp = OperationType.OTHER;
-			dateBnpCalc = DateUtil.dateToLong(DateUtil.parse(dateBnp));
+			dateBnpCalc = dateBnp;
 			LogBnp.logWarning("Type operation inconnu : "+libTypeOpeBnp);
 		}
 	}
 
-	public String getDateBnp() {
+	public MyDate getDateBnp() {
 		return dateBnp;
 	}
 
-	public void setDateBnp(String dateBnp) {
+	public void setDateBnp(MyDate dateBnp) {
 		this.dateBnp = dateBnp;
 	}
 
@@ -171,13 +171,10 @@ public class Bnp {
 		this.typeOpeBnp = type;
 	}
 
-	public long getDateBnpCalc() {
+	public MyDate getDateBnpCalc() {
 		return dateBnpCalc;
 	}
 
-	public void setDate(long dateBnpCalc) {
-		this.dateBnpCalc = dateBnpCalc;
-	}
 
 	public String getChqNumberBnp() {
 		return chqNumberBnp;
@@ -205,7 +202,7 @@ public class Bnp {
 		int result = 1;
 		result = prime * result + ((chqNumberBnp == null) ? 0 : chqNumberBnp.hashCode());
 		result = prime * result + ((dateBnp == null) ? 0 : dateBnp.hashCode());
-		result = prime * result + (int) (dateBnpCalc ^ (dateBnpCalc >>> 32));
+		result = prime * result + ((dateBnpCalc == null) ? 0 : dateBnpCalc.hashCode());
 		result = prime * result + ((etatBnp == null) ? 0 : etatBnp.hashCode());
 		result = prime * result + id;
 		result = prime * result + ((libCourtBnp == null) ? 0 : libCourtBnp.hashCode());

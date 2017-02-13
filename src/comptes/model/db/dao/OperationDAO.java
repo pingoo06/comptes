@@ -4,37 +4,33 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import comptes.model.bo.OperationBO;
 import comptes.model.db.entity.Categorie;
 import comptes.model.db.entity.Operation;
 import comptes.model.db.entity.Tiers;
+import comptes.util.MyDate;
 import comptes.util.log.LogOperation;
 import comptes.util.log.Logger;
 
 public class OperationDAO extends DAO<Operation> {
 	public void create(Operation myOperation) {
 		LogOperation.logDebug("Début");
-		long dateOpeLong = 0;
 		PreparedStatement statement = null;
 		try {
-			LocalDate date = LocalDate.parse(myOperation.getDateOpe());
-			Logger.logDebug(" date  " + date);
-			dateOpeLong = date.toEpochDay();
 			Logger.logDebug("Dans try dans create operation dans DAO operation");
 			statement = connection.prepareStatement(
 					"INSERT INTO operation (id,  typeOpe,  dateOpe,  montantOpe,  categOpeId, tiersId, detailOpe, etatOpe, echID, dateOpeLong)VALUES(?,?,?,?,?,?,?,?,?,?)");
 			statement.setString(2, myOperation.getTypeOpe());
-			statement.setString(3, myOperation.getDateOpe());
+			statement.setString(3, myOperation.getDateOpe().toDbFormat());
 			statement.setDouble(4, myOperation.getMontantOpe());
 			statement.setInt(5, myOperation.getCategOpeId());
 			statement.setInt(6, myOperation.getTiersId());
 			statement.setString(7, myOperation.getDetailOpe());
 			statement.setString(8, myOperation.getEtatOpe());
 			statement.setInt(9, myOperation.getEchId());
-			statement.setLong(10, dateOpeLong);
+			statement.setLong(10, myOperation.getDateOpe().toLongValue());
 			statement.executeUpdate();
 			// System.out.println("dans Operation DAO create arrive après
 			// execute statement de create operation");
@@ -60,10 +56,7 @@ public class OperationDAO extends DAO<Operation> {
 			ResultSet rs = statement.executeQuery("SELECT * FROM operation WHERE id = '" + id + "'");
 			// System.out.println("rs = " + rs.getInt("id"));
 			if (rs.next()) {
-				myOperation = new Operation(rs.getInt("id"), rs.getString("typeOpe"), rs.getString("dateOpe"),
-						rs.getDouble("montantOpe"), rs.getInt("categOpeId"), rs.getInt("tiersId"),
-						rs.getString("detailOpe"), rs.getString("etatOpe"), rs.getInt("echId"),
-						rs.getLong("dateOpeLong"));
+				myOperation = operationFromRow(rs);
 			}
 		} catch (SQLException e) {
 			System.out.println("SQL Exception dans Operation DAO find  ");
@@ -74,7 +67,7 @@ public class OperationDAO extends DAO<Operation> {
 	//
 
 	public ArrayList<Operation> findAll() {
-		Operation myOperation = null;
+		Operation myOperation;
 		ArrayList<Operation> myOperationList = null;
 		try {
 			myOperationList = new ArrayList<Operation>();
@@ -85,10 +78,7 @@ public class OperationDAO extends DAO<Operation> {
 			ResultSet rs = statement.executeQuery("SELECT * FROM operation ");
 			// System.out.println("rs = " + rs.getInt("id"));
 			while (rs.next()) {
-				myOperation = new Operation(rs.getInt("id"), rs.getString("typeOpe"), rs.getString("dateOpe"),
-						rs.getDouble("montantOpe"), rs.getInt("categOpeId"), rs.getInt("tiersId"),
-						rs.getString("detailOpe"), rs.getString("etatOpe"), rs.getInt("echId"),
-						rs.getLong("dateOpeLong"));
+				myOperation = operationFromRow(rs);
 				myOperationList.add(myOperation);
 			}
 			statement.close();
@@ -110,8 +100,7 @@ public class OperationDAO extends DAO<Operation> {
 			ResultSet rs;
 			rs = statement.executeQuery("SELECT * FROM  operation where etatOpe='NR' ");
 			while (rs.next()) {
-				myOperation = new Operation(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getDouble(4),
-						rs.getInt(5), rs.getInt(6), rs.getString(7), rs.getString(8), rs.getInt(9), rs.getLong(10));
+				myOperation = operationFromRow(rs);
 				myOperationList.add(myOperation);
 			}
 		} catch (SQLException e) {
@@ -134,8 +123,7 @@ public class OperationDAO extends DAO<Operation> {
 			ResultSet rs = statement.executeQuery(
 					"SELECT * FROM operation as o INNER JOIN tiers as t on o.tiersId = t.id INNER JOIN categorie as c on o.categOpeId = c.id");
 			while (rs.next()) {
-				myOperation = new Operation(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getDouble(4),
-						rs.getInt(5), rs.getInt(6), rs.getString(7), rs.getString(8), rs.getInt(9), rs.getLong(10));
+				myOperation = operationFromRow(rs);
 				myOperationBO = new OperationBO(myOperation);
 				myTiers = new Tiers(rs.getInt(11), rs.getString(12), rs.getString(13));
 				myOperationBO.setTiersBO(myTiers);
@@ -214,8 +202,7 @@ public class OperationDAO extends DAO<Operation> {
 					+ "= t.id INNER JOIN categorie as c on o.categOpeId = c.id " + whereClause);
 			// System.out.println("rs = " + rs.getInt("id"));
 			while (rs.next()) {
-				myOperation = new Operation(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getDouble(4),
-						rs.getInt(5), rs.getInt(6), rs.getString(7), rs.getString(8), rs.getInt(9), rs.getLong(10));
+				myOperation = operationFromRow(rs);
 				myOperationBO = new OperationBO(myOperation);
 				myTiers = new Tiers(rs.getInt(11), rs.getString(12), rs.getString(13));
 				myOperationBO.setTiersBO(myTiers);
@@ -242,10 +229,10 @@ public class OperationDAO extends DAO<Operation> {
 			// System.out.println("debut try update operation");
 			statement = connection.createStatement();
 			statement.executeUpdate("UPDATE operation SET typeOpe='" + myOperation.getTypeOpe() + "',dateOpe='"
-					+ myOperation.getDateOpe() + "',montantOpe=" + myOperation.getMontantOpe() + ",categOpeId="
+					+ myOperation.getDateOpe().toDbFormat() + "',montantOpe=" + myOperation.getMontantOpe() + ",categOpeId="
 					+ myOperation.getCategOpeId() + ",tiersID=" + myOperation.getTiersId() + ", detailOpe='"
 					+ myOperation.getDetailOpe() + "',etatOpe='" + myOperation.getEtatOpe() + "', echId="
-					+ myOperation.getEchId() + myOperation.getDateOpeLong() + " where Id=" + myOperation.getId());
+					+ myOperation.getEchId() + myOperation.getDateOpe().toLongValue() + " where Id=" + myOperation.getId());
 			// System.out.println("Dans update operation dateOpe= " +
 			// myOperation.getDateOpe());
 			// System.out.println("Dans update operation dateOpelong = " +
@@ -279,5 +266,16 @@ public class OperationDAO extends DAO<Operation> {
 			}
 		}
 
+	}
+	
+	public static Operation operationFromRow(ResultSet rs) {
+		try {
+			return new Operation(rs.getInt("id"), rs.getString("typeOpe"), new MyDate(rs.getString("dateOpe")),
+					rs.getDouble("montantOpe"), rs.getInt("categOpeId"), rs.getInt("tiersId"),
+					rs.getString("detailOpe"), rs.getString("etatOpe"), rs.getInt("echId"));
+		} catch (SQLException e) {
+			LogOperation.logError("Error while building operation from resulset", e);
+			return null;
+		}
 	}
 }

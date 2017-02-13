@@ -13,6 +13,7 @@ import comptes.model.db.entity.DerRappro;
 import comptes.model.db.entity.Operation;
 import comptes.model.facade.DerRapproFacade;
 import comptes.model.facade.OperationFacade;
+import comptes.util.MyDate;
 
 public class RapproManager {
 	private OngletRappro myOngletRappro;
@@ -72,7 +73,7 @@ public class RapproManager {
 		DerRappro myDerRappro = new DerRappro();
 		DerRapproFacade myDerRapproFacade = new DerRapproFacade();
 		myDerRappro=myDerRapproFacade.find(1);
-		myDerRappro.setDateDerRappro(myOngletRappro.getJtfDateRappro().getText());
+		myDerRappro.setDateDerRappro(new MyDate(myOngletRappro.getJtfDateRappro().getText()));
 		myDerRappro.setDerSolde(Double.parseDouble(myOngletRappro.getJtfMtFinal().getText()));
 		myDerRapproFacade.update(myDerRappro);
 		RapproTableau myRapproTableau = (RapproTableau)myOngletRappro.getTableRappro().getModel();

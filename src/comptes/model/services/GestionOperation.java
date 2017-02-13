@@ -8,7 +8,7 @@ import comptes.model.db.entity.Tiers;
 import comptes.model.facade.CategorieFacade;
 import comptes.model.facade.OperationFacade;
 import comptes.model.facade.TiersFacade;
-import comptes.util.DateUtil;
+import comptes.util.MyDate;
 import comptes.util.log.Logger;
 
 public class GestionOperation {
@@ -34,11 +34,8 @@ public class GestionOperation {
 		Operation myOperation = new Operation();
 		myOperation.setId(myOperationDTO.getId());
 		myOperation.setTypeOpe(myOperationDTO.getTypeOpe());
-		String datetmp="";
-		datetmp=DateUtil.convertDateStr(myOperationDTO.getDateOpe());
-		Logger.logDebug("dans dtoToOperation de Gestion Operation : datetmp" + datetmp);
-
-		myOperation.setDateOpe(datetmp);
+		myOperation.setDateOpe(new MyDate(myOperationDTO.getDateOpe()));
+		Logger.logDebug("dans dtoToOperation de Gestion Operation : date dto" + myOperationDTO.getDateOpe());
 		Logger.logDebug("dans dtoToOperation de Gestion Operation : myOperation.getDateOpe" + myOperation.getDateOpe());
 
 		if (myOperationDTO.getDebitOpe() != 0) {

@@ -7,6 +7,7 @@ import javax.swing.JComboBox;
 
 public class FiltreRapproCombo extends JComboBox<String> implements ActionListener {
 
+	private static final long serialVersionUID = -3289281137105389750L;
 	private static final String[] typeStrings = { "Tout", "Non rapproches", "Rapproches" };
 
 	public FiltreRapproCombo() {
