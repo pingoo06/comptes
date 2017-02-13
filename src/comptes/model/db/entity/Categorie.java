@@ -10,6 +10,7 @@ public class Categorie implements Comparable<Categorie>{
 
 	}
 
+	
 	public int getId() {
 		return id;
 	}
