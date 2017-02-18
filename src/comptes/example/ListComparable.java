@@ -56,6 +56,7 @@ class MyObject implements Comparable<MyObject> {
 
 	@Override
 	public int compareTo(MyObject o) {
+		System.out.println("compare my date" + myDate.compareTo(o.myDate));
 		return myDate.compareTo(o.myDate);
 	}
 
