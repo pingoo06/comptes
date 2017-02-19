@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import comptes.model.db.entity.Categorie;
+import comptes.util.log.LogCategorie;
 
 public class CategorieDAO extends DAO<Categorie> {
 	public void create(Categorie myCategorie) {
@@ -19,12 +20,12 @@ public class CategorieDAO extends DAO<Categorie> {
 			statement.executeUpdate();
 			// statement.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogCategorie.logError("create categ KO", e);
 		} finally {
 			try {
 				statement.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LogCategorie.logError("close statement de create categ KO", e);
 			}
 		}
 	}
@@ -40,8 +41,7 @@ public class CategorieDAO extends DAO<Categorie> {
 				myCategorie = new Categorie(rs.getInt("id"), rs.getString("libCateg"));
 			}
 		} catch (SQLException e) {
-			System.out.println("select unique Categorie KO");
-			e.printStackTrace();
+			LogCategorie.logError("select unique Categorie KO",e);
 		}
 		return myCategorie;
 	}
@@ -55,7 +55,7 @@ public class CategorieDAO extends DAO<Categorie> {
 			id = 0;
 			// System.out.println("select lib Categ début try");
 			Statement statement = connection.createStatement();
-			System.out.println("Dans CategorieDAO : select : SELECT * FROM categorie WHERE libCateg = '" + libCateg + "'" );
+			LogCategorie.logDebug("Dans CategorieDAO : select : SELECT * FROM categorie WHERE libCateg = '" + libCateg + "'" );
 			ResultSet rs = statement.executeQuery("SELECT * FROM categorie WHERE libCateg = '" + libCateg + "'");
 			if (rs.next()) {
 				id = rs.getInt(1);
@@ -63,9 +63,7 @@ public class CategorieDAO extends DAO<Categorie> {
 				// System.out.println("id = " + id );
 			}
 		} catch (SQLException e) {
-			System.out.println("select lib Categ KO");
-			System.out.println("LibCateg = " + lib);
-			e.printStackTrace();
+			LogCategorie.logError("findlib categ KO", e);
 		}
 		return id;
 	}
@@ -76,7 +74,7 @@ public class CategorieDAO extends DAO<Categorie> {
 		ArrayList<Categorie> myCategorieList = null;
 		try {
 			myCategorieList = new ArrayList<Categorie>();
-			// System.out.println("select all Categorie début try");
+			LogCategorie.logDebug("select all Categorie début try");
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT * FROM categorie");
 			while (rs.next()) {
@@ -87,8 +85,7 @@ public class CategorieDAO extends DAO<Categorie> {
 			statement.close();
 
 		} catch (SQLException e) {
-			System.out.println("select unique categorie KO");
-			e.printStackTrace();
+			LogCategorie.logError("select unique categorie KO",e);
 		}
 		return myCategorieList;
 	}
@@ -100,12 +97,12 @@ public class CategorieDAO extends DAO<Categorie> {
 			statement.executeUpdate("UPDATE categorie SET libCateg='" + myCategorie.getLibCateg() + "' where Id="
 					+ myCategorie.getId());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogCategorie.logError("update categ KO", e);
 		} finally {
 			try {
 				statement.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LogCategorie.logError("statement close de update categ KO", e);
 			}
 		}
 	}
@@ -116,12 +113,12 @@ public class CategorieDAO extends DAO<Categorie> {
 			statement = connection.createStatement();
 			statement.executeUpdate("Delete from categorie where Id=" + myCategorie.getId());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogCategorie.logError("delete categ KO", e);
 		} finally {
 			try {
 				statement.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LogCategorie.logError("statement.close de delete categ KO", e);
 			}
 		}
 	}

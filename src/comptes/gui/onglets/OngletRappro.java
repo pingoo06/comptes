@@ -150,6 +150,7 @@ public class OngletRappro extends JSplitPane {
 
 		// Tableau rappro
 		myGestionRappro = new GestionRappro();
+//		myGestionRappro.ecritOpeCredit();
 		myGestionRappro.prepaRappro();
 		tableRappro = new JTable(new RapproTableau(myRapproMngr,myGestionRappro));
 		vTopR.add(new JScrollPane(tableRappro), BorderLayout.CENTER);

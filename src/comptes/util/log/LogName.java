@@ -2,7 +2,7 @@ package comptes.util.log;
 
 public enum LogName {
 	defaut(LogLevel.INFO),
-	operation(LogLevel.DEBUG),
+	operation(LogLevel.INFO),
 	echeancier(LogLevel.INFO),
 	bnp(LogLevel.INFO),
 	categorie(LogLevel.INFO),

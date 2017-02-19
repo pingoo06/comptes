@@ -6,11 +6,15 @@ import java.util.Iterator;
 import comptes.model.bo.RapproBO;
 import comptes.model.db.dao.RapproDAO;
 import comptes.model.db.entity.Bnp;
+import comptes.model.db.entity.Matching;
 import comptes.model.db.entity.Operation;
 import comptes.model.db.entity.Tiers;
 import comptes.model.facade.BnpFacade;
+import comptes.model.facade.CategorieFacade;
+import comptes.model.facade.MatchingFacade;
 import comptes.model.facade.OperationFacade;
 import comptes.model.facade.TiersFacade;
+import comptes.util.log.LogRappro;
 
 public class GestionRappro {
 	private OperationFacade myOperationFacade;
@@ -27,8 +31,55 @@ public class GestionRappro {
 		myBnpFacade = new BnpFacade();
 		myOpeListNr = new ArrayList<Operation>();
 		myBnpListNr = new ArrayList<Bnp>();
+		myBnpFacade = new BnpFacade();
+		
 	}
 
+	public void ecritOpeCredit() {
+		ArrayList<Bnp> myBnpList = myBnpFacade.findAll();
+		transcoTiers(myBnpList);
+		TiersFacade myTiersFacade = new TiersFacade();
+		ArrayList<Tiers> myTiersList = myTiersFacade.findAll();
+		for(Bnp bnp : myBnpList) {
+			if (bnp.getMontantBnp() > 0){
+				for(Tiers tiers : myTiersList){
+					if (bnp.getLibOpeBnp().toUpperCase().contains(tiers.getLibTiers().toUpperCase()) && !"Virement".equals(tiers.getLibTiers())){
+						bnpToOpe(bnp,tiers);
+						LogRappro.logDebug("pour bnp " + bnp);
+						LogRappro.logDebug("trouve tiers " + tiers);
+					}
+				}
+			}
+		}
+	}
+	
+	public void 	transcoTiers(ArrayList<Bnp>myBnpList){
+		MatchingFacade myMatchingFacade=new MatchingFacade();
+		ArrayList<Matching> myMatchingList = myMatchingFacade.findAll();
+		for(Bnp bnp : myBnpList) {
+			for (Matching matching : myMatchingList){
+				if (bnp.getLibOpeBnp().toUpperCase().contains(matching.getlibBnp())){
+					bnp.setLibOpeBnp(matching.getlibTier());
+				}
+			}
+		}
+	}
+
+	public void bnpToOpe(Bnp bnp, Tiers tiers) {
+		Operation myOperation = new Operation();
+		CategorieFacade myCategorieFacade = new CategorieFacade();
+		myOperation.setId(0);
+		myOperation.setTiersId(tiers.getId());
+		myOperation.setCategOpeId(myCategorieFacade.findLib(tiers.getDerCategDeTiers()));
+		myOperation.setDateOpe(bnp.getDateBnp());
+		myOperation.setDetailOpe(null);
+		myOperation.setEchId(0);
+		myOperation.setEtatOpe("NR");
+		myOperation.setMontantOpe(bnp.getMontantBnp());
+		myOperation.setTypeOpe(bnp.getTypeOpeBnp().toString());
+		myOperationFacade.create(myOperation);
+	}
+	
 	public void prepaRappro() {
 		myRapproBOList = myRapproDAO.rapproAuto();
 		ArrayList<Operation> myOpeList = new ArrayList<Operation>();
@@ -36,15 +87,16 @@ public class GestionRappro {
 		for (RapproBO rappro : myRapproBOList) {
 			myOpeList.add(rappro.getOperation());
 			myBnpList.add(rappro.getBnp());
-
 		}
 		myBnpListNr = myBnpFacade.findAll();
+		LogRappro.logInfo("myBnpList size avant ménage" + myBnpListNr.size());
 		Iterator<Bnp> it = myBnpListNr.iterator();
 		while(it.hasNext()) {
 			if (myBnpList.contains(it.next())) {
 				it.remove();
 			}
 		}
+		LogRappro.logInfo("myBnpList size apres ménage" + myBnpListNr.size());
 		myOpeListNr = myOperationFacade.findOpeNr();
 		Iterator<Operation> it2 = myOpeListNr.iterator();
 		while(it2.hasNext()) {
