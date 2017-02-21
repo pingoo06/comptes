@@ -5,37 +5,34 @@ import static org.fusesource.jansi.Ansi.Color.*;
 
 public class Logger {
 
-	protected LogName name = LogName.defaut;
-	protected static Logger logger;
-	
+	private static final LogName name = LogName.defaut;
 	
 	public static void logFatal(String msg) {
-		printOutput(LogLevel.FATAL, msg);
+		printOutput(LogLevel.FATAL, msg, name);
 	}
 
 	public static void logError(String msg) {
-		printOutput(LogLevel.ERROR, msg);
+		printOutput(LogLevel.ERROR, msg, name);
 	}
 
 	public static void logError(String msg, Exception e) {
-		printOutput(LogLevel.ERROR, msg + "\n" + e.getMessage());
+		printOutput(LogLevel.ERROR, msg + "\n" + e.getMessage(), name);
 	}
 
 	public static void logWarning(String msg) {
-		printOutput(LogLevel.WARNING, msg);
+		printOutput(LogLevel.WARNING, msg, name);
 	}
 
 	public static void logInfo(String msg) {
-		printOutput(LogLevel.INFO, msg);
+		printOutput(LogLevel.INFO, msg, name);
 	}
 
 	public static void logDebug(String msg) {
-		printOutput(LogLevel.DEBUG, msg);
+		printOutput(LogLevel.DEBUG, msg, name);
 	}
 
-	private static void printOutput(LogLevel logLevel, String msg) {
-		init();
-		if (logLevel.getLevel() <= logger.name.getLogLevel().getLevel()) {
+	protected static void printOutput(LogLevel logLevel, String msg, LogName logName) {
+		if (logLevel.getLevel() <= logName.getLogLevel().getLevel()) {
 			StackTraceElement e = Thread.currentThread().getStackTrace()[3];
 			printOutput(e.getFileName(), e.getClassName(), e.getMethodName(), e.getLineNumber(), logLevel,
 					msg);
@@ -75,17 +72,13 @@ public class Logger {
 
 	}
 	
-	public static void init() {
-		if(logger == null) {
-			logger = new Logger();
-		}
-	}
 	public static void main(String[] args) {
 		logDebug("Pouet");
 		logInfo("Pouet");
 		logWarning("Pouet");
 		logError("Pouet");
 		logFatal("Pouet");
+		LogOperation.logDebug("héhé");
 		
 	}
 }

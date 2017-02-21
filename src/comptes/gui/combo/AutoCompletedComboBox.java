@@ -65,6 +65,12 @@ public class AutoCompletedComboBox extends JComboBox<String> {
 		}
 		return selectedItem;
 	}
+	
+	@Override
+	public void removeAllItems() {
+		super.removeAllItems();
+		originalCasse.clear();
+	}
 
 }
 
