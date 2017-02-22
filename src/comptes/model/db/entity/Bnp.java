@@ -249,7 +249,10 @@ public class Bnp {
 				return false;
 		} else if (!dateBnp.equals(other.dateBnp))
 			return false;
-		if (dateBnpCalc != other.dateBnpCalc)
+		if (dateBnpCalc == null) {
+			if (other.dateBnpCalc != null)
+				return false;
+		} else if (!dateBnpCalc.equals(other.dateBnpCalc))
 			return false;
 		if (etatBnp == null) {
 			if (other.etatBnp != null)
@@ -279,5 +282,7 @@ public class Bnp {
 			return false;
 		return true;
 	}
+
+
 
 }
