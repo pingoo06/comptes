@@ -46,7 +46,7 @@ public class EchToOpe extends Thread {
 				
 				Logger.logDebug("Dans EchToOpe run : dateEch " + myEcheancierBO.getDateEch());
 				myEcheancierBO.getDateEch().plusMonth(1);
-				myEcheancier=GestionEcheancier.boToEcheancier(myEcheancierBO);
+				myEcheancier=EcheancierUtil.boToEcheancier(myEcheancierBO);
 				myEcheancierFacade.update(myEcheancier);
 			}
 		}

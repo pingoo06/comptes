@@ -94,6 +94,8 @@ public class PanelCreationOperation extends Box {
 				clearSaisieOpe();
 			}
 		});
+		
+		
 
 		comboTiers.addActionListener(new ActionListener() {
 			@Override
@@ -196,7 +198,7 @@ public class PanelCreationOperation extends Box {
 		return jp;
 	}
 
-	public OperationDTO getDto() {
+	public OperationDTO createOpeDtoFromField() {
 		OperationDTO myOperationDTO = new OperationDTO();
 		String choixTypeOpe = comboTypeOpe.getSelectedItem().toString();
 		if ("CHQ".equals(choixTypeOpe)) {
@@ -232,8 +234,22 @@ public class PanelCreationOperation extends Box {
 		myOperationDTO.setDetailOpe(jtfDetailOpe.getText());
 		myOperationDTO.setEtatOpe("NR");
 		myOperationDTO.setEchId(0);
+		myOperationDTO.setNumCheque(jtfNumChq.getText());
 
 		return myOperationDTO;
+	}
+	
+	public void fillFieldFromOpeDto (OperationDTO myOperationDTO) {
+		comboTiers.setSelectedItem(myOperationDTO.getTiers());
+		comboCategorie.setSelectedItem(myOperationDTO.getCategOpe());
+		comboTypeOpe.setSelectedItem("CB");
+		comboTypeOpe.requestFocus();
+		jtfDateOpe.setText(myOperationDTO.getDateOpe());
+		//A revoir
+		jtfNumChq.setText(myOperationDTO.getNumCheque());
+		jtfDetailOpe.setText(myOperationDTO.getDetailOpe());
+		jtfDebit.setText(""+myOperationDTO.getDebitOpe());  
+		jtfCredit.setText(""+myOperationDTO.getCreditOpe());
 	}
 
 	public void clearSaisieOpe() {

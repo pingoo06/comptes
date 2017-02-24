@@ -22,7 +22,7 @@ import comptes.gui.combo.TiersCombo;
 import comptes.gui.dto.OperationDTO;
 import comptes.gui.listener.DateDocumentListener;
 import comptes.gui.tableaux.OperationTableau;
-import comptes.model.services.GestionOperation;
+import comptes.model.services.OperationUtil;
 import comptes.util.DateUtil;
 import comptes.util.log.LogOperation;
 
@@ -142,14 +142,14 @@ public class OngletOperation extends JSplitPane {
 		public void actionPerformed(ActionEvent e) {
 			final JOptionPane frame;
 			LogOperation.logDebug("Dans Bouton OK listener");
-			OperationDTO myOperationDTO = panelCreationOperation.getDto();
+			OperationDTO myOperationDTO = panelCreationOperation.createOpeDtoFromField();
 			String res = validateSaisieOpe();
 			if (res != "") {
 				frame = new JOptionPane();
 				JOptionPane.showMessageDialog(frame, res, "Saisie erronée", JOptionPane.WARNING_MESSAGE);
 			} else {
 				LogOperation.logDebug("montant débit" + panelCreationOperation.getJtfDebit().getText());
-				GestionOperation myGestionOperation = new GestionOperation();
+				OperationUtil myGestionOperation = new OperationUtil();
 				myGestionOperation.create(myOperationDTO);
 				panelCreationOperation.clearSaisieOpe();
 				OperationTableau model = ((OperationTableau) tableOperation.getModel());

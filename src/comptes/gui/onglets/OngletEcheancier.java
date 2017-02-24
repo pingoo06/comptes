@@ -26,7 +26,7 @@ import comptes.gui.tableaux.EcheancierTableau;
 import comptes.model.bo.EcheancierBO;
 import comptes.model.db.entity.Tiers;
 import comptes.model.facade.TiersFacade;
-import comptes.model.services.GestionEcheancier;
+import comptes.model.services.EcheancierUtil;
 import comptes.util.MyDate;
 
 public class OngletEcheancier extends JSplitPane {
@@ -196,7 +196,7 @@ public class OngletEcheancier extends JSplitPane {
 			myEcheancierDTO.setMontantEch(Double.parseDouble(jtfMontantEch.getText()));
 			myEcheancierDTO.setDateEch(jtfDateEch.getText());
 			myEcheancierDTO.setNbEch(Integer.parseUnsignedInt(jtfNbEch.getText()));
-			GestionEcheancier myGestionEcheancier = new GestionEcheancier();
+			EcheancierUtil myGestionEcheancier = new EcheancierUtil();
 			myGestionEcheancier.create(myEcheancierDTO);
 			clearSaisieEch();
 			EcheancierBO myEcheancierBO = myGestionEcheancier.buildEcheancierBo(myEcheancierDTO);

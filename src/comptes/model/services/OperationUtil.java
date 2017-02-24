@@ -11,13 +11,13 @@ import comptes.model.facade.TiersFacade;
 import comptes.util.MyDate;
 import comptes.util.log.Logger;
 
-public class GestionOperation {
+public class OperationUtil {
 	private OperationFacade myOperationFacade = new OperationFacade();
 	private TiersFacade myTiersFacade = new TiersFacade();
 	private CategorieFacade myCategorieFacade = new CategorieFacade();
 
 	// Constructeur
-	public GestionOperation() {
+	public OperationUtil() {
 		super();
 		Logger.logDebug("Début : constructeur gestion operation ");
 	}
@@ -76,6 +76,25 @@ public class GestionOperation {
 
 		return myOperation;
 	}
+	
+
+	public OperationDTO opeToDtoOperation (Operation ope){
+		OperationDTO myOperationDTO=new OperationDTO();
+		myOperationDTO.setCategOpe(myCategorieFacade.find(ope.getCategOpeId()).getLibCateg());
+		if (ope.getMontantOpe() < 0) {
+			myOperationDTO.setDebitOpe(ope.getMontantOpe() * -1);}
+		else {
+			myOperationDTO.setCreditOpe(ope.getMontantOpe());
+		}
+		myOperationDTO.setDateOpe(ope.getDateOpe().toString());
+		myOperationDTO.setDetailOpe(null);
+		myOperationDTO.setEchId(0);
+		myOperationDTO.setEtatOpe("NR");
+		myOperationDTO.setId(0);
+		myOperationDTO.setTiers(myTiersFacade.find(ope.getTiersId()).getLibTiers());
+		myOperationDTO.setTypeOpe(ope.getTypeOpe());
+		return myOperationDTO;
+	}
 
 	public OperationBO buildOperationBo(OperationDTO ope) {
 		System.out.println("Début : buildOperationBO");
@@ -87,5 +106,12 @@ public class GestionOperation {
 		res.setTiersBO(myTiers);
 		res.setCategorieBo(myCategorie);
 		return res;
+	}
+	
+	public String getLibTiersFromOpe(Operation myOperation) {
+		TiersFacade myTiersFacade = new TiersFacade();
+		Tiers myTiers = new Tiers();
+		myTiers = myTiersFacade.find(myOperation.getTiersId());
+		return myTiers.getLibTiers();
 	}
 }

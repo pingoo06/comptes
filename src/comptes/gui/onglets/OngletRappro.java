@@ -27,8 +27,7 @@ import comptes.gui.tableaux.OpeNrTableau;
 import comptes.gui.tableaux.RapproTableau;
 import comptes.model.db.entity.DerRappro;
 import comptes.model.facade.DerRapproFacade;
-import comptes.model.services.GestionOperation;
-import comptes.model.services.GestionRappro;
+import comptes.model.services.OperationUtil;
 import comptes.util.DateUtil;
 
 public class OngletRappro extends JSplitPane {
@@ -36,7 +35,6 @@ public class OngletRappro extends JSplitPane {
 	private static final long serialVersionUID = 1L;
 
 	private RapproManager myRapproMngr;
-	private GestionRappro myGestionRappro;
 
 	private JTextField jtfMtInitial ;
 	private JTextField jtfMtFinal ;
@@ -149,15 +147,14 @@ public class OngletRappro extends JSplitPane {
 		boutonAnnulRappro.addActionListener(new BoutonAnnulRapproListener());
 
 		// Tableau rappro
-		myGestionRappro = new GestionRappro();
 //		myGestionRappro.ecritOpeCredit();
-		myGestionRappro.prepaRappro();
-		tableRappro = new JTable(new RapproTableau(myRapproMngr,myGestionRappro));
+		myRapproMngr.prepaRappro();
+		tableRappro = new JTable(new RapproTableau(myRapproMngr));
 		vTopR.add(new JScrollPane(tableRappro), BorderLayout.CENTER);
 		tableRappro.setAutoCreateRowSorter(true);
-		tableOpeNr = new JTable(new OpeNrTableau(myRapproMngr,myGestionRappro));
+		tableOpeNr = new JTable(new OpeNrTableau(myRapproMngr));
 		tableOpeNr.setAutoCreateRowSorter(true);
-		tableBnpNr = new JTable(new BnpNrTableau(myRapproMngr,myGestionRappro));
+		tableBnpNr = new JTable(new BnpNrTableau(myRapproMngr));
 		b1.add(new JScrollPane(tableBnpNr));
 		b1.add(new JScrollPane(tableOpeNr));
 		b2.add(b1);
@@ -187,10 +184,10 @@ public class OngletRappro extends JSplitPane {
 	//Execution du bouton OK Operation
 	class BoutonOKListener implements ActionListener {
 		private OperationDTO myOperationDTO ;
-		private GestionOperation myGestionOperation;
+		private OperationUtil myGestionOperation;
 		public void actionPerformed(ActionEvent e) {
-			myOperationDTO = panelCreationOperation.getDto();
-			myGestionOperation = new GestionOperation();
+			myOperationDTO = panelCreationOperation.createOpeDtoFromField();
+			myGestionOperation = new OperationUtil();
 			myGestionOperation.create(myOperationDTO);
 			panelCreationOperation.clearSaisieOpe();
 		}
@@ -219,9 +216,6 @@ public class OngletRappro extends JSplitPane {
 	}
 	public JTable getTableOpeNr() {
 		return tableOpeNr;
-	}
-	public GestionRappro getMyGestionRappro() {
-		return myGestionRappro;
 	}
 	public JTextField getJtfDateRappro() {
 		return jtfDateRappro;

@@ -2,7 +2,6 @@ package comptes.gui.tableaux;
 
 import comptes.gui.manager.RapproManager;
 import comptes.model.db.entity.Operation;
-import comptes.model.services.GestionRappro;
 import comptes.util.log.LogRappro;
 
 public class OpeNrTableau extends CheckableTableau {
@@ -11,8 +10,8 @@ public class OpeNrTableau extends CheckableTableau {
 
 	
 	// Remplit le tableau
-	public OpeNrTableau(RapproManager rapproMngr, GestionRappro gestionRappro) {
-		super(rapproMngr,gestionRappro);
+	public OpeNrTableau(RapproManager rapproMngr) {
+		super(rapproMngr);
 		LogRappro.logInfo("Début : constructeur OpeNrTableau tableau");
 	}
 
@@ -23,7 +22,7 @@ public class OpeNrTableau extends CheckableTableau {
 
 	@Override
 	public int getRowCount() {
-		return myGestionRappro.getMyOpeListNr().size();
+		return myRapproMngr.getMyOpeListNr().size();
 	}
 
 	@Override
@@ -35,13 +34,13 @@ public class OpeNrTableau extends CheckableTableau {
 	// renvoie le contenu de chaque colonne de la liste
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		LogRappro.logDebug("columnIndex : " + columnIndex + "RowIndex" + rowIndex);
-		Operation current = myGestionRappro.getMyOpeListNr().get(rowIndex);
+		Operation current = myRapproMngr.getMyOpeListNr().get(rowIndex);
 		LogRappro.logDebug("operation : " + current);
 		switch (columnIndex) {
 		case 0:
 			return current.getDateOpe();
 		case 1:
-			return myGestionRappro.getLibTiersFromOpe(current);
+			return myRapproMngr.getMyOperationUtil().getLibTiersFromOpe(current);
 		case 2:
 			if (current.getMontantOpe() > 0) {
 				return current.getMontantOpe();
@@ -76,7 +75,7 @@ fireTableDataChanged();
 	// Retourne le type de chaque colonne
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		if (myGestionRappro.getMyOpeListNr().isEmpty()) {
+		if (myRapproMngr.getMyOpeListNr().isEmpty()) {
 			return Object.class;
 		}
 		LogRappro.logDebug("column	 index : " + columnIndex);

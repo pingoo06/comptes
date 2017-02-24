@@ -11,13 +11,13 @@ import comptes.model.facade.TiersFacade;
 import comptes.util.MyDate;
 import comptes.util.log.LogEcheancier;
 
-public class GestionEcheancier {
+public class EcheancierUtil {
 	private TiersFacade myTiersFacade = new TiersFacade();
 	private CategorieFacade myCategorieFacade = new CategorieFacade();
 	private EcheancierFacade myEcheancierFacade = new EcheancierFacade();
 
 	// Constructeur
-	public GestionEcheancier() {
+	public EcheancierUtil() {
 		super();
 		LogEcheancier.logDebug("Début : constructeur gestion echeancier ");
 	}

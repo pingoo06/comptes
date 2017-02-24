@@ -1,16 +1,17 @@
 package comptes.gui.dto;
 
 public class OperationDTO {
-	private int id = 0;
-	private String typeOpe = "";
-	private String  dateOpe = "";
-	private double debitOpe = 0;
-	private double creditOpe = 0;
-	private String detailOpe = "";
-	private String etatOpe = "";
-	private String categOpe= "";
-	private String tiers= "";
-	private int echId = 0;
+		private int id;
+		private String typeOpe;
+		private String  dateOpe;
+		private double debitOpe;
+		private double creditOpe;
+		private String detailOpe;
+		private String etatOpe ;
+		private String categOpe;
+		private String tiers;
+		private int echId;
+		private String numCheque;
 	
 	public OperationDTO(){
 		this.id = 0;
@@ -22,6 +23,7 @@ public class OperationDTO {
 		this.etatOpe = "";
 		this.categOpe= "";
 		this.tiers= "";
+		this.numCheque="";
 	}
 	public OperationDTO(int id, String typeOpe, String dateOpe, double debitOpe, double creditOpe,int categOpeId, 
 			String categOpe, int tiersId,String tiers, String detailOpe, String etatOpe,
@@ -36,6 +38,7 @@ public class OperationDTO {
 		this.detailOpe = detailOpe;
 		this.etatOpe = etatOpe;
 		this.echId = echId;
+		this.numCheque="";
 	}
 	public void reset() {
 		this.id = 0;
@@ -47,6 +50,7 @@ public class OperationDTO {
 		this.etatOpe = "";
 		this.categOpe= "";
 		this.tiers= "";
+		this.numCheque="";
 	}
 	public int getId() {
 		return id;
@@ -107,6 +111,12 @@ public class OperationDTO {
 	}
 	public void setTiers(String tiers) {
 		this.tiers = tiers;
+	}
+	public String getNumCheque() {
+		return numCheque;
+	}
+	public void setNumCheque(String numCheque) {
+		this.numCheque = numCheque;
 	};
 
 }

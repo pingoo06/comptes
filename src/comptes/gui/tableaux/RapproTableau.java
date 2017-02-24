@@ -2,7 +2,6 @@ package comptes.gui.tableaux;
 
 import comptes.gui.manager.RapproManager;
 import comptes.model.bo.RapproBO;
-import comptes.model.services.GestionRappro;
 import comptes.util.log.LogRappro;
 
 public class RapproTableau extends CheckableTableau {
@@ -11,8 +10,8 @@ public class RapproTableau extends CheckableTableau {
 			"Check" };
 
 	// Remplit le tableau
-	public RapproTableau(RapproManager rapproMngr, GestionRappro gestionRappro) {
-		super(rapproMngr, gestionRappro);
+	public RapproTableau(RapproManager rapproMngr) {
+		super(rapproMngr);
 		LogRappro.logInfo("Début : constructeur RapproTableau tableau");
 	}
 
@@ -23,7 +22,7 @@ public class RapproTableau extends CheckableTableau {
 
 	@Override
 	public int getRowCount() {
-		return myGestionRappro.getMyRapproBOList().size();
+		return myRapproMngr.getMyRapproBOList().size();
 	}
 
 	@Override
@@ -35,11 +34,11 @@ public class RapproTableau extends CheckableTableau {
 	// renvoie le contenu de chaque colonne de la liste
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		LogRappro.logDebug("columnIndex : " + columnIndex + "RowIndex" + rowIndex);
-		RapproBO current = myGestionRappro.getMyRapproBOList().get(rowIndex);
+		RapproBO current = myRapproMngr.getMyRapproBOList().get(rowIndex);
 		LogRappro.logDebug("Dans GetValueAt de echeancierTableau : RapproBO :  : " + current);
 		switch (columnIndex) {
 		case 0:
-			return current.getBnp();
+			return current.getBnp().getDateBnpCalc();
 		case 1:
 			return current.getOperation().getDateOpe();
 		case 2:
@@ -62,10 +61,9 @@ public class RapproTableau extends CheckableTableau {
 
 	}
 
-	// A implementer
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		LogRappro.logInfo("Début : Set ValueAt de Rappro Tableau");
+		LogRappro.logDebug("Début : Set ValueAt de Rappro Tableau");
 		if (columnIndex == 6) {
 			myRapproMngr.uncheckRappro(rowIndex);
 		}
@@ -74,7 +72,7 @@ public class RapproTableau extends CheckableTableau {
 	// Retourne le type de chaque colonne
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		if (myGestionRappro.getMyRapproBOList().isEmpty()) {
+		if (myRapproMngr.getMyRapproBOList().isEmpty()) {
 			return Object.class;
 		}
 		LogRappro.logDebug("column	 index : " + columnIndex);

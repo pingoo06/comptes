@@ -2,16 +2,15 @@ package comptes.gui.tableaux;
 
 import comptes.gui.manager.RapproManager;
 import comptes.model.db.entity.Bnp;
-import comptes.model.services.GestionRappro;
 import comptes.util.log.LogRappro;
 
 public class BnpNrTableau extends CheckableTableau {
 	private static final long serialVersionUID = 1L;
-	private String[] columnNames = { "Date BNP", "Lib Ope BNP", "Montant BNP", "Check" };
+	private String[] columnNames = { "Date BNP", "Lib Ope BNP", "Montant BNP", "Check","Creation" };
 
 	// Remplit le tableau
-	public BnpNrTableau(RapproManager rapproMngr, GestionRappro gestionRappro) {
-		super(rapproMngr, gestionRappro);
+	public BnpNrTableau(RapproManager rapproMngr) {
+		super(rapproMngr);
 		LogRappro.logInfo("Début : constructeur BnpNrTableau tableau");
 	}
 
@@ -22,7 +21,7 @@ public class BnpNrTableau extends CheckableTableau {
 
 	@Override
 	public int getRowCount() {
-		return myGestionRappro.getMyBnpListNr().size();
+		return myRapproMngr.getMyBnpListNr().size();
 	}
 
 	@Override
@@ -34,7 +33,7 @@ public class BnpNrTableau extends CheckableTableau {
 	// renvoie le contenu de chaque colonne de la liste
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		LogRappro.logDebug("columnIndex " + columnIndex + "RowIndex" + rowIndex);
-		Bnp current = myGestionRappro.getMyBnpListNr().get(rowIndex);
+		Bnp current = myRapproMngr.getMyBnpListNr().get(rowIndex);
 		LogRappro.logDebug("Bnp : " + current);
 		switch (columnIndex) {
 		case 0:
@@ -45,6 +44,8 @@ public class BnpNrTableau extends CheckableTableau {
 			return current.getMontantBnp();
 		case 3:
 			return rowIndex == tabSelected;
+		case 4:
+			return rowIndex == tabSelected;
 		default:
 			throw new IllegalArgumentException("Dans Get ValueAT de BnpNrTableau TableauInvalid column index");
 		}
@@ -53,7 +54,7 @@ public class BnpNrTableau extends CheckableTableau {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		LogRappro.logInfo("Début : Set ValueAt de Rappro Tableau");
+		LogRappro.logDebug("Début : Set ValueAt de Rappro Tableau");
 		if (columnIndex == 3) {
 			boolean checked = (boolean) aValue;
 			if (checked) {
@@ -63,14 +64,23 @@ public class BnpNrTableau extends CheckableTableau {
 				tabSelected = -1;
 			}
 		}
-		LogRappro.logDebug("Dans SetValueAt de Echeancier Tableau : fire");
+		if (columnIndex == 4) {
+			boolean checked = (boolean) aValue;
+			if (checked) {
+				tabSelected = rowIndex;
+				myRapproMngr.creationOpeNr();
+			} else {
+				tabSelected = -1;
+			}
+		}
+		LogRappro.logDebug(" fire");
 		fireTableDataChanged();
 	}
 
 	// Retourne le type de chaque colonne
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		if (myGestionRappro.getMyBnpListNr().isEmpty()) {
+		if (myRapproMngr.getMyBnpListNr().isEmpty()) {
 			return Object.class;
 		}
 		LogRappro.logDebug("column	 index " + columnIndex);
@@ -85,12 +95,12 @@ public class BnpNrTableau extends CheckableTableau {
 	// seule la colonne avec la checkBox est modifiable
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return columnIndex == 3;
+		return (columnIndex == 3 || columnIndex == 4);
 	}
 
 	// supression de ligne
 	public void deleteRow(int idx) {
-		// LogRappro.LogInfo("Début : deleteRow de echeancier Tableau");
+		// LogRappro.LogDebug("Début ");
 		// EcheancierBO echeancierBO = listEcheancierBO.get(idx);
 		// listEcheancierBO.remove(idx);
 		// fireTableRowsDeleted(idx, idx);
