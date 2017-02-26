@@ -25,7 +25,10 @@ import comptes.gui.manager.RapproManager;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
 import comptes.gui.tableaux.RapproTableau;
+import comptes.model.db.entity.Bnp;
 import comptes.model.db.entity.DerRappro;
+import comptes.model.db.entity.Operation;
+import comptes.model.db.entity.Tiers;
 import comptes.model.facade.DerRapproFacade;
 import comptes.model.services.OperationUtil;
 import comptes.util.DateUtil;
@@ -189,6 +192,12 @@ public class OngletRappro extends JSplitPane {
 			myOperationDTO = panelCreationOperation.createOpeDtoFromField();
 			myGestionOperation = new OperationUtil();
 			myGestionOperation.create(myOperationDTO);
+			if (myRapproMngr.getTabSelectedCreationCheckBnp() != -1){
+				Bnp myBnp =myRapproMngr.getMyBnp();
+				Operation myOperation=myRapproMngr.getMyOperation();
+				Tiers myTiers=myRapproMngr.getMyTiers();
+				myRapproMngr.bnpListNrToRapproTableau(myBnp, myOperation, myOperationDTO.getTiers());
+			}
 			panelCreationOperation.clearSaisieOpe();
 		}
 	}
@@ -235,6 +244,12 @@ public class OngletRappro extends JSplitPane {
 	}
 	public void setJtfMtFinal(JTextField jtfMtFinal) {
 		this.jtfMtFinal = jtfMtFinal;
+	}
+	public PanelCreationOperation getPanelCreationOperation() {
+		return panelCreationOperation;
+	}
+	public void setPanelCreationOperation(PanelCreationOperation panelCreationOperation) {
+		this.panelCreationOperation = panelCreationOperation;
 	}
 
 }

@@ -7,24 +7,36 @@ import comptes.util.log.LogRappro;
 
 public abstract class CheckableTableau extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
-	protected int tabSelected;
+	protected int tabSelectedRapproManu;
+	protected int tabSelectedCreationCheck;
 	protected RapproManager myRapproMngr;
 	
 
 	// Remplit le tableau
 	public CheckableTableau(RapproManager rapproMngr) {
 		LogRappro.logDebug("Début : constructeur RapproTableau tableau");
-		tabSelected=-1;
+		tabSelectedRapproManu=-1;
+		tabSelectedCreationCheck=-1;
 		this.myRapproMngr=rapproMngr;
 	}
 
 
-	public int getTabSelected() {
-		return tabSelected;
+	public int getTabSelectedRapproManu() {
+		return tabSelectedRapproManu;
 	}
 	
 	public void resetTabSelected() {
-		tabSelected=-1;
+		tabSelectedRapproManu=-1;
+	}
+
+
+	public int getTabSelectedCreationCheck() {
+		return tabSelectedCreationCheck;
+	}
+
+
+	public void resetTabSelectedCreationCheck() {
+		tabSelectedCreationCheck=-1;
 	}
 
 }

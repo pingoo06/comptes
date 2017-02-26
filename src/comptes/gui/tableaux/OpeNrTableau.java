@@ -48,7 +48,7 @@ public class OpeNrTableau extends CheckableTableau {
 				return current.getMontantOpe() * -1;
 			}
 		case 3:
-			return rowIndex==tabSelected ;
+			return rowIndex==tabSelectedRapproManu ;
 		default:
 			throw new IllegalArgumentException("Dans Get ValueAT de RapproTableau TableauInvalid column index");
 		}
@@ -62,11 +62,11 @@ public class OpeNrTableau extends CheckableTableau {
 		 if (columnIndex == 3) {
 			 boolean checked = (boolean)aValue;
 			 if(checked){
-				 tabSelected=rowIndex;
+				 tabSelectedRapproManu=rowIndex;
 				 myRapproMngr.chekNr();
 			 }
 			 else {
-				 tabSelected=-1;
+				 tabSelectedRapproManu=-1;
 			 }
 		 }
 fireTableDataChanged();

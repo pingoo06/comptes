@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import comptes.gui.onglets.OngletRappro;
-import comptes.gui.onglets.PanelCreationOperation;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
 import comptes.gui.tableaux.RapproTableau;
@@ -38,6 +37,11 @@ public class RapproManager {
 	private Operation myOperation;
 	private TiersFacade myTiersFacade;
 	private RapproTableau myRapproTableau;
+	private int tabSelectedCreationCheckBnp;
+	private BnpNrTableau myBnpNrTableau ;
+	private Bnp myBnp;
+	private Tiers myTiers;
+
 	
 
 	public RapproManager(OngletRappro myOngletRappro) {
@@ -51,16 +55,18 @@ public class RapproManager {
 		myOperationUtil = new OperationUtil();
 		myMatchingFacade = new MatchingFacade();
 		myOperation = new Operation();
-		myTiersFacade = new TiersFacade();
+		myTiersFacade = new TiersFacade();	
+		myBnp =new Bnp();
+		myTiers = new Tiers();
 	}
 	
 	public void chekNr(){
 		OpeNrTableau myOpeNrTableau = (OpeNrTableau)myOngletRappro.getTableOpeNr().getModel();
-		int tabSelectedOpe = myOpeNrTableau.getTabSelected();
-		BnpNrTableau myBnpNrTableau = (BnpNrTableau)myOngletRappro.getTableBnpNr().getModel();
-		int tabSelectedBnp = myBnpNrTableau.getTabSelected();
+		int tabSelectedOpe = myOpeNrTableau.getTabSelectedRapproManu();
+		myBnpNrTableau = (BnpNrTableau)myOngletRappro.getTableBnpNr().getModel();
+		int tabSelectedBnp = myBnpNrTableau.getTabSelectedRapproManu();
 		if (tabSelectedOpe != -1 && tabSelectedBnp != -1) {
-			Bnp myBnp= myBnpListNr.get(tabSelectedBnp);
+			myBnp= myBnpListNr.get(tabSelectedBnp);
 			Operation myOperation= myOpeListNr.get(tabSelectedOpe);
 			String libTiers= myOperationUtil.getLibTiersFromOpe(myOperation);
 			RapproBO myRapproBo = new RapproBO(myBnp, myOperation, libTiers);
@@ -85,45 +91,46 @@ public class RapproManager {
 		myRapproTableau.fireTableDataChanged();
 		myBnpNrTableau.fireTableDataChanged();
 		myOpeNrTableau.fireTableDataChanged();
+		
 
 	}
 	
 	public void creationOpeNr(){
 		boolean	tiersReconnu=false;
 		BnpNrTableau myBnpNrTableau = (BnpNrTableau)myOngletRappro.getTableBnpNr().getModel();
-		int tabSelectedBnp = myBnpNrTableau.getTabSelected();
-		Bnp myBnp= myBnpListNr.get(tabSelectedBnp);
-		Tiers myTiers;
+		tabSelectedCreationCheckBnp = myBnpNrTableau.getTabSelectedCreationCheck();
+
+		myBnp= myBnpListNr.get(tabSelectedCreationCheckBnp);
+		transcoTiers(myBnp);
+		String libOpeBnp=myBnp.getLibOpeBnp().toUpperCase();
 		ArrayList<Tiers> myTiersList = myTiersFacade.findAll();
 		for (Tiers tiers : myTiersList) {
-			if (myBnp.getLibOpeBnp().toUpperCase().contains(tiers.getLibTiers().toUpperCase())
+			if (libOpeBnp.contains(tiers.getLibTiers().toUpperCase())
 					&& !"Virement".equals(tiers.getLibTiers())) {
 				myOperation=bnpToOpe(myBnp, tiers);
 				tiersReconnu=true;
 				myOperationFacade.create(myOperation);
-				myRapproTableau = (RapproTableau)myOngletRappro.getTableRappro().getModel();
-				RapproBO myRapproBo = new RapproBO(myBnp, myOperation, tiers.getLibTiers());
-				myRapproBOList.add(myRapproBo);
-				myBnpListNr.remove(tabSelectedBnp);
-				myRapproTableau.fireTableDataChanged();
-				myBnpNrTableau.fireTableDataChanged();
+				bnpListNrToRapproTableau(myBnp, myOperation, tiers.getLibTiers());
 			}
 		}
 		if (!tiersReconnu){
 			myTiers=myTiersFacade.find(myTiersFacade.findLib("?"));
 			myOperation=bnpToOpe(myBnp, myTiers);
-			PanelCreationOperation myPanelCreationOpe = new PanelCreationOperation();
-			myPanelCreationOpe.fillFieldFromOpeDto(myOperationUtil.opeToDtoOperation(myOperation));
-			//plus loin quand bouton OK sitabSelected BNP enlever la ligne et déselecter
+			myOngletRappro.getPanelCreationOperation().fillFieldFromOpeDto(myOperationUtil.opeToDtoOperation(myOperation));
 		}
 	}
 
-	//		}
-//		//enlève la ligne
-		//rapproche bnpet ope 
-		//fire les deux tableaux
-//	}
 	
+	public void bnpListNrToRapproTableau(Bnp myBnp, Operation myOperation, String libTiers){
+	RapproBO myRapproBo = new RapproBO(myBnp, myOperation, libTiers);
+	myRapproBOList.add(myRapproBo);
+	myBnpListNr.remove(tabSelectedCreationCheckBnp);
+	myRapproTableau = (RapproTableau)myOngletRappro.getTableRappro().getModel();
+	myRapproTableau.fireTableDataChanged();
+	BnpNrTableau myBnpNrTableau = (BnpNrTableau)myOngletRappro.getTableBnpNr().getModel();
+	myBnpNrTableau.resetTabSelectedCreationCheck();
+	myBnpNrTableau.fireTableDataChanged();
+}
 	public void ecritOpeCredit() {
 		ArrayList<Bnp> myBnpList = myBnpFacade.findAll();
 		transcoTiers(myBnpList);
@@ -175,8 +182,7 @@ public class RapproManager {
 	
 	public void prepaRappro() {
 		LogRappro.logDebug("arrive dans preparappro");
-		Bnp myBnp;
-		Bnp myBnpNr;
+//		Bnp myBnp;
 		myRapproBOList = myRapproDAO.rapproAuto();
 		ArrayList<Operation> myOpeList = new ArrayList<Operation>();
 		ArrayList<Bnp> myBnpList = new ArrayList<Bnp>();
@@ -243,5 +249,21 @@ public class RapproManager {
 	}
 	public OperationUtil getMyOperationUtil() {
 		return myOperationUtil;
+	}
+
+	public Operation getMyOperation() {
+		return myOperation;
+	}
+
+	public int getTabSelectedCreationCheckBnp() {
+		return tabSelectedCreationCheckBnp;
+	}
+
+	public Bnp getMyBnp() {
+		return myBnp;
+	}
+
+	public Tiers getMyTiers() {
+		return myTiers;
 	}
 }

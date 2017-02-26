@@ -43,9 +43,9 @@ public class BnpNrTableau extends CheckableTableau {
 		case 2:
 			return current.getMontantBnp();
 		case 3:
-			return rowIndex == tabSelected;
+			return rowIndex == tabSelectedRapproManu;
 		case 4:
-			return rowIndex == tabSelected;
+			return rowIndex == tabSelectedCreationCheck;
 		default:
 			throw new IllegalArgumentException("Dans Get ValueAT de BnpNrTableau TableauInvalid column index");
 		}
@@ -58,19 +58,19 @@ public class BnpNrTableau extends CheckableTableau {
 		if (columnIndex == 3) {
 			boolean checked = (boolean) aValue;
 			if (checked) {
-				tabSelected = rowIndex;
+				tabSelectedRapproManu = rowIndex;
 				myRapproMngr.chekNr();
 			} else {
-				tabSelected = -1;
+				tabSelectedRapproManu = -1;
 			}
 		}
 		if (columnIndex == 4) {
 			boolean checked = (boolean) aValue;
 			if (checked) {
-				tabSelected = rowIndex;
+				tabSelectedCreationCheck = rowIndex;
 				myRapproMngr.creationOpeNr();
 			} else {
-				tabSelected = -1;
+				tabSelectedCreationCheck = -1;
 			}
 		}
 		LogRappro.logDebug(" fire");
