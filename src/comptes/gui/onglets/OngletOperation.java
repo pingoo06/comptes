@@ -14,11 +14,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 
 import comptes.gui.combo.FiltreDateCombo;
 import comptes.gui.combo.FiltreRapproCombo;
 import comptes.gui.combo.TiersCombo;
+import comptes.gui.component.MyJTextField;
 import comptes.gui.dto.OperationDTO;
 import comptes.gui.listener.DateDocumentListener;
 import comptes.gui.tableaux.OperationTableau;
@@ -36,7 +36,7 @@ public class OngletOperation extends JSplitPane {
 	private JButton boutonFiltreOpe;
 
 	// Pour operation
-	private JTextField jtfDateOpe;
+	private MyJTextField jtfDateOpe;
 
 	private JTable tableOperation;
 
@@ -72,7 +72,7 @@ public class OngletOperation extends JSplitPane {
 		boutonFiltreOpe = new JButton("Filtrer");
 
 		// Pour operation
-		jtfDateOpe = new JTextField(dateJourStr);
+		jtfDateOpe = new MyJTextField(dateJourStr);
 		pFilters.add(labelDuree);
 		pFilters.add(comboFiltreDuree);
 		pFilters.add(labelRappro);

@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 
+import comptes.gui.component.MyJTextField;
 import comptes.gui.dto.OperationDTO;
 import comptes.gui.listener.DateDocumentListener;
 import comptes.gui.manager.RapproManager;
@@ -39,12 +39,12 @@ public class OngletRappro extends JSplitPane {
 
 	private RapproManager myRapproMngr;
 
-	private JTextField jtfMtInitial ;
-	private JTextField jtfMtFinal ;
-	private JTextField jtfDateRappro ;
-	private JTextField jtfSommeDeb ;
-	private JTextField jtfSommeCred ;
-	private JTextField jtfDiff ;
+	private MyJTextField jtfMtInitial ;
+	private MyJTextField jtfMtFinal ;
+	private MyJTextField jtfDateRappro ;
+	private MyJTextField jtfSommeDeb ;
+	private MyJTextField jtfSommeCred ;
+	private MyJTextField jtfDiff ;
 
 	private JLabel labelMtInitial ;
 	private JLabel labelMtFinal;
@@ -83,14 +83,14 @@ public class OngletRappro extends JSplitPane {
 		DerRappro myDerRappro = new DerRappro();
 		DerRapproFacade myDerRapproFacade = new DerRapproFacade();
 		myDerRappro=myDerRapproFacade.find(1);
-		jtfMtInitial = new JTextField(myDerRappro.getDerSolde().toString());
-		jtfMtFinal = new JTextField();
+		jtfMtInitial = new MyJTextField(myDerRappro.getDerSolde().toString());
+		jtfMtFinal = new MyJTextField();
 		LocalDate dateJour = LocalDate.now();
 		String dateJourStr = DateUtil.format(dateJour, "dd/MM/yyyy");
-		jtfDateRappro = new JTextField(dateJourStr);
-		jtfSommeDeb = new JTextField();
-		jtfSommeCred = new JTextField();
-		jtfDiff = new JTextField();
+		jtfDateRappro = new MyJTextField(dateJourStr);
+		jtfSommeDeb = new MyJTextField();
+		jtfSommeCred = new MyJTextField();
+		jtfDiff = new MyJTextField();
 
 
 		labelMtInitial = new JLabel("Solde Initial");
@@ -193,7 +193,7 @@ public class OngletRappro extends JSplitPane {
 			myGestionOperation = new OperationUtil();
 			myGestionOperation.create(myOperationDTO);
 			if (myRapproMngr.getTabSelectedCreationCheckBnp() != -1){
-				Bnp myBnp =myRapproMngr.getMyBnp();
+				Bnp myBnp =myRapproMngr.getSelectedBnp();
 				Operation myOperation=myRapproMngr.getMyOperation();
 				Tiers myTiers=myRapproMngr.getMyTiers();
 				myRapproMngr.bnpListNrToRapproTableau(myBnp, myOperation, myOperationDTO.getTiers());
@@ -226,23 +226,23 @@ public class OngletRappro extends JSplitPane {
 	public JTable getTableOpeNr() {
 		return tableOpeNr;
 	}
-	public JTextField getJtfDateRappro() {
+	public MyJTextField getJtfDateRappro() {
 		return jtfDateRappro;
 	}
-	public void setJtfDateRappro(JTextField jtfDateRappro) {
+	public void setJtfDateRappro(MyJTextField jtfDateRappro) {
 		this.jtfDateRappro = jtfDateRappro;
 	}
 
-	public JTextField getJtfMtInitial() {
+	public MyJTextField getJtfMtInitial() {
 		return jtfMtInitial;
 	}
-	public void setJtfMtInitial(JTextField jtfMtInitial) {
+	public void setJtfMtInitial(MyJTextField jtfMtInitial) {
 		this.jtfMtInitial = jtfMtInitial;
 	}
-	public JTextField getJtfMtFinal() {
+	public MyJTextField getJtfMtFinal() {
 		return jtfMtFinal;
 	}
-	public void setJtfMtFinal(JTextField jtfMtFinal) {
+	public void setJtfMtFinal(MyJTextField jtfMtFinal) {
 		this.jtfMtFinal = jtfMtFinal;
 	}
 	public PanelCreationOperation getPanelCreationOperation() {

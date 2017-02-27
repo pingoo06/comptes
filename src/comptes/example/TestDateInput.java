@@ -1,5 +1,8 @@
 package comptes.example;
 
+import java.awt.Dimension;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
@@ -23,12 +26,26 @@ public class TestDateInput {
 		
 		p.add(tf);
 		f.getContentPane().add(p);
-		JTextField tf2 = new JTextField("");
-		
+		JTextField tf2 = new JTextField("Chabadea");
+		tf2.setPreferredSize(new Dimension(200,100));
+		p.add(tf2);
 		f.setVisible(true);
 		f.pack();
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		tf2.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				tf2.selectAll();
+			}
+		});
 		tf.addPropertyChangeListener(new PropertyChangeListener() {
 			
 			@Override

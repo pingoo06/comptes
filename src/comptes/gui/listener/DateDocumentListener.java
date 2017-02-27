@@ -2,20 +2,20 @@ package comptes.gui.listener;
 
 import java.time.LocalDate;
 
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import comptes.gui.component.MyJTextField;
 import comptes.util.DateUtil;
 import comptes.util.log.Logger;
 
 public class DateDocumentListener implements DocumentListener {
 
-	private JTextField jtf;
+	private MyJTextField jtf;
 	
 	
-	public DateDocumentListener(JTextField jtf) {
+	public DateDocumentListener(MyJTextField jtf) {
 		super();
 		this.jtf = jtf;
 	}

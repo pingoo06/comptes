@@ -14,11 +14,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import comptes.gui.combo.CategorieCombo;
 import comptes.gui.combo.TiersCombo;
 import comptes.gui.combo.TypeOpeCombo;
+import comptes.gui.component.MyJTextField;
 import comptes.gui.dto.OperationDTO;
 import comptes.gui.listener.DateDocumentListener;
 import comptes.model.db.entity.Tiers;
@@ -41,11 +41,11 @@ public class PanelCreationOperation extends Box {
 
 	private JButton boutonOKOpe;
 	private JButton boutonAnnulOpe;
-	private JTextField jtfDateOpe;
-	private JTextField jtfNumChq;
-	private JTextField jtfDetailOpe;
-	private JTextField jtfDebit;
-	private JTextField jtfCredit;
+	private MyJTextField jtfDateOpe;
+	private MyJTextField jtfNumChq;
+	private MyJTextField jtfDetailOpe;
+	private MyJTextField jtfDebit;
+	private MyJTextField jtfCredit;
 
 	// combo operation
 	private TypeOpeCombo comboTypeOpe;
@@ -64,11 +64,11 @@ public class PanelCreationOperation extends Box {
 		Font police = new Font("Arial", Font.BOLD, 12);
 		LocalDate dateJour = LocalDate.now();
 		String dateJourStr = DateUtil.format(dateJour, "dd/MM/yyyy");
-		jtfDateOpe = new JTextField(dateJourStr);
-		jtfNumChq = new JTextField("");
-		jtfDetailOpe = new JTextField("");
-		jtfDebit = new JTextField("");
-		jtfCredit = new JTextField("");
+		jtfDateOpe = new MyJTextField(dateJourStr);
+		jtfNumChq = new MyJTextField("");
+		jtfDetailOpe = new MyJTextField("");
+		jtfDebit = new MyJTextField("");
+		jtfCredit = new MyJTextField("");
 
 		// combo operation
 		comboTypeOpe = new TypeOpeCombo();
@@ -191,7 +191,7 @@ public class PanelCreationOperation extends Box {
 		add(b3);
 	}
 
-	private JPanel wrap(JLabel label, JTextField tf) {
+	private JPanel wrap(JLabel label, MyJTextField tf) {
 		JPanel jp = new JPanel();
 		jp.add(label);
 		jp.add(tf);
@@ -271,19 +271,19 @@ public class PanelCreationOperation extends Box {
 		return boutonAnnulOpe;
 	}
 
-	public JTextField getJtfDateOpe() {
+	public MyJTextField getJtfDateOpe() {
 		return jtfDateOpe;
 	}
 
-	public JTextField getJtfDetailOpe() {
+	public MyJTextField getJtfDetailOpe() {
 		return jtfDetailOpe;
 	}
 
-	public JTextField getJtfDebit() {
+	public MyJTextField getJtfDebit() {
 		return jtfDebit;
 	}
 
-	public JTextField getJtfCredit() {
+	public MyJTextField getJtfCredit() {
 		return jtfCredit;
 	}
 
@@ -311,11 +311,11 @@ public class PanelCreationOperation extends Box {
 		return b3;
 	}
 
-	public JTextField getJtfNumChq() {
+	public MyJTextField getJtfNumChq() {
 		return jtfNumChq;
 	}
 
-	public void setJtfNumChq(JTextField jtfNumChq) {
+	public void setJtfNumChq(MyJTextField jtfNumChq) {
 		this.jtfNumChq = jtfNumChq;
 	}
 }

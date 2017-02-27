@@ -15,11 +15,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 
 import comptes.gui.combo.CategorieCombo;
 import comptes.gui.combo.TiersCombo;
 import comptes.gui.combo.TypeEchCombo;
+import comptes.gui.component.MyJTextField;
 import comptes.gui.dto.EcheancierDTO;
 import comptes.gui.listener.DateDocumentListener;
 import comptes.gui.tableaux.EcheancierTableau;
@@ -38,12 +38,12 @@ public class OngletEcheancier extends JSplitPane {
 
 
 	// Pour echeancier
-	private JTextField jtfDateEch = new JTextField(new MyDate().toString());
-	private JTextField jtfNbEch = new JTextField();
-	private JTextField jtfTypeEch = new JTextField("Prelevement");
-	private JTextField jtfCategEch = new JTextField();
-	private JTextField jtfTiersEch = new JTextField();
-	private JTextField jtfMontantEch = new JTextField();
+	private MyJTextField jtfDateEch = new MyJTextField(new MyDate().toString());
+	private MyJTextField jtfNbEch = new MyJTextField();
+	private MyJTextField jtfTypeEch = new MyJTextField("Prelevement");
+	private MyJTextField jtfCategEch = new MyJTextField();
+	private MyJTextField jtfTiersEch = new MyJTextField();
+	private MyJTextField jtfMontantEch = new MyJTextField();
 
 	private JLabel labelTypeEch = new JLabel("TypeEch");
 	private JLabel labelTiers = new JLabel("Tiers");
