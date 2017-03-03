@@ -2,7 +2,6 @@ package comptes.gui.manager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import comptes.gui.onglets.OngletRappro;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
@@ -110,7 +109,7 @@ public class RapproManager {
 	}
 	
 	public void doRappro(Bnp bnp, Operation operation) {
-		String libTiers = myOperationUtil.getLibTiersFromOpe(myOperation);
+		String libTiers = myOperationUtil.getLibTiersFromOpe(operation);
 		RapproBO myRapproBo = new RapproBO(bnp, operation, libTiers);
 		myBnpListNr.remove(bnp);
 		myOpeListNr.remove(operation);

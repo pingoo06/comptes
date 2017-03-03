@@ -41,13 +41,11 @@ public class OngletMatching extends JSplitPane {
 
 	private JTable tableMatching;
 
-
 	public OngletMatching() {
 		labelLibBnp = new JLabel("Libellé BNP");
 		jtfLibBnp = new MyJTextField();
 		labelTiers= new JLabel("Tiers");
-		TiersCombo comboTiers = new TiersCombo();
-		
+		comboTiers = new TiersCombo();
 		
 		boutonOkMatch = new JButton("OK");
 		boutonOkMatch.addActionListener(new boutonOkMatchListener());
@@ -69,7 +67,6 @@ public class OngletMatching extends JSplitPane {
 			}
 		});
 		
-		
 		vTopM = new JPanel();
 		setTopComponent(vTopM);
 		vTopM.setLayout(new BorderLayout());
@@ -87,7 +84,13 @@ public class OngletMatching extends JSplitPane {
 		// Tableau matching
 		tableMatching = new JTable(new MatchingTableau());
 		tableMatching.setAutoCreateRowSorter(true);
-		vTopM.add(new JScrollPane(tableMatching), BorderLayout.CENTER);
+		JScrollPane jScrollPane = new JScrollPane(tableMatching);
+		JPanel jp = new JPanel();
+		jScrollPane.setSize(new Dimension(100, 200));
+		jp.setPreferredSize(new Dimension(250,500));
+		jp.add(jScrollPane);
+		vTopM.add(jp);
+		
 
 //		comboTiers.addActionListener(new ActionListener() {
 //			@Override

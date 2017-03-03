@@ -16,18 +16,18 @@ public class RapproAmexManager {
 		myOpeAmexList = new ArrayList<Operation>();
 	}
 
-	public void chekAmex(Operation opearation) {
-		if (!myOpeAmexList.contains(opearation)) {
-			myOpeAmexList.add(opearation);
-			sumOpeAmex += opearation.getMontantOpe();
+	public void chekAmex(Operation operation) {
+		if (!myOpeAmexList.contains(operation)) {
+			myOpeAmexList.add(operation);
+			sumOpeAmex += operation.getMontantOpe();
 			LogRappro.logInfo("mt AmexBnp " + mtAmexBnp + " mt amex Ope " + sumOpeAmex);
 		}
 	}
 
-	public void uncheckRappro(Operation opearation) {
-		if (myOpeAmexList.contains(opearation)) {
-			myOpeAmexList.remove(opearation);
-			sumOpeAmex -= opearation.getMontantOpe();
+	public void uncheckRappro(Operation operation) {
+		if (myOpeAmexList.contains(operation)) {
+			myOpeAmexList.remove(operation);
+			sumOpeAmex -= operation.getMontantOpe();
 			LogRappro.logInfo(" uncheck mt AmexBnp " + mtAmexBnp + " mt amex Ope " + sumOpeAmex);
 		}
 

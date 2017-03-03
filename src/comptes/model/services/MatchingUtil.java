@@ -11,6 +11,7 @@ public class MatchingUtil {
 	// Constructeur
 	public MatchingUtil() {
 		super();
+		myMatchingFacade = new MatchingFacade();
 	}
 
 	public void create(MatchingDTO myMatchingDTO) {
