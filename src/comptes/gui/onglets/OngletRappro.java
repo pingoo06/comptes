@@ -21,7 +21,6 @@ import javax.swing.JTable;
 import comptes.gui.component.MyJTextField;
 import comptes.gui.dto.OperationDTO;
 import comptes.gui.listener.DateDocumentListener;
-import comptes.gui.manager.RapproAmexManager;
 import comptes.gui.manager.RapproManager;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
@@ -39,7 +38,6 @@ public class OngletRappro extends JSplitPane {
 	private static final long serialVersionUID = 1L;
 
 	private RapproManager myRapproMngr;
-private RapproAmexManager myRapproAmexMngr;
 	private MyJTextField jtfMtInitial ;
 	private MyJTextField jtfMtFinal ;
 	private MyJTextField jtfDateRappro ;
@@ -69,8 +67,7 @@ private RapproAmexManager myRapproAmexMngr;
 	//bottom
 
 	public OngletRappro() {
-		myRapproMngr=new RapproManager(this);
-		myRapproAmexMngr = new RapproAmexManager(this);
+		
 		vTopR 	  = new JPanel();
 		vBottomR  = new JPanel();
 		 Box b1 = Box.createHorizontalBox();
@@ -153,6 +150,7 @@ private RapproAmexManager myRapproAmexMngr;
 
 		// Tableau rappro
 //		myGestionRappro.ecritOpeCredit();
+		myRapproMngr=new RapproManager(this);
 		myRapproMngr.prepaRappro();
 		tableRappro = new JTable(new RapproTableau(myRapproMngr));
 		vTopR.add(new JScrollPane(tableRappro), BorderLayout.CENTER);
@@ -182,8 +180,7 @@ private RapproAmexManager myRapproAmexMngr;
 
 		jtfDateRappro.getDocument().addDocumentListener(new DateDocumentListener(jtfDateRappro));
 
-
-
+		myRapproMngr.updateTableaux();
 	}
 
 	//Execution du bouton OK Operation
