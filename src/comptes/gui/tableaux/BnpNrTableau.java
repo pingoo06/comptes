@@ -68,7 +68,7 @@ public class BnpNrTableau extends CheckableTableau {
 			boolean checked = (boolean) aValue;
 			if (checked) {
 				tabSelectedCreationCheck = rowIndex;
-				myRapproMngr.creationOpeNr();
+				myRapproMngr.createOpeFromBnpNr();
 			} else {
 				tabSelectedCreationCheck = -1;
 			}

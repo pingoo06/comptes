@@ -21,6 +21,7 @@ import javax.swing.JTable;
 import comptes.gui.component.MyJTextField;
 import comptes.gui.dto.OperationDTO;
 import comptes.gui.listener.DateDocumentListener;
+import comptes.gui.manager.RapproAmexManager;
 import comptes.gui.manager.RapproManager;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
@@ -38,7 +39,7 @@ public class OngletRappro extends JSplitPane {
 	private static final long serialVersionUID = 1L;
 
 	private RapproManager myRapproMngr;
-
+private RapproAmexManager myRapproAmexMngr;
 	private MyJTextField jtfMtInitial ;
 	private MyJTextField jtfMtFinal ;
 	private MyJTextField jtfDateRappro ;
@@ -69,6 +70,7 @@ public class OngletRappro extends JSplitPane {
 
 	public OngletRappro() {
 		myRapproMngr=new RapproManager(this);
+		myRapproAmexMngr = new RapproAmexManager(this);
 		vTopR 	  = new JPanel();
 		vBottomR  = new JPanel();
 		 Box b1 = Box.createHorizontalBox();

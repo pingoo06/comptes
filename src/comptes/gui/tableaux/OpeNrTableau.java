@@ -42,11 +42,13 @@ public class OpeNrTableau extends CheckableTableau {
 		case 1:
 			return myRapproMngr.getMyOperationUtil().getLibTiersFromOpe(current);
 		case 2:
-			if (current.getMontantOpe() > 0) {
-				return current.getMontantOpe();
-			} else {
-				return current.getMontantOpe() * -1;
-			}
+			//03/03
+//			if (current.getMontantOpe() > 0) {
+//				return current.getMontantOpe();
+//			} else {
+//				return current.getMontantOpe() * -1;
+//			}
+			return current.getMontantOpe();
 		case 3:
 			return rowIndex==tabSelectedRapproManu ;
 		default:

@@ -48,11 +48,13 @@ public class RapproTableau extends CheckableTableau {
 		case 4:
 			return current.getBnp().getMontantBnp();
 		case 5:
-			if (current.getOperation().getMontantOpe() > 0) {
-				return current.getOperation().getMontantOpe();
-			} else {
-				return current.getOperation().getMontantOpe() * -1;
-			}
+			//03/03
+//			if (current.getOperation().getMontantOpe() > 0) {
+//				return current.getOperation().getMontantOpe();
+//			} else {
+//				return current.getOperation().getMontantOpe() * -1;
+//			}
+			return current.getOperation().getMontantOpe();
 		case 6:
 			return true;
 		default:
