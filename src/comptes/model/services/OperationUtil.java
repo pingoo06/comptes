@@ -9,7 +9,9 @@ import comptes.model.facade.CategorieFacade;
 import comptes.model.facade.OperationFacade;
 import comptes.model.facade.TiersFacade;
 import comptes.util.MyDate;
+import comptes.util.log.LogOperation;
 import comptes.util.log.Logger;
+import sun.util.resources.OpenListResourceBundle;
 
 public class OperationUtil {
 	private OperationFacade myOperationFacade = new OperationFacade();
@@ -112,6 +114,11 @@ public class OperationUtil {
 		TiersFacade myTiersFacade = new TiersFacade();
 		Tiers myTiers = new Tiers();
 		myTiers = myTiersFacade.find(myOperation.getTiersId());
-		return myTiers.getLibTiers();
+		if(myTiers != null) {
+			return myTiers.getLibTiers();
+		}else {
+			LogOperation.logError("Lib tier nor fount for operation : "+myOperation);
+			return "";
+		}
 	}
 }

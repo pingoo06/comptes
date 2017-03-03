@@ -43,7 +43,7 @@ public class BnpNrTableau extends CheckableTableau {
 		case 2:
 			return current.getMontantBnp();
 		case 3:
-			return rowIndex == tabSelectedRapproManu;
+			return tabSelectedRapproManu.contains(rowIndex);
 		case 4:
 			return rowIndex == tabSelectedCreationCheck;
 		default:
@@ -57,11 +57,16 @@ public class BnpNrTableau extends CheckableTableau {
 		LogRappro.logDebug("Début : Set ValueAt de Rappro Tableau");
 		if (columnIndex == 3) {
 			boolean checked = (boolean) aValue;
+			if(!tabSelectedRapproManu.isEmpty() && myRapproMngr.isAmex(myRapproMngr.getMyBnpListNr().get(tabSelectedRapproManu.get(0)))) {
+				myRapproMngr.clearAmex();
+			}
 			if (checked) {
-				tabSelectedRapproManu = rowIndex;
+				tabSelectedRapproManu.clear();
+				tabSelectedRapproManu.add(rowIndex);
 				myRapproMngr.chekNr();
 			} else {
-				tabSelectedRapproManu = -1;
+				myRapproMngr.uncheckBnp();
+				resetTabSelected();
 			}
 		}
 		if (columnIndex == 4) {

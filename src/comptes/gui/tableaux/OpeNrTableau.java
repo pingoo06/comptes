@@ -8,7 +8,6 @@ public class OpeNrTableau extends CheckableTableau {
 	private static final long serialVersionUID = 1L;
 	private String[] columnNames = { "Date Ope", "Tiers", "Montant", "Check" };
 
-	
 	// Remplit le tableau
 	public OpeNrTableau(RapproManager rapproMngr) {
 		super(rapproMngr);
@@ -42,15 +41,15 @@ public class OpeNrTableau extends CheckableTableau {
 		case 1:
 			return myRapproMngr.getMyOperationUtil().getLibTiersFromOpe(current);
 		case 2:
-			//03/03
-//			if (current.getMontantOpe() > 0) {
-//				return current.getMontantOpe();
-//			} else {
-//				return current.getMontantOpe() * -1;
-//			}
+			// 03/03
+			// if (current.getMontantOpe() > 0) {
+			// return current.getMontantOpe();
+			// } else {
+			// return current.getMontantOpe() * -1;
+			// }
 			return current.getMontantOpe();
 		case 3:
-			return rowIndex==tabSelectedRapproManu ;
+			return tabSelectedRapproManu.contains(rowIndex);
 		default:
 			throw new IllegalArgumentException("Dans Get ValueAT de RapproTableau TableauInvalid column index");
 		}
@@ -60,18 +59,18 @@ public class OpeNrTableau extends CheckableTableau {
 	// A implementer
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		 LogRappro.logInfo("Début : Set ValueAt de OpeNR Tableau"); 
-		 if (columnIndex == 3) {
-			 boolean checked = (boolean)aValue;
-			 if(checked){
-				 tabSelectedRapproManu=rowIndex;
-				 myRapproMngr.chekNr();
-			 }
-			 else {
-				 tabSelectedRapproManu=-1;
-			 }
-		 }
-fireTableDataChanged();
+		LogRappro.logInfo("Début : Set ValueAt de OpeNR Tableau");
+		if (columnIndex == 3) {
+			boolean checked = (boolean) aValue;
+			if (checked) {
+				tabSelectedRapproManu.add(rowIndex);
+				myRapproMngr.chekNr();
+			} else {
+				myRapproMngr.uncheckOpearation(rowIndex);
+				tabSelectedRapproManu.remove(new Integer(rowIndex));
+			}
+		}
+		fireTableDataChanged();
 	}
 
 	// Retourne le type de chaque colonne
