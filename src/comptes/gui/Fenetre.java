@@ -13,13 +13,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import comptes.gui.onglets.OngletEcheancier;
+import comptes.gui.onglets.OngletMatching;
 import comptes.gui.onglets.OngletOperation;
 import comptes.gui.onglets.OngletRappro;
 
 public class Fenetre extends JFrame {
 	private static final long serialVersionUID = 1L;
-
-
 
 	private JPanel container = new JPanel();
 
@@ -28,7 +27,6 @@ public class Fenetre extends JFrame {
 
 	public Fenetre() {
 		this.setTitle("Text Field");
-		//		this.setSize(900, 600);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 
@@ -40,6 +38,9 @@ public class Fenetre extends JFrame {
 		onglets.add("Opérations", operationPanel);
 		onglets.add("Echeancier", getEcheancierPanel());
 		onglets.add("Rappro", getRapproPanel());
+		onglets.add("Matching", getMatchingPanel());
+//		onglets.add("Categorie", getRapproPanel());
+//		onglets.add("Tiers", getRapproPanel());
 
 		ChangeListener changeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent changeEvent) {
@@ -71,6 +72,13 @@ public class Fenetre extends JFrame {
 	public Component getRapproPanel() {
 		return new OngletRappro();
 	}
+	// Matching
+	public Component getMatchingPanel() {
+		return new OngletMatching();
+	}
+	
+	
+	
 }
 
 

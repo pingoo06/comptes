@@ -30,10 +30,10 @@ public class InitFillMoney {
 		MatchingFacade myMatchingFacade = new MatchingFacade();
 		myMatchingFacade.create(myMatching);
 		Logger.logInfo("\n appel deuxieme create Matching ");
-		myMatching.setLibCateg("SFR");
+		myMatching.setLibTiers("SFR");
 		myMatching.setlibBnp("SRFSEPA");
 		myMatchingFacade.create(myMatching);
-		myMatching.setLibCateg("Sosh");
+		myMatching.setLibTiers("Sosh");
 		myMatching.setlibBnp("SoshSEPA");
 		myMatchingFacade.create(myMatching);
 
@@ -47,7 +47,7 @@ public class InitFillMoney {
 		}
 		//
 		myMatching = myMatchingFacade.find(1);
-		myMatching.setLibCateg("newBouygues");
+		myMatching.setLibTiers("newBouygues");
 		myMatchingFacade.update(myMatching);
 		myMatchingList = myMatchingFacade.findAll();
 		Logger.logInfo("\n vidage liste Matching après update ");

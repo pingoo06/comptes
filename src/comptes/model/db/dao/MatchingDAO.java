@@ -13,7 +13,7 @@ public class MatchingDAO extends DAO<Matching> {
 		PreparedStatement statement = null;
 		try {
 			statement = connection.prepareStatement("INSERT INTO matching (id,  libTier,  libBnp)VALUES(?,?,?)");
-			statement.setString(2, myMatching.getlibTier());
+			statement.setString(2, myMatching.getlibTiers());
 			statement.setString(3, myMatching.getlibBnp());
 			statement.executeUpdate();
 //			statement.close();
@@ -24,7 +24,6 @@ public class MatchingDAO extends DAO<Matching> {
 				statement.close();
 //				connection.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -73,7 +72,7 @@ public class MatchingDAO extends DAO<Matching> {
 		Statement statement = null;
 		try {
 			statement = connection.createStatement();
-			statement.executeUpdate("UPDATE matching SET libTier='" + myMatching.getlibTier() + "',libBnp='"
+			statement.executeUpdate("UPDATE matching SET libTier='" + myMatching.getlibTiers() + "',libBnp='"
 					+ myMatching.getlibBnp() + "' where Id=" + myMatching.getId());
 			// statement.close();
 		} catch (SQLException e) {
@@ -83,7 +82,6 @@ public class MatchingDAO extends DAO<Matching> {
 				statement.close();
 //				connection.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -102,7 +100,6 @@ public class MatchingDAO extends DAO<Matching> {
 				statement.close();
 //				connection.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

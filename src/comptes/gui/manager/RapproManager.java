@@ -221,7 +221,7 @@ public class RapproManager {
 		ArrayList<Matching> myMatchingList = myMatchingFacade.findAll();
 		for (Matching matching : myMatchingList) {
 			if (myBnp.getLibOpeBnp().toUpperCase().contains(matching.getlibBnp())) {
-				myBnp.setLibOpeBnp(matching.getlibTier());
+				myBnp.setLibOpeBnp(matching.getlibTiers());
 			}
 		}
 	}

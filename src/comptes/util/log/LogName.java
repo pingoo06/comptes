@@ -7,7 +7,8 @@ public enum LogName {
 	bnp(LogLevel.INFO),
 	categorie(LogLevel.INFO),
 	tiers(LogLevel.INFO), 
-	rappro(LogLevel.INFO);
+	rappro(LogLevel.INFO),
+	matching(LogLevel.INFO);
 	
 	private LogName(LogLevel level) {
 		this.level = level;
