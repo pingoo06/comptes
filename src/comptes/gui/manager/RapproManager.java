@@ -39,12 +39,12 @@ public class RapproManager {
 	private RapproTableau myRapproTableau;
 	private int tabSelectedCreationCheckBnp;
 	private BnpNrTableau myBnpNrTableau;
+	private OpeNrTableau myOpeNrTableau;
 	private Bnp selectedBnp;
 	private Tiers myTiers;
-	private double mtAmexBnp;
-	private double sumOpeAmex;
-	private ArrayList<Operation> myOpeAmexList;
 
+	private RapproAmexManager amexManager;
+	
 	public RapproManager(OngletRappro myOngletRappro) {
 		super();
 		this.myOngletRappro = myOngletRappro;
@@ -59,46 +59,88 @@ public class RapproManager {
 		myTiersFacade = new TiersFacade();
 		selectedBnp = new Bnp();
 		myTiers = new Tiers();
-		mtAmexBnp = 0;
-		sumOpeAmex = 0;
-		myOpeAmexList = new ArrayList<Operation>();
+		
+		amexManager = new RapproAmexManager(-1);
+	}
+	
+	public void updateTableaux() {
+		myOpeNrTableau = (OpeNrTableau) myOngletRappro.getTableOpeNr().getModel();
+		myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
+		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
 	}
 
 	public void chekNr() {
-		OpeNrTableau myOpeNrTableau = (OpeNrTableau) myOngletRappro.getTableOpeNr().getModel();
-		int tabSelectedOpe = myOpeNrTableau.getTabSelectedRapproManu();
-		myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
-		int tabSelectedBnp = myBnpNrTableau.getTabSelectedRapproManu();
-		if (tabSelectedBnp != -1) {
-			Bnp myBnp = myBnpListNr.get(tabSelectedBnp);
-			if (myBnp.getLibOpeBnp().contains("AMERICAN EXPRESS")) {
-				chekAmex();
+		ArrayList<Integer> opeNrSelected = myOpeNrTableau.getTabSelectedRapproManu();
+		ArrayList<Integer> bnpNrSelected = myBnpNrTableau.getTabSelectedRapproManu();
+		if (!bnpNrSelected.isEmpty()) {
+			Bnp myBnp = myBnpListNr.get(bnpNrSelected.get(0));
+			if (isAmex(myBnp)) {
+//				chekAmex();
+				amexManager.setMtAmexBnp(myBnp.getMontantBnp());
+				for(int i : opeNrSelected) {
+					amexManager.chekAmex(myOpeListNr.get(i));
+				}
+				if(amexManager.isComplete()) {
+					for(Operation ope : amexManager.getMyOpeAmexList()) {
+						doRappro(myBnp, ope);
+					}
+					rapproEnd();
+					amexManager.reset();
+				}
 			} else {
-				if (tabSelectedOpe != -1) {
+				amexManager.reset();
+				if (!opeNrSelected.isEmpty()) {
 					/*
 					 * rapproche un BNP et une OPE et modifie les tableaux
 					 */
-					Operation myOperation = myOpeListNr.get(tabSelectedOpe);
-					String libTiers = myOperationUtil.getLibTiersFromOpe(myOperation);
-					RapproBO myRapproBo = new RapproBO(myBnp, myOperation, libTiers);
-					myBnpListNr.remove(tabSelectedBnp);
-					myOpeListNr.remove(tabSelectedOpe);
-					myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
-					myRapproBOList.add(myRapproBo);
-					myBnpNrTableau.resetTabSelected();
-					myOpeNrTableau.resetTabSelected();
-					myRapproTableau.fireTableDataChanged();
-					myBnpNrTableau.fireTableDataChanged();
-					myOpeNrTableau.fireTableDataChanged();
+					Operation myOperation = myOpeListNr.get(opeNrSelected.get(0));
+					doRappro(myBnp, myOperation);
+					rapproEnd();
+					while(opeNrSelected.size() > 1) {
+						opeNrSelected.remove(0);
+					}
 				}
+			}
+		}else {
+			//evite de pouvoir cocher plusieurs operations si aucun BNP n'est sélectionné
+			while(opeNrSelected.size() > 1) {
+				opeNrSelected.remove(0);
 			}
 		}
 	}
+	
+	public void doRappro(Bnp bnp, Operation operation) {
+		String libTiers = myOperationUtil.getLibTiersFromOpe(myOperation);
+		RapproBO myRapproBo = new RapproBO(bnp, operation, libTiers);
+		myBnpListNr.remove(bnp);
+		myOpeListNr.remove(operation);
+		myRapproBOList.add(myRapproBo);
+	}
+	public void rapproEnd() {
+		myBnpNrTableau.resetTabSelected();
+		myOpeNrTableau.resetTabSelected();
+		myRapproTableau.fireTableDataChanged();
+		myBnpNrTableau.fireTableDataChanged();
+		myOpeNrTableau.fireTableDataChanged();
+		
+	}
 
+	public boolean isAmex(Bnp bnp) {
+		return bnp.getLibOpeBnp().contains("AMERICAN EXPRESS");
+	}
+	
+	public void uncheckBnp() {
+		amexManager.reset();
+	}
+	
+	public void uncheckOpearation(int rowIndex) {
+		Operation op = myOpeListNr.remove(rowIndex);
+		amexManager.uncheckRappro(op);
+	}
+	
 	public void uncheckRappro(int rowIndex) {
 		// penser au decochage de Amex : tout remettre à zéro : sum, listopeamex
 		// ...
-		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
 		RapproBO myRapproBo = myRapproBOList.remove(rowIndex);
 		myBnpListNr.add(myRapproBo.getBnp());
 		myOpeListNr.add(myRapproBo.getOperation());
@@ -169,8 +211,8 @@ public class RapproManager {
 		}
 	}
 
+	/*
 	public void chekAmex() {
-		OpeNrTableau myOpeNrTableau = (OpeNrTableau) myOngletRappro.getTableOpeNr().getModel();
 		int tabSelectedOpe = myOpeNrTableau.getTabSelectedRapproManu();
 		myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
 		int tabSelectedBnp = myBnpNrTableau.getTabSelectedRapproManu();
@@ -210,7 +252,7 @@ public class RapproManager {
 	}
 
 	}
-
+*/
 	public void transcoTiers(ArrayList<Bnp> myBnpList) {
 		for (Bnp bnp : myBnpList) {
 			transcoTiers(bnp);
@@ -330,5 +372,11 @@ public class RapproManager {
 
 	public Tiers getMyTiers() {
 		return myTiers;
+	}
+
+	public void clearAmex() {
+		amexManager.reset();
+		myOpeNrTableau.resetTabSelected();
+		myOpeNrTableau.fireTableDataChanged();
 	}
 }
