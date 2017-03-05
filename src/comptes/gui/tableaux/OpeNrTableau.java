@@ -66,7 +66,7 @@ public class OpeNrTableau extends CheckableTableau {
 				tabSelectedRapproManu.add(rowIndex);
 				myRapproMngr.chekNr();
 			} else {
-				myRapproMngr.uncheckOpearation(rowIndex);
+				myRapproMngr.uncheckOperation(rowIndex);
 				tabSelectedRapproManu.remove(new Integer(rowIndex));
 			}
 		}

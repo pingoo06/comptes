@@ -1,8 +1,5 @@
 package comptes.gui.onglets;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -25,6 +22,7 @@ import comptes.model.db.entity.Tiers;
 import comptes.model.facade.OperationFacade;
 import comptes.model.facade.TiersFacade;
 import comptes.util.DateUtil;
+import comptes.util.log.LogOperation;
 import comptes.util.log.LogRappro;
 
 public class PanelCreationOperation extends Box {
@@ -61,7 +59,6 @@ public class PanelCreationOperation extends Box {
 		b1 = Box.createHorizontalBox();
 		b2 = Box.createHorizontalBox();
 		b3 = Box.createHorizontalBox();
-		Font police = new Font("Arial", Font.BOLD, 12);
 		LocalDate dateJour = LocalDate.now();
 		String dateJourStr = DateUtil.format(dateJour, "dd/MM/yyyy");
 		jtfDateOpe = new MyJTextField(dateJourStr);
@@ -142,28 +139,8 @@ public class PanelCreationOperation extends Box {
 
 		jtfDateOpe.getDocument().addDocumentListener(new DateDocumentListener(jtfDateOpe));
 
-		jtfDebit.setFont(police);
-		jtfDebit.setPreferredSize(new Dimension(100, 20));
-		jtfDebit.setForeground(Color.BLUE);
-
-		JPanel jp = new JPanel();
-		jp.add(jtfDebit);
-		jtfCredit.setFont(police);
-		jtfCredit.setPreferredSize(new Dimension(100, 20));
-		jtfCredit.setForeground(Color.BLUE);
-		jtfNumChq.setFont(police);
-		jtfNumChq.setPreferredSize(new Dimension(100, 20));
-		jtfNumChq.setForeground(Color.BLUE);
-		jtfDateOpe.setFont(police);
-		jtfDateOpe.setPreferredSize(new Dimension(100, 20));
-		jtfDateOpe.setForeground(Color.GREEN);
-		jtfDateOpe.setFont(police);
-		jtfDetailOpe.setPreferredSize(new Dimension(100, 20));
-		jtfDetailOpe.setFont(police);
-		jtfDetailOpe.setForeground(Color.RED);
-
-		// b1.add(labelDateOpe);
-		b1.add(wrap(labelDateOpe, jtfDateOpe));
+		b1.add(labelDateOpe);
+		b1.add(jtfDateOpe);
 		b1.add(labelTypeOpe);
 		b1.add(comboTypeOpe);
 		b1.add(labelNumChq);
@@ -172,12 +149,9 @@ public class PanelCreationOperation extends Box {
 		b1.add(comboTiers);
 		b1.add(labelCategOpe);
 		b1.add(comboCategorie);
-		// b2.add(labelDebit);
 		JPanel jpB2 = new JPanel();
 		jpB2.add(wrap(labelDebit, jtfDebit));
-		// b2.add(labelCredit);
 		jpB2.add(wrap(labelCredit, jtfCredit));
-		// b2.add(labelDetailOpe);
 		jpB2.add(wrap(labelDetailOpe, jtfDetailOpe));
 		b2.add(jpB2);
 		b3.add(boutonAnnulOpe);
@@ -239,6 +213,63 @@ public class PanelCreationOperation extends Box {
 		return myOperationDTO;
 	}
 	
+	
+	public String validateSaisieOpe() {
+
+		String res = "";
+		LogOperation.logDebug("Debut validateSaisieOpe");
+
+		// Date présente et correcte
+		if (jtfDateOpe.getText().length() == 0) {
+			res = "Saisir une date";
+		} else {
+			String dateSaisie = jtfDateOpe.getText();
+			if (!dateSaisie.matches("[0123][0-9]/[01][0-9]/[0-9]{4}")) {
+				res = "Saisir une date au format jj/mm/aaaa";
+			}
+		}
+
+		// Tiers choisi
+		if (comboTiers.getSelectedItem().toString().length() == 0
+				|| comboTiers.getSelectedItem().toString() == "Tout") {
+			res = "Saisir un tiers";
+		}
+
+		// categorie choisie
+		if (comboCategorie.getSelectedItem().toString().length() == 0) {
+			res = "Saisir une categorie";
+		}
+
+		// Au moins un montant
+		if (jtfDebit.getText().length() == 0
+				&& jtfCredit.getText().length() == 0) {
+			res = "saisir un montant";
+		}
+
+		// Un seul montant
+		if (jtfDebit.getText().length() != 0
+				&& jtfCredit.getText().length() != 0) {
+			res = "Saisir un seul montant";
+		}
+
+		// cohérence type Ope montant choisi
+		if ("VIR_RECU".equals(comboTypeOpe.getSelectedItem().toString())
+				|| "REMISE_CHQ".equals(comboTypeOpe.getSelectedItem().toString())
+				|| "DEPOT".equals(comboTypeOpe.getSelectedItem().toString())) {
+			if (jtfCredit.getText().length() == 0) {
+				res = "Saisir un crédit et non un débit";
+			}
+		} else if (jtfDebit.getText().length() == 0) {
+			res = "Saisir un débit et non un crédit";
+		}
+		
+		// cohérence type Ope et saisie num chq
+		if (jtfNumChq.getText().length() != 0
+			&& !"CHQ".equals(comboTypeOpe.getSelectedItem().toString())) {
+			res = "Incohérence entre type Ope et numéro de chèque";
+		}
+		return res;
+	}
 	public void fillFieldFromOpeDto (OperationDTO myOperationDTO) {
 		comboTiers.setSelectedItem(myOperationDTO.getTiers());
 		comboCategorie.setSelectedItem(myOperationDTO.getCategOpe());

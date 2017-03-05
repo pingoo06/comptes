@@ -1,7 +1,6 @@
 package comptes.gui.onglets;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -13,6 +12,7 @@ import java.time.LocalDate;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -28,7 +28,6 @@ import comptes.gui.tableaux.RapproTableau;
 import comptes.model.db.entity.Bnp;
 import comptes.model.db.entity.DerRappro;
 import comptes.model.db.entity.Operation;
-import comptes.model.db.entity.Tiers;
 import comptes.model.facade.DerRapproFacade;
 import comptes.model.services.OperationUtil;
 import comptes.util.DateUtil;
@@ -101,31 +100,14 @@ public class OngletRappro extends JSplitPane {
 
 		boutonValidRappro = new JButton("Valider");
 		boutonAnnulRappro = new JButton("Annuler");
+
 		Font police = new Font("Arial", Font.BOLD, 12);
 		labelMtInitial.setFont(police);
-		jtfMtInitial.setFont(police);
-		jtfMtInitial.setPreferredSize(new Dimension(100, 20));
-		jtfMtInitial.setForeground(Color.BLUE);
 		labelMtFinal.setFont(police);
-		jtfMtFinal.setFont(police);
-		jtfMtFinal.setPreferredSize(new Dimension(100, 20));
-		jtfMtFinal.setForeground(Color.BLUE);
 		labelDateRappro.setFont(police);
-		jtfDateRappro.setFont(police);
-		jtfDateRappro.setPreferredSize(new Dimension(100, 20));
-		jtfDateRappro.setForeground(Color.BLUE);
 		labelSommeDeb.setFont(police);
-		jtfSommeDeb.setFont(police);
-		jtfSommeDeb.setPreferredSize(new Dimension(100, 20));
-		jtfSommeDeb.setForeground(Color.BLUE);
 		labelSommeCred.setFont(police);
-		jtfSommeCred.setFont(police);
-		jtfSommeCred.setPreferredSize(new Dimension(100, 20));
-		jtfSommeCred.setForeground(Color.BLUE);
 		labelDiff.setFont(police);
-		jtfDiff.setFont(police);
-		jtfDiff.setPreferredSize(new Dimension(100, 20));
-		jtfDiff.setForeground(Color.BLUE);
 
 		vTopR.setLayout(new BorderLayout());
 		paramPanR = new JPanel();
@@ -185,19 +167,27 @@ public class OngletRappro extends JSplitPane {
 
 	//Execution du bouton OK Operation
 	class BoutonOKListener implements ActionListener {
-		private OperationDTO myOperationDTO ;
+		private OperationDTO myOperationDTO;
 		private OperationUtil myGestionOperation;
+
 		public void actionPerformed(ActionEvent e) {
 			myOperationDTO = panelCreationOperation.createOpeDtoFromField();
-			myGestionOperation = new OperationUtil();
-			myGestionOperation.create(myOperationDTO);
-			if (myRapproMngr.getTabSelectedCreationCheckBnp() != -1){
-				Bnp myBnp =myRapproMngr.getSelectedBnp();
-				Operation myOperation=myRapproMngr.getMyOperation();
-				Tiers myTiers=myRapproMngr.getMyTiers();
-				myRapproMngr.bnpListNrToRapproTableau(myBnp, myOperation, myOperationDTO.getTiers());
+			final JOptionPane frame;
+			String res = panelCreationOperation.validateSaisieOpe();
+			if (res != "") {
+				frame = new JOptionPane();
+				JOptionPane.showMessageDialog(frame, res, "Saisie erronée", JOptionPane.WARNING_MESSAGE);
+			} else {
+				myGestionOperation = new OperationUtil();
+				myGestionOperation.create(myOperationDTO);
+				if (myRapproMngr.getTabSelectedCreationCheckBnp() != -1) {
+					Bnp myBnp = myRapproMngr.getSelectedBnp();
+					Operation myOperation = myRapproMngr.getMyOperation();
+					// Tiers myTiers=myRapproMngr.getMyTiers();
+					myRapproMngr.bnpListNrToRapproTableau(myBnp, myOperation, myOperationDTO.getTiers());
+				}
+				panelCreationOperation.clearSaisieOpe();
 			}
-			panelCreationOperation.clearSaisieOpe();
 		}
 	}
 

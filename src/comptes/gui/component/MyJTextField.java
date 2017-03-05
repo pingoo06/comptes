@@ -1,5 +1,8 @@
 package comptes.gui.component;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -11,6 +14,10 @@ public class MyJTextField extends JTextField {
 	private static final long serialVersionUID = 7834295077765346095L;
 
 	{
+		Font police = new Font("Arial", Font.BOLD, 12);
+		this.setFont(police);
+		this.setPreferredSize(new Dimension(100, 20));
+		this.setForeground(Color.BLUE);
 		init();
 	}
 
@@ -34,8 +41,8 @@ public class MyJTextField extends JTextField {
 	}
 
 	public void init() {
-		addFocusListener(new FocusListener() {
-
+		addFocusListener(new FocusListener() 
+		{
 			@Override
 			public void focusLost(FocusEvent e) {
 				// TODO Auto-generated method stub

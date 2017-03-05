@@ -3,8 +3,6 @@ package comptes.gui.onglets;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 
 import javax.swing.JButton;
@@ -18,9 +16,7 @@ import javax.swing.JTable;
 import comptes.gui.combo.FiltreDateCombo;
 import comptes.gui.combo.FiltreRapproCombo;
 import comptes.gui.combo.TiersCombo;
-import comptes.gui.component.MyJTextField;
 import comptes.gui.dto.OperationDTO;
-import comptes.gui.listener.DateDocumentListener;
 import comptes.gui.tableaux.OperationTableau;
 import comptes.model.services.OperationUtil;
 import comptes.util.DateUtil;
@@ -34,12 +30,7 @@ public class OngletOperation extends JSplitPane {
 	String dateJourStr = DateUtil.format(dateJour, "dd/MM/yyyy");
 
 	private JButton boutonFiltreOpe;
-
-	// Pour operation
-	private MyJTextField jtfDateOpe;
-
 	private JTable tableOperation;
-
 	JPanel saisieOpePan = new JPanel();
 
 	TiersCombo comboFiltreTiers = new TiersCombo();
@@ -72,7 +63,6 @@ public class OngletOperation extends JSplitPane {
 		boutonFiltreOpe = new JButton("Filtrer");
 
 		// Pour operation
-		jtfDateOpe = new MyJTextField(dateJourStr);
 		pFilters.add(labelDuree);
 		pFilters.add(comboFiltreDuree);
 		pFilters.add(labelRappro);
@@ -125,16 +115,6 @@ public class OngletOperation extends JSplitPane {
 				model.deleteRow(modelIdx);
 			}
 		});
-
-		// AJOUT TESTS SUR DATEOPE
-		jtfDateOpe.addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-			}
-		});
-
-		jtfDateOpe.getDocument().addDocumentListener(new DateDocumentListener(jtfDateOpe));
-
 	}
 
 	// Execution du bouton OK Operation
@@ -143,7 +123,7 @@ public class OngletOperation extends JSplitPane {
 			final JOptionPane frame;
 			LogOperation.logDebug("Dans Bouton OK listener");
 			OperationDTO myOperationDTO = panelCreationOperation.createOpeDtoFromField();
-			String res = validateSaisieOpe();
+			String res = panelCreationOperation.validateSaisieOpe() ;
 			if (res != "") {
 				frame = new JOptionPane();
 				JOptionPane.showMessageDialog(frame, res, "Saisie erronée", JOptionPane.WARNING_MESSAGE);
@@ -157,57 +137,10 @@ public class OngletOperation extends JSplitPane {
 			}
 
 		}
+		
+		
 
-		public String validateSaisieOpe() {
-
-			String res = "";
-			LogOperation.logDebug("Debut validateSaisieOpe");
-
-			// Date présente et correcte
-			if (panelCreationOperation.getJtfDateOpe().getText().length() == 0) {
-				res = "Saisir une date";
-			} else {
-				String dateSaisie = panelCreationOperation.getJtfDateOpe().getText();
-				if (!dateSaisie.matches("[0123][0-9]/[01][0-9]/[0-9]{4}")) {
-					res = "Saisir une date au format jj/mm/aaaa";
-				}
-			}
-
-			// Tiers choisi
-			if (panelCreationOperation.getComboTiers().getSelectedItem().toString().length() == 0
-					|| panelCreationOperation.getComboTiers().getSelectedItem().toString() == "Tout") {
-				res = "Saisir un tiers";
-			}
-
-			// categorie choisie
-			if (panelCreationOperation.getComboCategorie().getSelectedItem().toString().length() == 0) {
-				res = "Saisir une categorie";
-			}
-
-			// Au moins un montant
-			if (panelCreationOperation.getJtfDebit().getText().length() == 0
-					&& panelCreationOperation.getJtfCredit().getText().length() == 0) {
-				res = "saisir un montant";
-			}
-
-			// Un seul montant
-			if (panelCreationOperation.getJtfDebit().getText().length() != 0
-					&& panelCreationOperation.getJtfCredit().getText().length() != 0) {
-				res = "Saisir un seul montant";
-			}
-
-			// cohérence type Ope montant choisi
-			if ("VIR_RECU".equals(panelCreationOperation.getComboTypeOpe().getSelectedItem().toString())
-					|| "REMISE_CHQ".equals(panelCreationOperation.getComboTypeOpe().getSelectedItem().toString())
-					|| "DEPOT".equals(panelCreationOperation.getComboTypeOpe().getSelectedItem().toString())) {
-				if (panelCreationOperation.getJtfCredit().getText().length() == 0) {
-					res = "Saisir un crédit et non un débit";
-				}
-			} else if (panelCreationOperation.getJtfDebit().getText().length() == 0) {
-				res = "Saisir un débit et non un crédit";
-			}
-			return res;
-		}
+		
 	}
 
 	// Execution du bouton Filtrer

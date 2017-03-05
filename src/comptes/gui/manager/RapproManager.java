@@ -58,15 +58,10 @@ public class RapproManager {
 		myTiersFacade = new TiersFacade();
 		selectedBnp = new Bnp();
 		myTiers = new Tiers();
-		
 		amexManager = new RapproAmexManager(-1);
 	}
 	
-	public void updateTableaux() {
-		myOpeNrTableau = (OpeNrTableau) myOngletRappro.getTableOpeNr().getModel();
-		myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
-		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
-	}
+
 
 	public void chekNr() {
 		ArrayList<Integer> opeNrSelected = myOpeNrTableau.getTabSelectedRapproManu();
@@ -132,7 +127,7 @@ public class RapproManager {
 		amexManager.reset();
 	}
 	
-	public void uncheckOpearation(int rowIndex) {
+	public void uncheckOperation(int rowIndex) {
 		Operation op = myOpeListNr.remove(rowIndex);
 		amexManager.uncheckRappro(op);
 	}
@@ -283,7 +278,6 @@ public class RapproManager {
 
 	public void prepaRappro() {
 		LogRappro.logDebug("arrive dans preparappro");
-		// Bnp myBnp;
 		myRapproBOList = myRapproDAO.rapproAuto();
 		ArrayList<Operation> myOpeList = new ArrayList<Operation>();
 		ArrayList<Bnp> myBnpList = new ArrayList<Bnp>();
@@ -335,6 +329,12 @@ public class RapproManager {
 		myDerRapproFacade.update(myDerRappro);
 		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
 		myRapproTableau.fireTableDataChanged();
+	}
+	
+	public void updateTableaux() {
+		myOpeNrTableau = (OpeNrTableau) myOngletRappro.getTableOpeNr().getModel();
+		myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
+		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
 	}
 
 	public OngletRappro getMyOngletRappro() {
