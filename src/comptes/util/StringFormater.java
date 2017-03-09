@@ -11,4 +11,12 @@ public class StringFormater {
 		return res;
 	}
 
+	public static boolean estUnDouble(String chaine) {
+		try {
+			Double.parseDouble(chaine);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
 }

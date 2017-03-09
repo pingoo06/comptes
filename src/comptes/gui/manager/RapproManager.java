@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import comptes.gui.onglets.OngletRappro;
+import comptes.gui.onglets.PanelRappro;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
 import comptes.gui.tableaux.RapproTableau;
@@ -45,7 +46,7 @@ public class RapproManager {
 
 	private RapproAmexManager amexManager;
 	private RapproSommesManager rapproSommesManager;
-	
+
 	public RapproManager(OngletRappro myOngletRappro) {
 		super();
 		this.myOngletRappro = myOngletRappro;
@@ -61,9 +62,8 @@ public class RapproManager {
 		selectedBnp = new Bnp();
 		myTiers = new Tiers();
 		amexManager = new RapproAmexManager(-1);
+		// rapproSommesManager = new RapproSommesManager();
 	}
-	
-
 
 	public void chekNr() {
 		ArrayList<Integer> opeNrSelected = myOpeNrTableau.getTabSelectedRapproManu();
@@ -72,12 +72,13 @@ public class RapproManager {
 			Bnp myBnp = myBnpListNr.get(bnpNrSelected.get(0));
 			if (isAmex(myBnp)) {
 				amexManager.setMtAmexBnp(myBnp.getMontantBnp());
-				for(int i : opeNrSelected) {
+				for (int i : opeNrSelected) {
 					amexManager.chekAmex(myOpeListNr.get(i));
 				}
-				if(amexManager.isComplete()) {
-					for(Operation ope : amexManager.getMyOpeAmexList()) {
+				if (amexManager.isComplete()) {
+					for (Operation ope : amexManager.getMyOpeAmexList()) {
 						doRappro(myBnp, ope);
+						myOngletRappro.getMyRapproSommesManager().addRappro(myOperation.getMontantOpe());
 					}
 					rapproEnd();
 					amexManager.reset();
@@ -90,20 +91,22 @@ public class RapproManager {
 					 */
 					Operation myOperation = myOpeListNr.get(opeNrSelected.get(0));
 					doRappro(myBnp, myOperation);
+					myOngletRappro.getMyRapproSommesManager().addRappro(myOperation.getMontantOpe());
 					rapproEnd();
-					while(opeNrSelected.size() > 1) {
+					while (opeNrSelected.size() > 1) {
 						opeNrSelected.remove(0);
 					}
 				}
 			}
-		}else {
-			//evite de pouvoir cocher plusieurs operations si aucun BNP n'est sélectionné
-			while(opeNrSelected.size() > 1) {
+		} else {
+			// evite de pouvoir cocher plusieurs operations si aucun BNP n'est
+			// sélectionné
+			while (opeNrSelected.size() > 1) {
 				opeNrSelected.remove(0);
 			}
 		}
 	}
-	
+
 	public void doRappro(Bnp bnp, Operation operation) {
 		String libTiers = myOperationUtil.getLibTiersFromOpe(operation);
 		RapproBO myRapproBo = new RapproBO(bnp, operation, libTiers);
@@ -111,40 +114,38 @@ public class RapproManager {
 		myOpeListNr.remove(operation);
 		myRapproBOList.add(myRapproBo);
 	}
+
+	public void uncheckRappro(int rowIndex) {
+		RapproBO myRapproBo = myRapproBOList.remove(rowIndex);
+		myBnpListNr.add(myRapproBo.getBnp());
+		myOpeListNr.add(myRapproBo.getOperation());
+		myOngletRappro.getMyRapproSommesManager().minusRappro(myRapproBo.getOperation().getMontantOpe());
+		OpeNrTableau myOpeNrTableau = (OpeNrTableau) myOngletRappro.getTableOpeNr().getModel();
+		BnpNrTableau myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
+		myRapproTableau.fireTableDataChanged();
+		myBnpNrTableau.fireTableDataChanged();
+		myOpeNrTableau.fireTableDataChanged();
+	}
+
 	public void rapproEnd() {
 		myBnpNrTableau.resetTabSelected();
 		myOpeNrTableau.resetTabSelected();
 		myRapproTableau.fireTableDataChanged();
 		myBnpNrTableau.fireTableDataChanged();
 		myOpeNrTableau.fireTableDataChanged();
-		
 	}
 
 	public boolean isAmex(Bnp bnp) {
 		return bnp.getLibOpeBnp().contains("AMERICAN EXPRESS");
 	}
-	
+
 	public void uncheckBnp() {
 		amexManager.reset();
 	}
-	
+
 	public void uncheckOperation(int rowIndex) {
 		Operation op = myOpeListNr.remove(rowIndex);
 		amexManager.uncheckRappro(op);
-	}
-	
-	public void uncheckRappro(int rowIndex) {
-		// penser au decochage de Amex : tout remettre à zéro : sum, listopeamex
-		// ...
-		RapproBO myRapproBo = myRapproBOList.remove(rowIndex);
-		myBnpListNr.add(myRapproBo.getBnp());
-		myOpeListNr.add(myRapproBo.getOperation());
-		OpeNrTableau myOpeNrTableau = (OpeNrTableau) myOngletRappro.getTableOpeNr().getModel();
-		BnpNrTableau myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
-		myRapproTableau.fireTableDataChanged();
-		myBnpNrTableau.fireTableDataChanged();
-		myOpeNrTableau.fireTableDataChanged();
-
 	}
 
 	public void createOpeFromBnpNr() {
@@ -207,47 +208,33 @@ public class RapproManager {
 	}
 
 	/*
-	public void chekAmex() {
-		int tabSelectedOpe = myOpeNrTableau.getTabSelectedRapproManu();
-		myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
-		int tabSelectedBnp = myBnpNrTableau.getTabSelectedRapproManu();
-		Bnp myBnp = myBnpListNr.get(tabSelectedBnp);
-		LogRappro.logInfo("tabSelectedOpe " + tabSelectedOpe + " tabSelectedBnp " + tabSelectedBnp);
-		mtAmexBnp = myBnp.getMontantBnp();
-		if (tabSelectedOpe != -1 && tabSelectedBnp != -1) {
-			Operation myOperation = myOpeListNr.get(tabSelectedOpe);
-			if (!myOpeAmexList.contains(myOperation)) {
-				myOpeAmexList.add(myOperation);
-				sumOpeAmex = sumOpeAmex + myOperation.getMontantOpe();
-				LogRappro.logInfo("mt AmexBnp " + mtAmexBnp + " mt amex Ope " + sumOpeAmex);
-			}
-		}
-		if (mtAmexBnp == sumOpeAmex) {
-			for (Operation ope : myOpeAmexList) {
-				String libTiers = myOperationUtil.getLibTiersFromOpe(ope);
-				RapproBO myRapproBo = new RapproBO(myBnp, ope, libTiers);
-				Iterator<Operation> it = myOpeListNr.iterator();
-				while (it.hasNext()) {
-					myOperation = it.next();
-					if (myOperation.equals(ope)) {
-						it.remove();
-					}
-			}
-			myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
-			myRapproBOList.add(myRapproBo);
-			myBnpNrTableau.resetTabSelected();
-			myOpeNrTableau.resetTabSelected();
-			myRapproTableau.fireTableDataChanged();
-			myBnpNrTableau.fireTableDataChanged();
-			myOpeNrTableau.fireTableDataChanged();
-		}
-			mtAmexBnp= 0;
-			sumOpeAmex=0;
-			myBnpListNr.remove(tabSelectedBnp);
-	}
-
-	}
-*/
+	 * public void chekAmex() { int tabSelectedOpe =
+	 * myOpeNrTableau.getTabSelectedRapproManu(); myBnpNrTableau =
+	 * (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel(); int
+	 * tabSelectedBnp = myBnpNrTableau.getTabSelectedRapproManu(); Bnp myBnp =
+	 * myBnpListNr.get(tabSelectedBnp); LogRappro.logInfo("tabSelectedOpe " +
+	 * tabSelectedOpe + " tabSelectedBnp " + tabSelectedBnp); mtAmexBnp =
+	 * myBnp.getMontantBnp(); if (tabSelectedOpe != -1 && tabSelectedBnp != -1)
+	 * { Operation myOperation = myOpeListNr.get(tabSelectedOpe); if
+	 * (!myOpeAmexList.contains(myOperation)) { myOpeAmexList.add(myOperation);
+	 * sumOpeAmex = sumOpeAmex + myOperation.getMontantOpe();
+	 * LogRappro.logInfo("mt AmexBnp " + mtAmexBnp + " mt amex Ope " +
+	 * sumOpeAmex); } } if (mtAmexBnp == sumOpeAmex) { for (Operation ope :
+	 * myOpeAmexList) { String libTiers =
+	 * myOperationUtil.getLibTiersFromOpe(ope); RapproBO myRapproBo = new
+	 * RapproBO(myBnp, ope, libTiers); Iterator<Operation> it =
+	 * myOpeListNr.iterator(); while (it.hasNext()) { myOperation = it.next();
+	 * if (myOperation.equals(ope)) { it.remove(); } } myRapproTableau =
+	 * (RapproTableau) myOngletRappro.getTableRappro().getModel();
+	 * myRapproBOList.add(myRapproBo); myBnpNrTableau.resetTabSelected();
+	 * myOpeNrTableau.resetTabSelected();
+	 * myRapproTableau.fireTableDataChanged();
+	 * myBnpNrTableau.fireTableDataChanged();
+	 * myOpeNrTableau.fireTableDataChanged(); } mtAmexBnp= 0; sumOpeAmex=0;
+	 * myBnpListNr.remove(tabSelectedBnp); }
+	 * 
+	 * }
+	 */
 	public void transcoTiers(ArrayList<Bnp> myBnpList) {
 		for (Bnp bnp : myBnpList) {
 			transcoTiers(bnp);
@@ -321,17 +308,17 @@ public class RapproManager {
 			myOperationFacade.update(myOperation);
 			it.remove();
 		}
-		myOngletRappro.getPanelMontantsRappro().getJtfDateRappro();
+		myOngletRappro.getPanelRappro().getJtfDateRappro();
 		DerRappro myDerRappro = new DerRappro();
 		DerRapproFacade myDerRapproFacade = new DerRapproFacade();
 		myDerRappro = myDerRapproFacade.find(1);
-		myDerRappro.setDateDerRappro(new MyDate(myOngletRappro.getPanelMontantsRappro().getJtfDateRappro().getText()));
-		myDerRappro.setDerSolde(Double.parseDouble(myOngletRappro.getPanelMontantsRappro().getJtfMtFinal().getText()));
+		myDerRappro.setDateDerRappro(new MyDate(myOngletRappro.getPanelRappro().getJtfDateRappro().getText()));
+		myDerRappro.setDerSolde(Double.parseDouble(myOngletRappro.getPanelRappro().getJtfMtFinal().getText()));
 		myDerRapproFacade.update(myDerRappro);
 		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
 		myRapproTableau.fireTableDataChanged();
 	}
-	
+
 	public void updateTableaux() {
 		myOpeNrTableau = (OpeNrTableau) myOngletRappro.getTableOpeNr().getModel();
 		myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();

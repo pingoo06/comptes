@@ -1,6 +1,5 @@
 package comptes.gui.onglets;
 
-import java.awt.Dimension;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -18,8 +17,10 @@ import comptes.gui.manager.RapproSommesManager;
 import comptes.model.db.entity.DerRappro;
 import comptes.model.facade.DerRapproFacade;
 import comptes.util.DateUtil;
+import comptes.util.StringFormater;
+import comptes.util.log.LogRappro;
 
-public class PanelMontantsRappro extends Box {
+public class PanelRappro extends Box {
 
 	private static final long serialVersionUID = 1084560641919471528L;
 
@@ -41,14 +42,16 @@ public class PanelMontantsRappro extends Box {
 	private JButton boutonValidRappro;
 	private JButton boutonAnnulRappro;
 	
+	private DerRappro myDerRappro;
+	
 	private RapproSommesManager rapproSommesManager;
 
-	public PanelMontantsRappro() {
+	public PanelRappro() {
 		super(BoxLayout.PAGE_AXIS);
 		Box b1 = Box.createHorizontalBox();
 		Box b2 = Box.createHorizontalBox();
 		Box b3 = Box.createHorizontalBox();
-		DerRappro myDerRappro = new DerRappro();
+		myDerRappro = new DerRappro();
 		DerRapproFacade myDerRapproFacade = new DerRapproFacade();
 		myDerRappro = myDerRapproFacade.find(1);
 //		rapproSommesManager = new RapproSommesManager(0,0,myDerRappro.getDerSolde(),double.par jtfMtFinal.getText());
@@ -78,7 +81,7 @@ public class PanelMontantsRappro extends Box {
 		boutonStartRappro = new JButton("Rapprocher");
 		boutonValidRappro = new JButton("Valider");
 		boutonAnnulRappro = new JButton("Annuler");
-		boutonStartRappro.setEnabled(false);
+		boutonValidRappro.setEnabled(false);
 		Font police = new Font("Arial", Font.BOLD, 12);
 		labelMtInitial.setFont(police);
 		labelMtFinal.setFont(police);
@@ -114,12 +117,49 @@ public class PanelMontantsRappro extends Box {
 		add(b2);
 		add(b3);
 	}
+	
+	public String validateSaisieRappro() {
+		String res = "";
+		LogRappro.logDebug("Debut validateSaisieRappro");
+
+		// Date présente et correcte
+		if (jtfMtFinal.getText().length() == 0) {
+			res = "Saisir une date";
+		} else {
+			String mtFinalStr  = jtfMtFinal.getText();
+			if (!StringFormater.estUnDouble(mtFinalStr)) {
+				res = "Saisir un montant correct";
+			}
+		} 
+		return res;
+	}
+	
+	public boolean estUnDouble(String chaine) {
+		try {
+			Double.parseDouble(chaine);
+		} catch (NumberFormatException e){
+			return false;
+		}
+ 
+		return true;
+	}
+
 
 	private JPanel wrap(JLabel label, MyJTextField tf) {
 		JPanel jp = new JPanel();
 		jp.add(label);
 		jp.add(tf);
 		return jp;
+	}
+	
+	public void reset(){
+		jtfMtFinal.setText("");
+		//nico pourquoi ca marche pas ?
+		jtfMtFinal.requestFocus();
+		LocalDate dateJour = LocalDate.now();
+		String dateJourStr = DateUtil.format(dateJour, "dd/MM/yyyy");
+		jtfDateRappro = new MyJTextField(dateJourStr);
+		boutonValidRappro.setEnabled(false);
 	}
 
 	public MyJTextField getJtfMtInitial() {
@@ -518,6 +558,8 @@ public class PanelMontantsRappro extends Box {
 	// jtfDebit.setText("");
 	// jtfCredit.setText("");
 	// }
+	
+	
 	//
 	// public JButton getBoutonOKOpe() {
 	// return boutonOKOpe;

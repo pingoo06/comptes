@@ -91,8 +91,6 @@ public class PanelCreationOperation extends Box {
 				clearSaisieOpe();
 			}
 		});
-		
-		
 
 		comboTiers.addActionListener(new ActionListener() {
 			@Override
@@ -212,8 +210,7 @@ public class PanelCreationOperation extends Box {
 
 		return myOperationDTO;
 	}
-	
-	
+
 	public String validateSaisieOpe() {
 
 		String res = "";
@@ -227,7 +224,7 @@ public class PanelCreationOperation extends Box {
 			if (!dateSaisie.matches("[0123][0-9]/[01][0-9]/[0-9]{4}")) {
 				res = "Saisir une date au format jj/mm/aaaa";
 			}
-		}
+		} 
 
 		// Tiers choisi
 		if (comboTiers.getSelectedItem().toString().length() == 0
@@ -241,14 +238,12 @@ public class PanelCreationOperation extends Box {
 		}
 
 		// Au moins un montant
-		if (jtfDebit.getText().length() == 0
-				&& jtfCredit.getText().length() == 0) {
+		if (jtfDebit.getText().length() == 0 && jtfCredit.getText().length() == 0) {
 			res = "saisir un montant";
 		}
 
 		// Un seul montant
-		if (jtfDebit.getText().length() != 0
-				&& jtfCredit.getText().length() != 0) {
+		if (jtfDebit.getText().length() != 0 && jtfCredit.getText().length() != 0) {
 			res = "Saisir un seul montant";
 		}
 
@@ -262,25 +257,25 @@ public class PanelCreationOperation extends Box {
 		} else if (jtfDebit.getText().length() == 0) {
 			res = "Saisir un débit et non un crédit";
 		}
-		
+
 		// cohérence type Ope et saisie num chq
-		if (jtfNumChq.getText().length() != 0
-			&& !"CHQ".equals(comboTypeOpe.getSelectedItem().toString())) {
+		if (jtfNumChq.getText().length() != 0 && !"CHQ".equals(comboTypeOpe.getSelectedItem().toString())) {
 			res = "Incohérence entre type Ope et numéro de chèque";
 		}
 		return res;
 	}
-	public void fillFieldFromOpeDto (OperationDTO myOperationDTO) {
+
+	public void fillFieldFromOpeDto(OperationDTO myOperationDTO) {
 		comboTiers.setSelectedItem(myOperationDTO.getTiers());
 		comboCategorie.setSelectedItem(myOperationDTO.getCategOpe());
 		comboTypeOpe.setSelectedItem("CB");
 		comboTypeOpe.requestFocus();
 		jtfDateOpe.setText(myOperationDTO.getDateOpe());
-		//A revoir
+		// A revoir
 		jtfNumChq.setText(myOperationDTO.getNumCheque());
 		jtfDetailOpe.setText(myOperationDTO.getDetailOpe());
-		jtfDebit.setText(""+myOperationDTO.getDebitOpe());  
-		jtfCredit.setText(""+myOperationDTO.getCreditOpe());
+		jtfDebit.setText("" + myOperationDTO.getDebitOpe());
+		jtfCredit.setText("" + myOperationDTO.getCreditOpe());
 	}
 
 	public void clearSaisieOpe() {
