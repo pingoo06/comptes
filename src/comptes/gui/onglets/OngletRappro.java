@@ -53,7 +53,7 @@ public class OngletRappro extends JSplitPane {
 		vTopR.add(panelMontantsRappro, BorderLayout.NORTH);
 		panelMontantsRappro.getBoutonValidRappro().addActionListener(new BoutonValidRapproListener());
 		panelMontantsRappro.getBoutonAnnulRappro().addActionListener(new BoutonAnnulRapproListener());
-
+		panelCreationOperation.getBoutonOKOpe().addActionListener(new BoutonOKListener());
 //		// Tableau rappro
 ////old		myGestionRappro.ecritOpeCredit();
 		myRapproMngr=new RapproManager(this);
@@ -123,6 +123,7 @@ public class OngletRappro extends JSplitPane {
 				
 					panelCreationOperation = new PanelCreationOperation();
 					panelCreationOperation.getBoutonOKOpe().addActionListener(new BoutonOKListener());
+	
 					
 					b2.add(panelCreationOperation);
 					vBottomR.add(b2);
@@ -132,6 +133,7 @@ public class OngletRappro extends JSplitPane {
 			
 		}
 	}
+	
 	
 	class BoutonValidRapproListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
