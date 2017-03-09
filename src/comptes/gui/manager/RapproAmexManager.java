@@ -9,6 +9,7 @@ public class RapproAmexManager {
 	private double mtAmexBnp;
 	private double sumOpeAmex;
 	private ArrayList<Operation> myOpeAmexList;
+	private RapproSommesManager rapproSommesManager;
 
 	public RapproAmexManager(double montantBnp) {
 		mtAmexBnp = 0;
@@ -21,6 +22,7 @@ public class RapproAmexManager {
 			myOpeAmexList.add(operation);
 			sumOpeAmex += operation.getMontantOpe();
 			LogRappro.logInfo("mt AmexBnp " + mtAmexBnp + " mt amex Ope " + sumOpeAmex);
+			rapproSommesManager.addRappro(operation.getMontantOpe());
 		}
 	}
 

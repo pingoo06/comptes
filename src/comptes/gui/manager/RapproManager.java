@@ -2,6 +2,7 @@ package comptes.gui.manager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import comptes.gui.onglets.OngletRappro;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
@@ -43,6 +44,7 @@ public class RapproManager {
 	private Tiers myTiers;
 
 	private RapproAmexManager amexManager;
+	private RapproSommesManager rapproSommesManager;
 	
 	public RapproManager(OngletRappro myOngletRappro) {
 		super();
@@ -69,7 +71,6 @@ public class RapproManager {
 		if (!bnpNrSelected.isEmpty()) {
 			Bnp myBnp = myBnpListNr.get(bnpNrSelected.get(0));
 			if (isAmex(myBnp)) {
-//				chekAmex();
 				amexManager.setMtAmexBnp(myBnp.getMontantBnp());
 				for(int i : opeNrSelected) {
 					amexManager.chekAmex(myOpeListNr.get(i));
@@ -320,12 +321,12 @@ public class RapproManager {
 			myOperationFacade.update(myOperation);
 			it.remove();
 		}
-		myOngletRappro.getJtfDateRappro();
+		myOngletRappro.getPanelMontantsRappro().getJtfDateRappro();
 		DerRappro myDerRappro = new DerRappro();
 		DerRapproFacade myDerRapproFacade = new DerRapproFacade();
 		myDerRappro = myDerRapproFacade.find(1);
-		myDerRappro.setDateDerRappro(new MyDate(myOngletRappro.getJtfDateRappro().getText()));
-		myDerRappro.setDerSolde(Double.parseDouble(myOngletRappro.getJtfMtFinal().getText()));
+		myDerRappro.setDateDerRappro(new MyDate(myOngletRappro.getPanelMontantsRappro().getJtfDateRappro().getText()));
+		myDerRappro.setDerSolde(Double.parseDouble(myOngletRappro.getPanelMontantsRappro().getJtfMtFinal().getText()));
 		myDerRapproFacade.update(myDerRappro);
 		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
 		myRapproTableau.fireTableDataChanged();
