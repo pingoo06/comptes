@@ -122,9 +122,19 @@ public class PanelRappro extends Box {
 		String res = "";
 		LogRappro.logDebug("Debut validateSaisieRappro");
 
+		
 		// Date présente et correcte
-		if (jtfMtFinal.getText().length() == 0) {
+		if (jtfDateRappro.getText().length() == 0) {
 			res = "Saisir une date";
+		} else {
+			String dateSaisie = jtfDateRappro.getText();
+			if (!dateSaisie.matches("[0123][0-9]/[01][0-9]/[0-9]{4}")) {
+				res = "Saisir une date au format jj/mm/aaaa";
+			}
+		} 
+		
+		if (jtfMtFinal.getText().length() == 0) {
+			res = "Saisir un montant";
 		} else {
 			String mtFinalStr  = jtfMtFinal.getText();
 			if (!StringFormater.estUnDouble(mtFinalStr)) {
@@ -144,7 +154,7 @@ public class PanelRappro extends Box {
 		return true;
 	}
 
-
+	
 	private JPanel wrap(JLabel label, MyJTextField tf) {
 		JPanel jp = new JPanel();
 		jp.add(label);

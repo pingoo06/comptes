@@ -28,8 +28,10 @@ public class RapproSommesManager {
 //	}
 
 	
-	public void init(double montantInit, double montantFinal) {
-		resteAPointer = montantInit - sumDebBnp + sumCredBnp -montantFinal;
+	public double initResteAPointer (double montantInit, double montantFinal) {
+		resteAPointer = montantInit + sumDebBnp + sumCredBnp - montantFinal;
+		LogRappro.logInfo("reste à pointer" + resteAPointer);
+		return resteAPointer;
 	}
 	
 	public void addRappro(double mtRappro){

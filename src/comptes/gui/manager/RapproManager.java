@@ -86,9 +86,6 @@ public class RapproManager {
 			} else {
 				amexManager.reset();
 				if (!opeNrSelected.isEmpty()) {
-					/*
-					 * rapproche un BNP et une OPE et modifie les tableaux
-					 */
 					Operation myOperation = myOpeListNr.get(opeNrSelected.get(0));
 					doRappro(myBnp, myOperation);
 					myOngletRappro.getMyRapproSommesManager().addRappro(myOperation.getMontantOpe());
@@ -108,6 +105,9 @@ public class RapproManager {
 	}
 
 	public void doRappro(Bnp bnp, Operation operation) {
+		/*
+		 * rapproche un BNP et une OPE et modifie les tableaux
+		 */
 		String libTiers = myOperationUtil.getLibTiersFromOpe(operation);
 		RapproBO myRapproBo = new RapproBO(bnp, operation, libTiers);
 		myBnpListNr.remove(bnp);
@@ -149,7 +149,7 @@ public class RapproManager {
 	}
 
 	public void createOpeFromBnpNr() {
-		/*
+		/**
 		 * Creation d'une opération quand on coche la colonne "creation" dans le
 		 * tableau BNP de l onglet rappro
 		 */
@@ -177,6 +177,10 @@ public class RapproManager {
 	}
 
 	public void bnpListNrToRapproTableau(Bnp myBnp, Operation myOperation, String libTiers) {
+		/**
+		 * Après création de l'operation à partir du BNP, ajoute l'élément dans
+		 * la liste et dans le tableau des rappprochés
+		 */
 		RapproBO myRapproBo = new RapproBO(myBnp, myOperation, libTiers);
 		myRapproBOList.add(myRapproBo);
 		myBnpListNr.remove(tabSelectedCreationCheckBnp);
@@ -188,6 +192,10 @@ public class RapproManager {
 	}
 
 	public void ecritOpeCredit() {
+		/**
+		 * A partir de la liste initiale de BNP, recherche les tiers puis écrit
+		 * automatiquement les opérations correspondantes si tiers trouvés
+		 */
 		ArrayList<Bnp> myBnpList = myBnpFacade.findAll();
 		transcoTiers(myBnpList);
 		ArrayList<Tiers> myTiersList = myTiersFacade.findAll();
@@ -207,34 +215,7 @@ public class RapproManager {
 		}
 	}
 
-	/*
-	 * public void chekAmex() { int tabSelectedOpe =
-	 * myOpeNrTableau.getTabSelectedRapproManu(); myBnpNrTableau =
-	 * (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel(); int
-	 * tabSelectedBnp = myBnpNrTableau.getTabSelectedRapproManu(); Bnp myBnp =
-	 * myBnpListNr.get(tabSelectedBnp); LogRappro.logInfo("tabSelectedOpe " +
-	 * tabSelectedOpe + " tabSelectedBnp " + tabSelectedBnp); mtAmexBnp =
-	 * myBnp.getMontantBnp(); if (tabSelectedOpe != -1 && tabSelectedBnp != -1)
-	 * { Operation myOperation = myOpeListNr.get(tabSelectedOpe); if
-	 * (!myOpeAmexList.contains(myOperation)) { myOpeAmexList.add(myOperation);
-	 * sumOpeAmex = sumOpeAmex + myOperation.getMontantOpe();
-	 * LogRappro.logInfo("mt AmexBnp " + mtAmexBnp + " mt amex Ope " +
-	 * sumOpeAmex); } } if (mtAmexBnp == sumOpeAmex) { for (Operation ope :
-	 * myOpeAmexList) { String libTiers =
-	 * myOperationUtil.getLibTiersFromOpe(ope); RapproBO myRapproBo = new
-	 * RapproBO(myBnp, ope, libTiers); Iterator<Operation> it =
-	 * myOpeListNr.iterator(); while (it.hasNext()) { myOperation = it.next();
-	 * if (myOperation.equals(ope)) { it.remove(); } } myRapproTableau =
-	 * (RapproTableau) myOngletRappro.getTableRappro().getModel();
-	 * myRapproBOList.add(myRapproBo); myBnpNrTableau.resetTabSelected();
-	 * myOpeNrTableau.resetTabSelected();
-	 * myRapproTableau.fireTableDataChanged();
-	 * myBnpNrTableau.fireTableDataChanged();
-	 * myOpeNrTableau.fireTableDataChanged(); } mtAmexBnp= 0; sumOpeAmex=0;
-	 * myBnpListNr.remove(tabSelectedBnp); }
-	 * 
-	 * }
-	 */
+
 	public void transcoTiers(ArrayList<Bnp> myBnpList) {
 		for (Bnp bnp : myBnpList) {
 			transcoTiers(bnp);
@@ -264,14 +245,18 @@ public class RapproManager {
 		return myOperation;
 	}
 
-	public void prepaRappro() {
+	public void prepaRappro(RapproSommesManager rapproSommesManager) {
+		/**
+		 * Lance le rapprochement auto puis crée les listes des non rapprochés
+		 */
 		LogRappro.logDebug("arrive dans preparappro");
 		myRapproBOList = myRapproDAO.rapproAuto();
-		ArrayList<Operation> myOpeList = new ArrayList<Operation>();
-		ArrayList<Bnp> myBnpList = new ArrayList<Bnp>();
+		ArrayList<Operation> myOpeListRappro = new ArrayList<Operation>();
+		ArrayList<Bnp> myBnpListRappro = new ArrayList<Bnp>();
 		for (RapproBO rappro : myRapproBOList) {
-			myOpeList.add(rappro.getOperation());
-			myBnpList.add(rappro.getBnp());
+			myOpeListRappro.add(rappro.getOperation());
+			rapproSommesManager.addRappro(rappro.getOperation().getMontantOpe());
+			myBnpListRappro.add(rappro.getBnp());
 		}
 		myBnpListNr = myBnpFacade.findAll();
 		LogRappro.logInfo("myBnpListNr size avant ménage" + myBnpListNr.size());
@@ -280,9 +265,9 @@ public class RapproManager {
 		while (it.hasNext()) {
 			myBnp = it.next();
 			LogRappro.logDebug("myBnp Id " + myBnp.getId());
-			// LogRappro.logDebug("myBnpList" + myBnpList);
-			// LogRappro.logDebug("myBnp" + myBnp);
-			if (myBnpList.contains(myBnp)) {
+			LogRappro.logDebug("myBnpListRappro" + myBnpListRappro);
+			LogRappro.logDebug("myBnp" + myBnp);
+			if (myBnpListRappro.contains(myBnp)) {
 				LogRappro.logDebug("passe dans remove");
 				it.remove();
 			}
@@ -291,7 +276,7 @@ public class RapproManager {
 		myOpeListNr = myOperationFacade.findOpeNr();
 		Iterator<Operation> it2 = myOpeListNr.iterator();
 		while (it2.hasNext()) {
-			if (myOpeList.contains(it2.next())) {
+			if (myOpeListRappro.contains(it2.next())) {
 				it2.remove();
 			}
 		}

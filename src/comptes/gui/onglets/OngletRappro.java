@@ -3,13 +3,17 @@ package comptes.gui.onglets;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.Box;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import comptes.gui.dto.OperationDTO;
 import comptes.gui.manager.RapproManager;
@@ -20,6 +24,7 @@ import comptes.gui.tableaux.RapproTableau;
 import comptes.model.db.entity.Bnp;
 import comptes.model.db.entity.Operation;
 import comptes.model.services.OperationUtil;
+import comptes.util.MyDate;
 
 public class OngletRappro extends JSplitPane {
 
@@ -57,31 +62,45 @@ public class OngletRappro extends JSplitPane {
 		
 		panelRappro.getBoutonValidRappro().addActionListener(new BoutonValidRapproListener());
 		panelRappro.getBoutonAnnulRappro().addActionListener(new BoutonAnnulRapproListener());
-		panelRappro.getBoutonStartRappro().addActionListener(new BoutonStartRapproListener(this));
+		panelRappro.getBoutonStartRappro().addActionListener(new BoutonRapprocherListener(this));
 		// panelCreationOperation.getBoutonOKOpe().addActionListener(new BoutonOKListener());
 		// // Tableau rappro
 		//// old myGestionRappro.ecritOpeCredit();
 		myRapproSommesManager = new RapproSommesManager(this);
 		myRapproMngr = new RapproManager(this);
-		myRapproMngr.prepaRappro();
-		 tableRappro = new JTable(new RapproTableau(myRapproMngr));
-		 vTopR.add(new JScrollPane(tableRappro), BorderLayout.CENTER);
+		myRapproMngr.prepaRappro(myRapproSommesManager);
+		tableRappro = new JTable(new RapproTableau(myRapproMngr));
+		vTopR.add(new JScrollPane(tableRappro), BorderLayout.CENTER);
 		tableRappro.setAutoCreateRowSorter(true);
-		 tableOpeNr = new JTable(new OpeNrTableau(myRapproMngr));
+		tableOpeNr = new JTable(new OpeNrTableau(myRapproMngr));
 		tableOpeNr.setAutoCreateRowSorter(true);
-		 tableBnpNr = new JTable(new BnpNrTableau(myRapproMngr));
-		 b1.add(new JScrollPane(tableBnpNr));
-		 b1.add(new JScrollPane(tableOpeNr));
-		 b2.add(b1);
-		
-		 panelCreationOperation = new PanelCreationOperation();
+		tableBnpNr = new JTable(new BnpNrTableau(myRapproMngr));
+		b1.add(new JScrollPane(tableBnpNr));
+		b1.add(new JScrollPane(tableOpeNr));
+		b2.add(b1);
+
+		panelCreationOperation = new PanelCreationOperation();
 		panelCreationOperation.getBoutonOKOpe().addActionListener(new
-		 BoutonOKListener());
-	
-		 b2.add(panelCreationOperation);
-		 vBottomR.add(b2);
-		 tableBnpNr.setAutoCreateRowSorter(true);
-		 myRapproMngr.updateTableaux();
+				BoutonOKListener());
+
+		b2.add(panelCreationOperation);
+		vBottomR.add(b2);
+		tableBnpNr.setAutoCreateRowSorter(true);
+		myRapproMngr.updateTableaux();
+		//ICI
+
+		JFileChooser chooser = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				"csv", "jpg", "gif","csv");
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(this);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+			System.out.println("You chose to open this file: " +
+					chooser.getSelectedFile().getName());
+			File f = chooser.getSelectedFile();
+			f.renameTo(new File("res/essai"+(new MyDate()).toDbFormat()+".csv"));
+		}
+		//		    FINICI
 	}
 
 	
@@ -113,29 +132,26 @@ public class OngletRappro extends JSplitPane {
 		}
 	}
 
-	class BoutonStartRapproListener implements ActionListener {
+	class BoutonRapprocherListener implements ActionListener {
 		private OngletRappro myOngletRappro;
-		public BoutonStartRapproListener(OngletRappro myOngletRappro) {
+		public BoutonRapprocherListener(OngletRappro myOngletRappro) {
 			super();
 			this.myOngletRappro = myOngletRappro;
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			final JOptionPane frameR;
-			Box b1 = Box.createHorizontalBox();
-			Box b2 = Box.createVerticalBox();
-			// Tableau rappro
-			// old myGestionRappro.ecritOpeCredit();
-			// myRapproMngr=new RapproManager(this);
 			String resRappro = panelRappro.validateSaisieRappro();
 			if (!resRappro.equals("")) {
 				frameR = new JOptionPane();
 				JOptionPane.showMessageDialog(frameR, resRappro, "Saisie erronée", JOptionPane.WARNING_MESSAGE);
 			} 
 				else {
-					myRapproSommesManager.init(Double.parseDouble(getPanelRappro().getJtfMtInitial().getText()),
+					
+			 double	mtDiffARapprocher= myRapproSommesManager.initResteAPointer(Double.parseDouble(getPanelRappro().getJtfMtInitial().getText()),
 							Double.parseDouble(getPanelRappro().getJtfMtFinal().getText()));
-
+					panelRappro.getJtfDiff().setText(""+mtDiffARapprocher);
+					panelRappro.getBoutonStartRappro().setEnabled(false);
 			}
 		}
 	}
@@ -168,25 +184,6 @@ public class OngletRappro extends JSplitPane {
 		return tableOpeNr;
 	}
 
-	// public MyJTextField getJtfDateRappro() {
-	// return jtfDateRappro;
-	// }
-	// public void setJtfDateRappro(MyJTextField jtfDateRappro) {
-	// this.jtfDateRappro = jtfDateRappro;
-	// }
-	//
-	// public MyJTextField getJtfMtInitial() {
-	// return jtfMtInitial;
-	// }
-	// public void setJtfMtInitial(MyJTextField jtfMtInitial) {
-	// this.jtfMtInitial = jtfMtInitial;
-	// }
-	// public MyJTextField getJtfMtFinal() {
-	// return jtfMtFinal;;
-	// }
-	// public void setJtfMtFinal(MyJTextField jtfMtFinal) {
-	// this.jtfMtFinal = jtfMtFinal;
-	// }
 	public PanelCreationOperation getPanelCreationOperation() {
 		return panelCreationOperation;
 	}
