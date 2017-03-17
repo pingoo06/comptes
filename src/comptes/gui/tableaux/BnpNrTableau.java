@@ -6,9 +6,13 @@ import comptes.util.log.LogRappro;
 
 public class BnpNrTableau extends CheckableTableau {
 	private static final long serialVersionUID = 1L;
-	private String[] columnNames = { "Date BNP", "Lib Ope BNP", "Montant BNP", "Check","Creation" };
+	private String[] columnNames = { "Date BNP", "Lib Ope BNP", "Montant BNP", "Check", "Creation" };
 
-	// Remplit le tableau
+	/**
+	 * Constructeur du tableau des BNP non rapprochés
+	 * 
+	 * @param rapproMngr
+	 */
 	public BnpNrTableau(RapproManager rapproMngr) {
 		super(rapproMngr);
 		LogRappro.logInfo("Début : constructeur BnpNrTableau tableau");
@@ -57,7 +61,8 @@ public class BnpNrTableau extends CheckableTableau {
 		LogRappro.logDebug("Début : Set ValueAt de Rappro Tableau");
 		if (columnIndex == 3) {
 			boolean checked = (boolean) aValue;
-			if(!tabSelectedRapproManu.isEmpty() && myRapproMngr.isAmex(myRapproMngr.getMyBnpListNr().get(tabSelectedRapproManu.get(0)))) {
+			if (!tabSelectedRapproManu.isEmpty()
+					&& myRapproMngr.isAmex(myRapproMngr.getMyBnpListNr().get(tabSelectedRapproManu.get(0)))) {
 				myRapproMngr.clearAmex();
 			}
 			if (checked) {
@@ -96,21 +101,11 @@ public class BnpNrTableau extends CheckableTableau {
 		}
 		return val.getClass();
 	}
-
-	// seule la colonne avec la checkBox est modifiable
+/**
+ * seules les colonnes avec les checkBox sont modifiables
+ */
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return (columnIndex == 3 || columnIndex == 4);
 	}
-
-	// supression de ligne
-	public void deleteRow(int idx) {
-		// LogRappro.LogDebug("Début ");
-		// EcheancierBO echeancierBO = listEcheancierBO.get(idx);
-		// listEcheancierBO.remove(idx);
-		// fireTableRowsDeleted(idx, idx);
-		// LogRappro.LogInfo(echeancierBO);
-		// echeancierFacade.delete(echeancierBO);
-	}
-
 }

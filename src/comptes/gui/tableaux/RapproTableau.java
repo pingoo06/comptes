@@ -9,7 +9,6 @@ public class RapproTableau extends CheckableTableau {
 	private String[] columnNames = { "Date BNP", "Date Ope", "Lib Ope BNP", "Tiers", "Montant BNP", "Montant",
 			"Check" };
 
-	// Remplit le tableau
 	public RapproTableau(RapproManager rapproMngr) {
 		super(rapproMngr);
 		LogRappro.logInfo("Début : constructeur RapproTableau tableau");
@@ -48,12 +47,6 @@ public class RapproTableau extends CheckableTableau {
 		case 4:
 			return current.getBnp().getMontantBnp();
 		case 5:
-			//03/03
-//			if (current.getOperation().getMontantOpe() > 0) {
-//				return current.getOperation().getMontantOpe();
-//			} else {
-//				return current.getOperation().getMontantOpe() * -1;
-//			}
 			return current.getOperation().getMontantOpe();
 		case 6:
 			return true;
@@ -86,20 +79,12 @@ public class RapproTableau extends CheckableTableau {
 		return val.getClass();
 	}
 
-	// seule la colonne avec la checkBox est modifiable
+	/**
+	 * seule la colonne avec la checkBox est modifiable
+	 */
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return columnIndex == 6;
-	}
-
-	// supression de ligne
-	public void deleteRow(int idx) {
-		// LogRappro.LogInfo("Début : deleteRow de echeancier Tableau");
-		// EcheancierBO echeancierBO = listEcheancierBO.get(idx);
-		// listEcheancierBO.remove(idx);
-		// fireTableRowsDeleted(idx, idx);
-		// LogRappro.LogInfo(echeancierBO);
-		// echeancierFacade.delete(echeancierBO);
 	}
 
 }

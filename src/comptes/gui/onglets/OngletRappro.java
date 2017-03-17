@@ -3,17 +3,13 @@ package comptes.gui.onglets;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.Box;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import comptes.gui.dto.OperationDTO;
 import comptes.gui.manager.RapproManager;
@@ -24,7 +20,6 @@ import comptes.gui.tableaux.RapproTableau;
 import comptes.model.db.entity.Bnp;
 import comptes.model.db.entity.Operation;
 import comptes.model.services.OperationUtil;
-import comptes.util.MyDate;
 
 public class OngletRappro extends JSplitPane {
 
@@ -68,7 +63,7 @@ public class OngletRappro extends JSplitPane {
 		//// old myGestionRappro.ecritOpeCredit();
 		myRapproSommesManager = new RapproSommesManager(this);
 		myRapproMngr = new RapproManager(this);
-		myRapproMngr.prepaRappro(myRapproSommesManager);
+		myRapproMngr.prepaRappro();
 		tableRappro = new JTable(new RapproTableau(myRapproMngr));
 		vTopR.add(new JScrollPane(tableRappro), BorderLayout.CENTER);
 		tableRappro.setAutoCreateRowSorter(true);
@@ -88,18 +83,18 @@ public class OngletRappro extends JSplitPane {
 		tableBnpNr.setAutoCreateRowSorter(true);
 		myRapproMngr.updateTableaux();
 		//ICI
-
-		JFileChooser chooser = new JFileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"csv", "jpg", "gif","csv");
-		chooser.setFileFilter(filter);
-		int returnVal = chooser.showOpenDialog(this);
-		if(returnVal == JFileChooser.APPROVE_OPTION) {
-			System.out.println("You chose to open this file: " +
-					chooser.getSelectedFile().getName());
-			File f = chooser.getSelectedFile();
-			f.renameTo(new File("res/essai"+(new MyDate()).toDbFormat()+".csv"));
-		}
+//
+//		JFileChooser chooser = new JFileChooser();
+//		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+//				"csv", "jpg", "gif","csv");
+//		chooser.setFileFilter(filter);
+//		int returnVal = chooser.showOpenDialog(this);
+//		if(returnVal == JFileChooser.APPROVE_OPTION) {
+//			System.out.println("You chose to open this file: " +
+//					chooser.getSelectedFile().getName());
+//			File f = chooser.getSelectedFile();
+//			f.renameTo(new File("res/essai"+(new MyDate()).toDbFormat()+".csv"));
+//		}
 		//		    FINICI
 	}
 

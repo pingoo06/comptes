@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import comptes.gui.onglets.OngletRappro;
-import comptes.gui.onglets.PanelRappro;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
 import comptes.gui.tableaux.RapproTableau;
@@ -43,10 +42,14 @@ public class RapproManager {
 	private OpeNrTableau myOpeNrTableau;
 	private Bnp selectedBnp;
 	private Tiers myTiers;
-
 	private RapproAmexManager amexManager;
-	private RapproSommesManager rapproSommesManager;
-
+	
+	/**
+	 * Constructeur de rappro manager Cette classe gère le métier de tout
+	 * l'onglet rapprochement
+	 * 
+	 * @param myOngletRappro
+	 */
 	public RapproManager(OngletRappro myOngletRappro) {
 		super();
 		this.myOngletRappro = myOngletRappro;
@@ -62,9 +65,15 @@ public class RapproManager {
 		selectedBnp = new Bnp();
 		myTiers = new Tiers();
 		amexManager = new RapproAmexManager(-1);
-		// rapproSommesManager = new RapproSommesManager();
 	}
 
+	/**
+	 * Fonction appelée à chaque fois que la colonne rappro manuel de bnp ou
+	 * opération est décochée Si un bnp est coché si c'est un amex on appelle la
+	 * gestion des amex sinon on remet à zéro tout ce qui aurait être pu fait
+	 * pour amex et on lance le rapprochement si une opération est sélectionnée.
+	 * Empeche de cocher une opération si aucun bnp n'est coché
+	 */
 	public void chekNr() {
 		ArrayList<Integer> opeNrSelected = myOpeNrTableau.getTabSelectedRapproManu();
 		ArrayList<Integer> bnpNrSelected = myBnpNrTableau.getTabSelectedRapproManu();
@@ -73,18 +82,17 @@ public class RapproManager {
 			if (isAmex(myBnp)) {
 				amexManager.setMtAmexBnp(myBnp.getMontantBnp());
 				for (int i : opeNrSelected) {
-					amexManager.chekAmex(myOpeListNr.get(i));
+					amexManager.chekAmex(myOpeListNr.get(i), myOngletRappro);
 				}
 				if (amexManager.isComplete()) {
 					for (Operation ope : amexManager.getMyOpeAmexList()) {
 						doRappro(myBnp, ope);
-						myOngletRappro.getMyRapproSommesManager().addRappro(myOperation.getMontantOpe());
 					}
 					rapproEnd();
-					amexManager.reset();
+					amexManager.reset(myOngletRappro);
 				}
 			} else {
-				amexManager.reset();
+				amexManager.reset(myOngletRappro);
 				if (!opeNrSelected.isEmpty()) {
 					Operation myOperation = myOpeListNr.get(opeNrSelected.get(0));
 					doRappro(myBnp, myOperation);
@@ -96,18 +104,19 @@ public class RapproManager {
 				}
 			}
 		} else {
-			// evite de pouvoir cocher plusieurs operations si aucun BNP n'est
-			// sélectionné
-			while (opeNrSelected.size() > 1) {
+			//Empeche de cocher une opération si aucun bnp n'est coché
+			while (opeNrSelected.size() >= 1) {
 				opeNrSelected.remove(0);
 			}
 		}
 	}
 
+	/**
+	 * lance le rapprochement d'un BNP et d'une OPE et modifie les tableaux
+	 * @param bnp
+	 * @param operation
+	 */
 	public void doRappro(Bnp bnp, Operation operation) {
-		/*
-		 * rapproche un BNP et une OPE et modifie les tableaux
-		 */
 		String libTiers = myOperationUtil.getLibTiersFromOpe(operation);
 		RapproBO myRapproBo = new RapproBO(bnp, operation, libTiers);
 		myBnpListNr.remove(bnp);
@@ -120,6 +129,20 @@ public class RapproManager {
 		myBnpListNr.add(myRapproBo.getBnp());
 		myOpeListNr.add(myRapproBo.getOperation());
 		myOngletRappro.getMyRapproSommesManager().minusRappro(myRapproBo.getOperation().getMontantOpe());
+		if (isAmex(myRapproBo.getBnp())) {
+			Bnp myBnpAmex=myRapproBo.getBnp();
+			Iterator<RapproBO> it = myRapproBOList.iterator();
+			RapproBO rapproBo;
+			while (it.hasNext()) {
+				rapproBo = it.next();
+				if (rapproBo.getBnp().equals(myBnpAmex)) {
+					it.remove();
+					myBnpListNr.add(rapproBo.getBnp());
+					myOpeListNr.add(rapproBo.getOperation());
+					myOngletRappro.getMyRapproSommesManager().minusRappro(myRapproBo.getOperation().getMontantOpe());
+				}
+			}
+		}
 		OpeNrTableau myOpeNrTableau = (OpeNrTableau) myOngletRappro.getTableOpeNr().getModel();
 		BnpNrTableau myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
 		myRapproTableau.fireTableDataChanged();
@@ -140,19 +163,22 @@ public class RapproManager {
 	}
 
 	public void uncheckBnp() {
-		amexManager.reset();
+		amexManager.reset(myOngletRappro);
 	}
 
 	public void uncheckOperation(int rowIndex) {
-		Operation op = myOpeListNr.remove(rowIndex);
-		amexManager.uncheckRappro(op);
+		// Modif 17/3
+		Operation ope = myOpeListNr.get(rowIndex);
+		// Operation ope = myOpeListNr.remove(rowIndex);
+		amexManager.uncheckRapproAmex(ope, myOngletRappro);
 	}
 
+	
+	/**
+	 * Creation d'une opération quand on coche la colonne "creation" dans le
+	 * tableau BNP de l onglet rappro
+	 */
 	public void createOpeFromBnpNr() {
-		/**
-		 * Creation d'une opération quand on coche la colonne "creation" dans le
-		 * tableau BNP de l onglet rappro
-		 */
 		boolean tiersReconnu = false;
 		BnpNrTableau myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
 		tabSelectedCreationCheckBnp = myBnpNrTableau.getTabSelectedCreationCheck();
@@ -176,13 +202,18 @@ public class RapproManager {
 		}
 	}
 
+	/**
+	 * Après création de l'operation à partir du BNP, ajoute l'élément dans
+	 * la liste et dans le tableau des rappprochés
+	 * 
+	 * @param myBnp
+	 * @param myOperation
+	 * @param libTiers
+	 */
 	public void bnpListNrToRapproTableau(Bnp myBnp, Operation myOperation, String libTiers) {
-		/**
-		 * Après création de l'operation à partir du BNP, ajoute l'élément dans
-		 * la liste et dans le tableau des rappprochés
-		 */
 		RapproBO myRapproBo = new RapproBO(myBnp, myOperation, libTiers);
 		myRapproBOList.add(myRapproBo);
+		myOngletRappro.getMyRapproSommesManager().addRappro(myOperation.getMontantOpe());
 		myBnpListNr.remove(tabSelectedCreationCheckBnp);
 		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
 		myRapproTableau.fireTableDataChanged();
@@ -215,7 +246,6 @@ public class RapproManager {
 		}
 	}
 
-
 	public void transcoTiers(ArrayList<Bnp> myBnpList) {
 		for (Bnp bnp : myBnpList) {
 			transcoTiers(bnp);
@@ -245,17 +275,17 @@ public class RapproManager {
 		return myOperation;
 	}
 
-	public void prepaRappro(RapproSommesManager rapproSommesManager) {
-		/**
-		 * Lance le rapprochement auto puis crée les listes des non rapprochés
-		 */
+	/**
+	 * Lance le rapprochement auto puis crée les listes des non rapprochés
+	 */
+	public void prepaRappro() {
 		LogRappro.logDebug("arrive dans preparappro");
 		myRapproBOList = myRapproDAO.rapproAuto();
 		ArrayList<Operation> myOpeListRappro = new ArrayList<Operation>();
 		ArrayList<Bnp> myBnpListRappro = new ArrayList<Bnp>();
 		for (RapproBO rappro : myRapproBOList) {
 			myOpeListRappro.add(rappro.getOperation());
-			rapproSommesManager.addRappro(rappro.getOperation().getMontantOpe());
+			myOngletRappro.getMyRapproSommesManager().addRappro(rappro.getOperation().getMontantOpe());
 			myBnpListRappro.add(rappro.getBnp());
 		}
 		myBnpListNr = myBnpFacade.findAll();
@@ -347,7 +377,7 @@ public class RapproManager {
 	}
 
 	public void clearAmex() {
-		amexManager.reset();
+		amexManager.reset(myOngletRappro);
 		myOpeNrTableau.resetTabSelected();
 		myOpeNrTableau.fireTableDataChanged();
 	}
