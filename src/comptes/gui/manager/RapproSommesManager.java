@@ -19,13 +19,14 @@ public class RapproSommesManager {
 	this.sumDebBnp = 0;
 	this.sumCredBnp = 0;
 	this.resteAPointer = 0;
-//	this.resteAPointer = montantInit - sumDebBnp + sumCredBnp -montantFinal;
 }
-
-	//A implementer
-//	public boolean isComplete() {
-//		return sumOpeAmex == mtAmexBnp;
-//	}
+/**
+ * Indique si le rapprochement est terminé
+ * @return true si resteAPointer = 0
+ */
+	public boolean isCompleteRappro() {
+		return resteAPointer == 0;
+	}
 
 	
 	public double initResteAPointer (double montantInit, double montantFinal) {
@@ -35,29 +36,32 @@ public class RapproSommesManager {
 	}
 	
 	public void addRappro(double mtRappro){
+		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		if (mtRappro < 0) {
 			sumDebBnp += mtRappro;
-			myOngletRappro.getPanelRappro().getJtfSommeDeb().setText(String.valueOf(sumDebBnp * -1));
-			LogRappro.logInfo("ajoute dans somme deb");
+			myOngletRappro.getPanelRappro().getJtfSommeDeb().setText(String.valueOf(df.format(sumDebBnp * -1)));
+			LogRappro.logInfo("ajoute dans somme deb : " + sumDebBnp + "; mt rappro : " + mtRappro);
 		} else {
 			sumCredBnp += mtRappro;
-			myOngletRappro.getPanelRappro().getJtfSommeCred().setText(String.valueOf(sumCredBnp));
+			myOngletRappro.getPanelRappro().getJtfSommeCred().setText(String.valueOf(df.format(sumCredBnp)));
+			LogRappro.logInfo("ajoute dans somme cred : " + sumCredBnp);
 		}
 		resteAPointer += mtRappro;
-		myOngletRappro.getPanelRappro().getJtfDiff().setText(String.valueOf(resteAPointer));
+		myOngletRappro.getPanelRappro().getJtfDiff().setText(String.valueOf(df.format(resteAPointer)));
 	}
 	
 	public void minusRappro(double mtRappro){
+		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		if (mtRappro < 0) {
 			sumDebBnp -= mtRappro;
-			myOngletRappro.getPanelRappro().getJtfSommeDeb().setText(String.valueOf(sumDebBnp * -1));
-			LogRappro.logInfo("ajoute dans somme deb");
+			myOngletRappro.getPanelRappro().getJtfSommeDeb().setText(String.valueOf(df.format(sumDebBnp * -1)));
+			LogRappro.logInfo("enlève dans somme deb : " + sumDebBnp + "; mt rappro : " + mtRappro);
 		} else {
 			sumCredBnp -= mtRappro;
-			myOngletRappro.getPanelRappro().getJtfSommeCred().setText(String.valueOf(sumCredBnp));
+			myOngletRappro.getPanelRappro().getJtfSommeCred().setText(String.valueOf(df.format(sumCredBnp)));
 		}
 		resteAPointer -= mtRappro;
-		myOngletRappro.getPanelRappro().getJtfDiff().setText(String.valueOf(resteAPointer));
+		myOngletRappro.getPanelRappro().getJtfDiff().setText(String.valueOf(df.format(resteAPointer)));
 	}
 	
 

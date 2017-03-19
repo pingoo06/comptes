@@ -83,10 +83,3 @@ public class Logger {
 	}
 }
 
-
-//UTILISATION
-//Logger.logDebug("format specifié: " + date);
-//Logger.logInfo("format specifié: " + date);
-//Logger.logWarning("format specifié: " + date);
-//Logger.logError("format specifié: " + date);
-//Logger.logFatal("format specifié: " + date);

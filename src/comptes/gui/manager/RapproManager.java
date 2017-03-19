@@ -3,6 +3,7 @@ package comptes.gui.manager;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import comptes.gui.dto.OperationDTO;
 import comptes.gui.onglets.OngletRappro;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
@@ -43,7 +44,7 @@ public class RapproManager {
 	private Bnp selectedBnp;
 	private Tiers myTiers;
 	private RapproAmexManager amexManager;
-	
+
 	/**
 	 * Constructeur de rappro manager Cette classe gère le métier de tout
 	 * l'onglet rapprochement
@@ -69,7 +70,7 @@ public class RapproManager {
 
 	/**
 	 * Fonction appelée à chaque fois que la colonne rappro manuel de bnp ou
-	 * opération est décochée Si un bnp est coché si c'est un amex on appelle la
+	 * opération est cochée Si un bnp est coché si c'est un amex on appelle la
 	 * gestion des amex sinon on remet à zéro tout ce qui aurait être pu fait
 	 * pour amex et on lance le rapprochement si une opération est sélectionnée.
 	 * Empeche de cocher une opération si aucun bnp n'est coché
@@ -103,8 +104,11 @@ public class RapproManager {
 					}
 				}
 			}
+			if (myOngletRappro.getMyRapproSommesManager().isCompleteRappro()) {
+				finaliseRappro();
+			}
 		} else {
-			//Empeche de cocher une opération si aucun bnp n'est coché
+			// Empeche de cocher une opération si aucun bnp n'est coché
 			while (opeNrSelected.size() >= 1) {
 				opeNrSelected.remove(0);
 			}
@@ -113,6 +117,7 @@ public class RapproManager {
 
 	/**
 	 * lance le rapprochement d'un BNP et d'une OPE et modifie les tableaux
+	 * 
 	 * @param bnp
 	 * @param operation
 	 */
@@ -130,7 +135,7 @@ public class RapproManager {
 		myOpeListNr.add(myRapproBo.getOperation());
 		myOngletRappro.getMyRapproSommesManager().minusRappro(myRapproBo.getOperation().getMontantOpe());
 		if (isAmex(myRapproBo.getBnp())) {
-			Bnp myBnpAmex=myRapproBo.getBnp();
+			Bnp myBnpAmex = myRapproBo.getBnp();
 			Iterator<RapproBO> it = myRapproBOList.iterator();
 			RapproBO rapproBo;
 			while (it.hasNext()) {
@@ -158,6 +163,19 @@ public class RapproManager {
 		myOpeNrTableau.fireTableDataChanged();
 	}
 
+	public void finaliseRappro() {
+		OperationFacade myOperationFacade = new OperationFacade();
+		Operation myOperation = new Operation();
+		Iterator<RapproBO> it = myRapproBOList.iterator();
+		RapproBO rapproBo;
+		while (it.hasNext()) {
+			rapproBo = it.next();
+			myOperation = rapproBo.getOperation();
+			myOperation.setEtatOpe("X");
+			myOperationFacade.update(myOperation);
+		}
+	}
+
 	public boolean isAmex(Bnp bnp) {
 		return bnp.getLibOpeBnp().contains("AMERICAN EXPRESS");
 	}
@@ -173,7 +191,6 @@ public class RapproManager {
 		amexManager.uncheckRapproAmex(ope, myOngletRappro);
 	}
 
-	
 	/**
 	 * Creation d'une opération quand on coche la colonne "creation" dans le
 	 * tableau BNP de l onglet rappro
@@ -203,8 +220,8 @@ public class RapproManager {
 	}
 
 	/**
-	 * Après création de l'operation à partir du BNP, ajoute l'élément dans
-	 * la liste et dans le tableau des rappprochés
+	 * Après création de l'operation à partir du BNP, ajoute l'élément dans la
+	 * liste et dans le tableau des rappprochés
 	 * 
 	 * @param myBnp
 	 * @param myOperation
@@ -243,6 +260,23 @@ public class RapproManager {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Crée une opération saisie dans le panel Operation de l'onglet rappro
+	 * @param myOperationDTO
+	 */
+	public void createNewOpe(OperationDTO myOperationDTO) {
+		myOperationUtil = new OperationUtil();
+		myOperationUtil.create(myOperationDTO);
+		Operation ope = myOperationUtil.dtoToOperation(myOperationDTO);
+		tabSelectedCreationCheckBnp = myBnpNrTableau.getTabSelectedCreationCheck();
+		if (tabSelectedCreationCheckBnp != -1) {
+			bnpListNrToRapproTableau(selectedBnp, ope, myOperationDTO.getTiers());
+		} else {
+			myOpeListNr.add(ope);
+			updateTableaux();
 		}
 	}
 

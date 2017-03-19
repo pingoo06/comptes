@@ -54,8 +54,6 @@ public class PanelRappro extends Box {
 		myDerRappro = new DerRappro();
 		DerRapproFacade myDerRapproFacade = new DerRapproFacade();
 		myDerRappro = myDerRapproFacade.find(1);
-//		rapproSommesManager = new RapproSommesManager(0,0,myDerRappro.getDerSolde(),double.par jtfMtFinal.getText());
-//		myDerRappro.setDerSolde(Double.parseDouble(myOngletRappro.getPanelMontantsRappro().getJtfMtFinal().getText()));
 		jtfMtInitial = new MyJTextField(myDerRappro.getDerSolde().toString());
 		jtfMtInitial.setEditable(false);
 		jtfMtFinal = new MyJTextField();

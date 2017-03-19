@@ -36,15 +36,12 @@ public class OngletRappro extends JSplitPane {
 
 	private PanelRappro panelRappro;
 	private PanelCreationOperation panelCreationOperation;
-	// bottom
 
 	public OngletRappro() {
 		Box b1 = Box.createHorizontalBox();
 		Box b2 = Box.createVerticalBox();
 		vTopR = new JPanel();
 		vBottomR = new JPanel();
-		// Box b1 = Box.createHorizontalBox();
-		// Box b2 = Box.createVerticalBox();
 
 		setTopComponent(vTopR);
 		setBottomComponent(vBottomR);
@@ -54,13 +51,10 @@ public class OngletRappro extends JSplitPane {
 		panelRappro = new PanelRappro();
 		panelCreationOperation = new PanelCreationOperation();
 		vTopR.add(panelRappro, BorderLayout.NORTH);
-		
+
 		panelRappro.getBoutonValidRappro().addActionListener(new BoutonValidRapproListener());
 		panelRappro.getBoutonAnnulRappro().addActionListener(new BoutonAnnulRapproListener());
 		panelRappro.getBoutonStartRappro().addActionListener(new BoutonRapprocherListener(this));
-		// panelCreationOperation.getBoutonOKOpe().addActionListener(new BoutonOKListener());
-		// // Tableau rappro
-		//// old myGestionRappro.ecritOpeCredit();
 		myRapproSommesManager = new RapproSommesManager(this);
 		myRapproMngr = new RapproManager(this);
 		myRapproMngr.prepaRappro();
@@ -75,36 +69,32 @@ public class OngletRappro extends JSplitPane {
 		b2.add(b1);
 
 		panelCreationOperation = new PanelCreationOperation();
-		panelCreationOperation.getBoutonOKOpe().addActionListener(new
-				BoutonOKListener());
+		panelCreationOperation.getBoutonOKOpe().addActionListener(new BoutonOKListener());
 
 		b2.add(panelCreationOperation);
 		vBottomR.add(b2);
 		tableBnpNr.setAutoCreateRowSorter(true);
 		myRapproMngr.updateTableaux();
-		//ICI
-//
-//		JFileChooser chooser = new JFileChooser();
-//		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-//				"csv", "jpg", "gif","csv");
-//		chooser.setFileFilter(filter);
-//		int returnVal = chooser.showOpenDialog(this);
-//		if(returnVal == JFileChooser.APPROVE_OPTION) {
-//			System.out.println("You chose to open this file: " +
-//					chooser.getSelectedFile().getName());
-//			File f = chooser.getSelectedFile();
-//			f.renameTo(new File("res/essai"+(new MyDate()).toDbFormat()+".csv"));
-//		}
-		//		    FINICI
+		// ICI
+		//
+		// JFileChooser chooser = new JFileChooser();
+		// FileNameExtensionFilter filter = new FileNameExtensionFilter(
+		// "csv", "jpg", "gif","csv");
+		// chooser.setFileFilter(filter);
+		// int returnVal = chooser.showOpenDialog(this);
+		// if(returnVal == JFileChooser.APPROVE_OPTION) {
+		// System.out.println("You chose to open this file: " +
+		// chooser.getSelectedFile().getName());
+		// File f = chooser.getSelectedFile();
+		// f.renameTo(new File("res/essai"+(new MyDate()).toDbFormat()+".csv"));
+		// }
+		// FINICI
 	}
 
-	
-
-	
 	// Execution du bouton OK Operation
 	class BoutonOKListener implements ActionListener {
 		private OperationDTO myOperationDTO;
-		private OperationUtil myGestionOperation;
+		private OperationUtil myOperationUtil;
 
 		public void actionPerformed(ActionEvent e) {
 			myOperationDTO = panelCreationOperation.createOpeDtoFromField();
@@ -114,14 +104,7 @@ public class OngletRappro extends JSplitPane {
 				frameO = new JOptionPane();
 				JOptionPane.showMessageDialog(frameO, resOpe, "Saisie erronée", JOptionPane.WARNING_MESSAGE);
 			} else {
-				myGestionOperation = new OperationUtil();
-				myGestionOperation.create(myOperationDTO);
-				if (myRapproMngr.getTabSelectedCreationCheckBnp() != -1) {
-					Bnp myBnp = myRapproMngr.getSelectedBnp();
-					Operation myOperation = myRapproMngr.getMyOperation();
-					// Tiers myTiers=myRapproMngr.getMyTiers();
-					myRapproMngr.bnpListNrToRapproTableau(myBnp, myOperation, myOperationDTO.getTiers());
-				}
+				myRapproMngr.createNewOpe(myOperationDTO);
 				panelCreationOperation.clearSaisieOpe();
 			}
 		}
@@ -129,6 +112,7 @@ public class OngletRappro extends JSplitPane {
 
 	class BoutonRapprocherListener implements ActionListener {
 		private OngletRappro myOngletRappro;
+
 		public BoutonRapprocherListener(OngletRappro myOngletRappro) {
 			super();
 			this.myOngletRappro = myOngletRappro;
@@ -140,13 +124,13 @@ public class OngletRappro extends JSplitPane {
 			if (!resRappro.equals("")) {
 				frameR = new JOptionPane();
 				JOptionPane.showMessageDialog(frameR, resRappro, "Saisie erronée", JOptionPane.WARNING_MESSAGE);
-			} 
-				else {
-					
-			 double	mtDiffARapprocher= myRapproSommesManager.initResteAPointer(Double.parseDouble(getPanelRappro().getJtfMtInitial().getText()),
-							Double.parseDouble(getPanelRappro().getJtfMtFinal().getText()));
-					panelRappro.getJtfDiff().setText(""+mtDiffARapprocher);
-					panelRappro.getBoutonStartRappro().setEnabled(false);
+			} else {
+
+				double mtDiffARapprocher = myRapproSommesManager.initResteAPointer(
+						Double.parseDouble(getPanelRappro().getJtfMtInitial().getText()),
+						Double.parseDouble(getPanelRappro().getJtfMtFinal().getText()));
+				panelRappro.getJtfDiff().setText("" + mtDiffARapprocher);
+				panelRappro.getBoutonStartRappro().setEnabled(false);
 			}
 		}
 	}
@@ -194,7 +178,6 @@ public class OngletRappro extends JSplitPane {
 	public void setPanelMontantsRappro(PanelRappro panelMontantsRappro) {
 		this.panelRappro = panelMontantsRappro;
 	}
-
 
 	public RapproSommesManager getMyRapproSommesManager() {
 		return myRapproSommesManager;
