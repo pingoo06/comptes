@@ -224,7 +224,7 @@ public class PanelCreationOperation extends Box {
 			if (!dateSaisie.matches("[0123][0-9]/[01][0-9]/[0-9]{4}")) {
 				res = "Saisir une date au format jj/mm/aaaa";
 			}
-		} 
+		}
 
 		// Tiers choisi
 		if (comboTiers.getSelectedItem().toString().length() == 0
@@ -274,8 +274,11 @@ public class PanelCreationOperation extends Box {
 		// A revoir
 		jtfNumChq.setText(myOperationDTO.getNumCheque());
 		jtfDetailOpe.setText(myOperationDTO.getDetailOpe());
-		jtfDebit.setText("" + myOperationDTO.getDebitOpe());
-		jtfCredit.setText("" + myOperationDTO.getCreditOpe());
+		if (myOperationDTO.getDebitOpe() != 0) {
+			jtfDebit.setText("" + myOperationDTO.getDebitOpe());
+		} else {
+			jtfCredit.setText("" + myOperationDTO.getCreditOpe());
+		}
 	}
 
 	public void clearSaisieOpe() {

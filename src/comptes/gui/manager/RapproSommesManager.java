@@ -40,7 +40,7 @@ public class RapproSommesManager {
 		if (mtRappro < 0) {
 			sumDebBnp += mtRappro;
 			myOngletRappro.getPanelRappro().getJtfSommeDeb().setText(String.valueOf(df.format(sumDebBnp * -1)));
-			LogRappro.logInfo("ajoute dans somme deb : " + sumDebBnp + "; mt rappro : " + mtRappro);
+			LogRappro.logDebug("ajoute dans somme deb : " + sumDebBnp + "; mt rappro : " + mtRappro);
 		} else {
 			sumCredBnp += mtRappro;
 			myOngletRappro.getPanelRappro().getJtfSommeCred().setText(String.valueOf(df.format(sumCredBnp)));

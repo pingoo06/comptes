@@ -39,7 +39,7 @@ public class RapproDAO extends DAO<RapproBO> {
 				myBnp = new Bnp (rs.getInt(11), new MyDate(rs.getString(12)),rs.getString(13),rs.getString(14), rs.getString(15),
 						rs.getDouble(16),rs.getString(17),OperationType.valueOf(rs.getString(18)),new MyDate(rs.getLong(19)),rs.getString(20));
 				myLibTiers=rs.getString(22);
-				LogRappro.logInfo("SELECT * FROM  operation as o INNER JOIN bnp as b INNER JOIN tiers as t  on o.tiersId=t.id and o.etatOpe='NR' and " + whereClause + 
+				LogRappro.logDebug("SELECT * FROM  operation as o INNER JOIN bnp as b INNER JOIN tiers as t  on o.tiersId=t.id and o.etatOpe='NR' and " + whereClause + 
 						" and not exists (select 1 from  (SELECT * FROM  operation as o2 INNER JOIN bnp as b2 INNER JOIN tiers as t2  on o2.tiersId=t2.id and o2.etatOpe='NR' and b.id = b2.id and o.id != o2.id and " + whereClause2 + "));");
 				RapproBO myRapproBo = new RapproBO(myBnp,myOperation,myLibTiers);
 				myRapproBOList.add(myRapproBo);

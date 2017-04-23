@@ -120,4 +120,20 @@ public class BnpDAO extends DAO<Bnp> {
 			}
 		}
 	}
+	
+
+	public boolean isFull() {
+		int res=0;
+		try {
+			LogBnp.logDebug("début isFull de Bnp");
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery("SELECT count(1) FROM bnp ");
+			LogBnp.logDebug("rs = " + rs.getInt(1));
+			res=rs.getInt(1);
+		} 
+		catch (SQLException e) {
+			LogBnp.logError("failed isFull BNP", e);
+		}
+		return  res != 0;
+	}
 }

@@ -89,7 +89,7 @@ public class RapproManager {
 					for (Operation ope : amexManager.getMyOpeAmexList()) {
 						doRappro(myBnp, ope);
 					}
-					rapproEnd();
+					rapproRefreshTableaux();
 					amexManager.reset(myOngletRappro);
 				}
 			} else {
@@ -98,7 +98,7 @@ public class RapproManager {
 					Operation myOperation = myOpeListNr.get(opeNrSelected.get(0));
 					doRappro(myBnp, myOperation);
 					myOngletRappro.getMyRapproSommesManager().addRappro(myOperation.getMontantOpe());
-					rapproEnd();
+					rapproRefreshTableaux();
 					while (opeNrSelected.size() > 1) {
 						opeNrSelected.remove(0);
 					}
@@ -116,7 +116,7 @@ public class RapproManager {
 	}
 
 	/**
-	 * lance le rapprochement d'un BNP et d'une OPE et modifie les tableaux
+	 * lance le rapprochement d'un BNP et d'une OPE et modifie les listes
 	 * 
 	 * @param bnp
 	 * @param operation
@@ -129,6 +129,12 @@ public class RapproManager {
 		myRapproBOList.add(myRapproBo);
 	}
 
+
+	/**
+	 * Fonction appelée lorsque la colonne check du tableau des rapprochée est décochée
+	 * Elle gère les dérapprochements
+	 * @param rowIndex
+	 */
 	public void uncheckRappro(int rowIndex) {
 		RapproBO myRapproBo = myRapproBOList.remove(rowIndex);
 		myBnpListNr.add(myRapproBo.getBnp());
@@ -155,7 +161,13 @@ public class RapproManager {
 		myOpeNrTableau.fireTableDataChanged();
 	}
 
-	public void rapproEnd() {
+	/**
+		 * Rafraichissement des tableaux de l'onglet rappro
+		 */
+		public void rapproRefreshTableaux() {
+	//		ajout 26/03
+	//		 myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
+			//fin ajout 2603
 		myBnpNrTableau.resetTabSelected();
 		myOpeNrTableau.resetTabSelected();
 		myRapproTableau.fireTableDataChanged();
@@ -163,6 +175,10 @@ public class RapproManager {
 		myOpeNrTableau.fireTableDataChanged();
 	}
 
+		/**
+			 * Met à jour les opérations dans la base avec le code X : rapproché
+			 *  lorsque le rapprochement est terminé
+			 */
 	public void finaliseRappro() {
 		OperationFacade myOperationFacade = new OperationFacade();
 		Operation myOperation = new Operation();
@@ -176,6 +192,11 @@ public class RapproManager {
 		}
 	}
 
+	/**
+	 * Retourne vrai si on a coché la ligne AMEX dans BNP
+	 * @param bnp
+	 * @return
+	 */
 	public boolean isAmex(Bnp bnp) {
 		return bnp.getLibOpeBnp().contains("AMERICAN EXPRESS");
 	}
@@ -345,7 +366,9 @@ public class RapproManager {
 			}
 		}
 	}
-
+/**
+ * Passe les opération rapprochées à l'état X
+ */
 	public void validateRappro() {
 		// ajouter un test sur solde = 0
 		RapproBO rapproBo = new RapproBO();

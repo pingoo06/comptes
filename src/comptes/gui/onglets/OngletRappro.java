@@ -17,8 +17,7 @@ import comptes.gui.manager.RapproSommesManager;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
 import comptes.gui.tableaux.RapproTableau;
-import comptes.model.db.entity.Bnp;
-import comptes.model.db.entity.Operation;
+import comptes.model.facade.BnpFacade;
 import comptes.model.services.OperationUtil;
 
 public class OngletRappro extends JSplitPane {
@@ -36,10 +35,15 @@ public class OngletRappro extends JSplitPane {
 
 	private PanelRappro panelRappro;
 	private PanelCreationOperation panelCreationOperation;
-
+	
+	private Box b1;
+	private Box b2;
+	private Box b3;
+	
 	public OngletRappro() {
-		Box b1 = Box.createHorizontalBox();
-		Box b2 = Box.createVerticalBox();
+		b1 = Box.createHorizontalBox();
+		b2 = Box.createVerticalBox();
+		b3 = Box.createHorizontalBox();
 		vTopR = new JPanel();
 		vBottomR = new JPanel();
 
@@ -51,46 +55,39 @@ public class OngletRappro extends JSplitPane {
 		panelRappro = new PanelRappro();
 		panelCreationOperation = new PanelCreationOperation();
 		vTopR.add(panelRappro, BorderLayout.NORTH);
-
 		panelRappro.getBoutonValidRappro().addActionListener(new BoutonValidRapproListener());
 		panelRappro.getBoutonAnnulRappro().addActionListener(new BoutonAnnulRapproListener());
 		panelRappro.getBoutonStartRappro().addActionListener(new BoutonRapprocherListener(this));
 		myRapproSommesManager = new RapproSommesManager(this);
 		myRapproMngr = new RapproManager(this);
+		BnpFacade myBnpFacade = new BnpFacade();
+		if (myBnpFacade.isFull()) {
+			remplitOngletRappro();
+			}
+		}
+
+	
+	public void remplitOngletRappro () {
 		myRapproMngr.prepaRappro();
-		tableRappro = new JTable(new RapproTableau(myRapproMngr));
-		vTopR.add(new JScrollPane(tableRappro), BorderLayout.CENTER);
+		tableRappro=new JTable(new RapproTableau(myRapproMngr));
 		tableRappro.setAutoCreateRowSorter(true);
 		tableOpeNr = new JTable(new OpeNrTableau(myRapproMngr));
 		tableOpeNr.setAutoCreateRowSorter(true);
 		tableBnpNr = new JTable(new BnpNrTableau(myRapproMngr));
 		b1.add(new JScrollPane(tableBnpNr));
 		b1.add(new JScrollPane(tableOpeNr));
+		b3.add(new JScrollPane(tableRappro));
 		b2.add(b1);
-
 		panelCreationOperation = new PanelCreationOperation();
 		panelCreationOperation.getBoutonOKOpe().addActionListener(new BoutonOKListener());
-
 		b2.add(panelCreationOperation);
 		vBottomR.add(b2);
+		vTopR.add(b3, BorderLayout.CENTER);
 		tableBnpNr.setAutoCreateRowSorter(true);
 		myRapproMngr.updateTableaux();
-		// ICI
-		//
-		// JFileChooser chooser = new JFileChooser();
-		// FileNameExtensionFilter filter = new FileNameExtensionFilter(
-		// "csv", "jpg", "gif","csv");
-		// chooser.setFileFilter(filter);
-		// int returnVal = chooser.showOpenDialog(this);
-		// if(returnVal == JFileChooser.APPROVE_OPTION) {
-		// System.out.println("You chose to open this file: " +
-		// chooser.getSelectedFile().getName());
-		// File f = chooser.getSelectedFile();
-		// f.renameTo(new File("res/essai"+(new MyDate()).toDbFormat()+".csv"));
-		// }
-		// FINICI
+		
 	}
-
+	
 	// Execution du bouton OK Operation
 	class BoutonOKListener implements ActionListener {
 		private OperationDTO myOperationDTO;
@@ -125,11 +122,17 @@ public class OngletRappro extends JSplitPane {
 				frameR = new JOptionPane();
 				JOptionPane.showMessageDialog(frameR, resRappro, "Saisie erronée", JOptionPane.WARNING_MESSAGE);
 			} else {
-
+				BnpFacade myBnpFacade=new BnpFacade();
+				if (!myBnpFacade.isFull()) {
+					myBnpFacade.remplitBnp();
+					myRapproMngr.ecritOpeCredit();
+					remplitOngletRappro();
+				}
 				double mtDiffARapprocher = myRapproSommesManager.initResteAPointer(
 						Double.parseDouble(getPanelRappro().getJtfMtInitial().getText()),
 						Double.parseDouble(getPanelRappro().getJtfMtFinal().getText()));
-				panelRappro.getJtfDiff().setText("" + mtDiffARapprocher);
+				java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+				panelRappro.getJtfDiff().setText("" + df.format(mtDiffARapprocher));
 				panelRappro.getBoutonStartRappro().setEnabled(false);
 			}
 		}

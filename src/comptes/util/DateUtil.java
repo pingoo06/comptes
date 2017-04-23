@@ -38,6 +38,7 @@ public class DateUtil {
 	 */
 	public static LocalDate parse(String dateText) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		//nico comment gérer Exception in thread "AWT-EventQueue-0" java.time.format.DateTimeParseException: Text '' could not be parsed at index 0
 		LocalDate date = LocalDate.parse(dateText, formatter);
 		return date;
 	}

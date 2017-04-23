@@ -81,13 +81,16 @@ public class BnpNrTableau extends CheckableTableau {
 				myRapproMngr.createOpeFromBnpNr();
 			} else {
 				tabSelectedCreationCheck = -1;
+				myRapproMngr.getMyOngletRappro().getPanelCreationOperation().clearSaisieOpe();
 			}
 		}
 		LogRappro.logDebug(" fire");
 		fireTableDataChanged();
 	}
 
-	// Retourne le type de chaque colonne
+	/**
+	 * Retourne le type de chaque colonne
+	 */
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
 		if (myRapproMngr.getMyBnpListNr().isEmpty()) {
@@ -101,9 +104,10 @@ public class BnpNrTableau extends CheckableTableau {
 		}
 		return val.getClass();
 	}
-/**
- * seules les colonnes avec les checkBox sont modifiables
- */
+
+	/**
+	 * seules les colonnes avec les checkBox sont modifiables
+	 */
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return (columnIndex == 3 || columnIndex == 4);

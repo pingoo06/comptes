@@ -11,10 +11,12 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 
 import comptes.gui.combo.CategorieCombo;
 import comptes.gui.combo.TiersCombo;
@@ -26,67 +28,97 @@ import comptes.gui.tableaux.EcheancierTableau;
 import comptes.model.bo.EcheancierBO;
 import comptes.model.db.entity.Tiers;
 import comptes.model.facade.TiersFacade;
+import comptes.model.services.EchToOpe;
 import comptes.model.services.EcheancierUtil;
 import comptes.util.MyDate;
+import comptes.util.log.LogEcheancier;
+import comptes.util.log.LogOperation;
 
 public class OngletEcheancier extends JSplitPane {
 
 	private static final long serialVersionUID = 1L;
 
-
-	JPanel saisieEchPan = new JPanel();
-
+	private JPanel saisieEchPan;
 
 	// Pour echeancier
-	private MyJTextField jtfDateEch = new MyJTextField(new MyDate().toString());
-	private MyJTextField jtfNbEch = new MyJTextField();
-	private MyJTextField jtfTypeEch = new MyJTextField("Prelevement");
-	private MyJTextField jtfCategEch = new MyJTextField();
-	private MyJTextField jtfTiersEch = new MyJTextField();
-	private MyJTextField jtfMontantEch = new MyJTextField();
+	private MyJTextField jtfDateEch;
+	private MyJTextField jtfNbEch;
+	private MyJTextField jtfTypeEch;
+	private MyJTextField jtfCategEch;
+	private MyJTextField jtfTiersEch;
+	private MyJTextField jtfMontantEch;
 
-	private JLabel labelTypeEch = new JLabel("TypeEch");
-	private JLabel labelTiers = new JLabel("Tiers");
-	private JLabel labelDateEch = new JLabel("Date Ech");
-	private JLabel labelMontantEch = new JLabel("Montant Ech");
-	private JLabel labelCategOpe = new JLabel("Categorie");
-	private JLabel labelNbEch = new JLabel("Nb Ech");
+	private JLabel labelTypeEch;
+	private JLabel labelTiers;
+	private JLabel labelDateEch;
+	private JLabel labelMontantEch;
+	private JLabel labelCategOpe;
+	private JLabel labelNbEch;
 
-	private JButton boutonOKEch = new JButton("OK");
-	private JButton boutonAnnulEch = new JButton("Annuler");
+	private JButton boutonOKEch;
+	private JButton boutonAnnulEch;
+	private JButton boutonSupprEch;
 
-	String whereClause = "";
-	JPanel vTopE = new JPanel();
-	JPanel vBottomE = new JPanel();
+	private JPanel vTopE;
+	private JPanel vBottomE;
+	private JPanel boutonPanE;
 
 	private JTable tableEcheancier;
 
 	// combo echeancier
-	TypeEchCombo comboTypeEch = new TypeEchCombo();
-	TiersCombo comboTiersE = new TiersCombo();
-	CategorieCombo comboCategorieE = new CategorieCombo();
+	private TypeEchCombo comboTypeEch;
+	private TiersCombo comboTiersE;
+	private CategorieCombo comboCategorieE;
 
 	public OngletEcheancier() {
-		setTopComponent(vTopE);
-		setBottomComponent(vBottomE);
-		setOrientation(JSplitPane.VERTICAL_SPLIT);
+		saisieEchPan = new JPanel();
+		jtfDateEch = new MyJTextField(new MyDate().toString());
+		jtfNbEch = new MyJTextField("");
+		jtfTypeEch = new MyJTextField("Prelevement");
+		jtfCategEch = new MyJTextField("");
+		jtfTiersEch = new MyJTextField("");
+		jtfMontantEch = new MyJTextField("");
 
+		labelTypeEch = new JLabel("TypeEch");
+		labelTiers = new JLabel("Tiers");
+		labelDateEch = new JLabel("Date Ech");
+		labelMontantEch = new JLabel("Montant Ech");
+		labelCategOpe = new JLabel("Categorie");
+		labelNbEch = new JLabel("Nb Ech");
 
-		vTopE.setLayout(new BorderLayout());
+		// combo echeancier
+		comboTypeEch = new TypeEchCombo();
+		comboTiersE = new TiersCombo();
+		comboCategorieE = new CategorieCombo();
+
+		boutonOKEch = new JButton("OK");
+		boutonAnnulEch = new JButton("Annuler");
+		boutonSupprEch = new JButton("Supprimer");
 
 		// Tableau echeancier
+		vTopE = new JPanel();
+		setTopComponent(vTopE);
+		vTopE.setLayout(new BorderLayout());
+		setOrientation(JSplitPane.VERTICAL_SPLIT);
 		tableEcheancier = new JTable(new EcheancierTableau());
 		vTopE.add(new JScrollPane(tableEcheancier), BorderLayout.CENTER);
 		tableEcheancier.setAutoCreateRowSorter(true);
 
+		// boutons
+		vBottomE = new JPanel();
+		setBottomComponent(vBottomE);
 		vBottomE.setLayout(new BorderLayout());
-		JPanel boutonPanE = new JPanel();
+		boutonPanE = new JPanel();
 		boutonPanE.add(boutonAnnulEch);
 		boutonPanE.add(boutonOKEch);
+		boutonPanE.add(boutonSupprEch);
 		vBottomE.add(boutonPanE, BorderLayout.EAST);
+		
+
+		//Bouton ok
 		boutonOKEch.addActionListener(new BoutonOKEchListener());
+
 		// Bouton Supprimer
-		JButton boutonSupprEch = new JButton("Supprimer");
 		boutonSupprEch.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -97,13 +129,15 @@ public class OngletEcheancier extends JSplitPane {
 			}
 		});
 
+		//bouton Annuler
 		boutonAnnulEch.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				clearSaisieEch();
 			}
 		});
-		boutonPanE.add(boutonSupprEch);
+		
+		
 		comboTiersE.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -133,7 +167,6 @@ public class OngletEcheancier extends JSplitPane {
 		});
 
 		// AJOUT TESTS SUR DATECH
-		// nico en faire une fonction ?
 		jtfDateEch.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -163,8 +196,6 @@ public class OngletEcheancier extends JSplitPane {
 		jtfNbEch.setPreferredSize(new Dimension(100, 20));
 		jtfNbEch.setFont(police);
 		jtfNbEch.setForeground(Color.RED);
-		// Ecoute clavier sur JTF4
-		// jtfDetailOpe.addKeyListener(new ClavierListener());
 
 		saisieEchPan.add(labelTypeEch);
 		saisieEchPan.add(comboTypeEch);
@@ -188,24 +219,77 @@ public class OngletEcheancier extends JSplitPane {
 
 	class BoutonOKEchListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			EcheancierDTO myEcheancierDTO = new EcheancierDTO();
-			myEcheancierDTO.setId(0);
-			myEcheancierDTO.setTypeEch(jtfTypeEch.getText());
-			myEcheancierDTO.setCategEch(jtfCategEch.getText());
-			myEcheancierDTO.setTiersEch(jtfTiersEch.getText());
-			myEcheancierDTO.setMontantEch(Double.parseDouble(jtfMontantEch.getText()));
-			myEcheancierDTO.setDateEch(jtfDateEch.getText());
-			myEcheancierDTO.setNbEch(Integer.parseUnsignedInt(jtfNbEch.getText()));
-			EcheancierUtil myGestionEcheancier = new EcheancierUtil();
-			myGestionEcheancier.create(myEcheancierDTO);
-			clearSaisieEch();
-			EcheancierBO myEcheancierBO = myGestionEcheancier.buildEcheancierBo(myEcheancierDTO);
-			System.out.println("dans BoutonOKEchListener tableEcheancier : " + tableEcheancier);
-			EcheancierTableau model = ((EcheancierTableau) tableEcheancier.getModel());
-			model.getListEcheancierBO().add(myEcheancierBO);
-			model.fireTableDataChanged();
-
+			final JOptionPane frame;
+			String res = validateSaisieEch();
+			if (res != "") {
+				frame = new JOptionPane();
+				JOptionPane.showMessageDialog(frame, res, "Saisie erronée", JOptionPane.WARNING_MESSAGE);
+			} else {
+				EcheancierDTO myEcheancierDTO = new EcheancierDTO();
+				myEcheancierDTO.setId(0);
+				myEcheancierDTO.setTypeEch(jtfTypeEch.getText());
+				myEcheancierDTO.setCategEch(jtfCategEch.getText());
+				myEcheancierDTO.setTiersEch(jtfTiersEch.getText());
+				myEcheancierDTO.setMontantEch(Double.parseDouble(jtfMontantEch.getText()));
+				myEcheancierDTO.setDateEch(jtfDateEch.getText());
+				myEcheancierDTO.setNbEch(Integer.parseUnsignedInt(jtfNbEch.getText()));
+				EcheancierUtil myGestionEcheancier = new EcheancierUtil();
+				myGestionEcheancier.create(myEcheancierDTO);
+				clearSaisieEch();
+				EcheancierBO myEcheancierBO = myGestionEcheancier.buildEcheancierBo(myEcheancierDTO);
+				System.out.println("dans BoutonOKEchListener tableEcheancier : " + tableEcheancier);
+				EcheancierTableau model = ((EcheancierTableau) tableEcheancier.getModel());
+				model.getListEcheancierBO().add(myEcheancierBO);
+				model.fireTableDataChanged();
+			}
 		}
+	}
+
+	public String validateSaisieEch() {
+		String res = "";
+		LogEcheancier.logDebug("Debut validateSaisieEch");
+
+		// Date présente et correcte
+		if (jtfDateEch.getText().length() == 0) {
+			res = "Saisir une date";
+		} else {
+			String dateSaisie = jtfDateEch.getText();
+			if (!dateSaisie.matches("[0123][0-9]/[01][0-9]/[0-9]{4}")) {
+				res = "Saisir une date au format jj/mm/aaaa";
+			}
+		}
+
+		if (jtfTypeEch.getText().length() == 0) {
+			res = "Saisir un type d'opération";
+		}
+
+		// Tiers choisi
+		if (jtfTiersEch.getText().length() == 0) {
+			res = "Saisir un tiers";
+		}
+
+		// categorie choisie
+		String test = jtfCategEch.toString();
+		LogEcheancier.logInfo("test : " + test);
+		if (jtfCategEch.getText().length() == 0) {
+			res = "Saisir une categorie";
+		}
+
+		// montant saisi
+		if (jtfMontantEch.getText().length() == 0) {
+			res = "saisir un montant";
+		} else if ("0".equals(jtfMontantEch.getText())) {
+			res = "saisir un montant";
+		}
+
+		// nb echéances saisi
+		if (jtfNbEch.getText().length() == 0) {
+			res = "saisir un nombre d'echeances";
+		} else if ("0".equals(jtfNbEch.getText())) {
+			res = "saisir un nombre d'echeances";
+		}
+
+		return res;
 	}
 
 	public void clearSaisieEch() {
@@ -218,6 +302,9 @@ public class OngletEcheancier extends JSplitPane {
 		jtfNbEch.setText("");
 		jtfTypeEch.setText("Prelevement");
 		jtfCategEch.setText("");
+		String essai;
+		essai = jtfCategEch.getText();
+		LogEcheancier.logInfo("essai : " + essai);
 		jtfMontantEch.setText("");
 	}
 }

@@ -2,6 +2,8 @@ package comptes.model.services;
 
 import java.util.ArrayList;
 
+import com.sun.org.apache.bcel.internal.generic.DMUL;
+
 import comptes.model.bo.EcheancierBO;
 import comptes.model.db.dao.EcheancierDAO;
 import comptes.model.db.entity.Echeancier;
@@ -9,21 +11,26 @@ import comptes.model.db.entity.Operation;
 import comptes.model.facade.EcheancierFacade;
 import comptes.model.facade.OperationFacade;
 import comptes.util.MyDate;
+import comptes.util.log.LogEcheancier;
 import comptes.util.log.Logger;
 
-public class EchToOpe extends Thread {
-	@Override
-	public void run() {
+public class EchToOpe {
+	private MyDate dateJour;
+	private MyDate dateEchSuiv;
+
+	public EchToOpe () {
+		LogEcheancier.logInfo("Début echToOpe");
 		ArrayList<EcheancierBO> listEcheancierBO = new EcheancierDAO().findAllEchBO();
 		EcheancierBO myEcheancierBO = new EcheancierBO();
-		MyDate dateJour = new MyDate();
+		dateJour = new MyDate();
 		for (int i = 0; i < listEcheancierBO.size(); i++) {
 			myEcheancierBO = listEcheancierBO.get(i);
 			int nbEch=myEcheancierBO.getNbEch();
-			Logger.logDebug("Dans EchToOpe run : dateJourLong " + dateJour.toLongValue());
-			Logger.logDebug("Dans EchToOpe run : myEcheancierBO.getDateEchLong() " + myEcheancierBO.getDateEch().toLongValue());
+			LogEcheancier.logInfo("Dans EchToOpe run : dateJourLong " + dateJour.toLongValue());
+			LogEcheancier.logInfo("Dans EchToOpe run : myEcheancierBO.getDateEchLong() " + myEcheancierBO.getDateEch().toLongValue());
 			
-			if (myEcheancierBO.getDateEch().toLongValue() <= dateJour.toLongValue() && nbEch > 0) {
+		if (myEcheancierBO.getDateEch().toLongValue() <= dateJour.toLongValue() && nbEch > 0) {
+//			if (myEcheancierBO.getDateEch().compareTo(dateJour) <= 0 && nbEch > 0) {
 				Operation myOperation = new Operation();
 				myOperation.setCategOpeId(myEcheancierBO.getCategorieBo().getId());
 				myOperation.setDateOpe(myEcheancierBO.getDateEch());
@@ -44,19 +51,22 @@ public class EchToOpe extends Thread {
 				Echeancier myEcheancier=new Echeancier();
 				myEcheancierBO.setNbEch(nbEch - 1);
 				
-				Logger.logDebug("Dans EchToOpe run : dateEch " + myEcheancierBO.getDateEch());
-				myEcheancierBO.getDateEch().plusMonth(1);
+				LogEcheancier.logInfo("Dans EchToOpe run : dateEch " + myEcheancierBO.getDateEch());
+				dateEchSuiv = myEcheancierBO.getDateEch();
+				dateEchSuiv.plusMonth(1);
+				LogEcheancier.logInfo("Dans EchToOpe : dateEchSuiv " + dateEchSuiv);
+				myEcheancierBO.setDateEch(dateEchSuiv);
 				myEcheancier=EcheancierUtil.boToEcheancier(myEcheancierBO);
 				myEcheancierFacade.update(myEcheancier);
 			}
 		}
 	}
-	
+
 }
 
-//Rattrapage date echeancier
-//update  echeancier set dateEch='2017-01-26', dateEchLong='17192';
-//commit;
+// Rattrapage date echeancier
+// update echeancier set dateEch='2017-01-26', dateEchLong='17192';
+// commit;
 //
-//delete from operation where operation.echID > 0;
-//Commit;
+// delete from operation where operation.echID > 0;
+// Commit;

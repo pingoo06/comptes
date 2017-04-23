@@ -77,11 +77,11 @@ public class MyDate implements Comparable<MyDate> {
 	}
 	
 	public void plusMonth(long n){
-		date.plusMonths(n);
+		this.date=date.plusMonths(n);
 	}
 
 	public void minusMonth(long n){
-		date.minusMonths(n);
+		this.date=date.minusMonths(n);
 	}
 	
 	@Override
