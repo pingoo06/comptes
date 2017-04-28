@@ -8,6 +8,7 @@ import comptes.model.db.dao.OperationDAO;
 import comptes.model.db.entity.Operation;
 import comptes.model.db.entity.Tiers;
 import comptes.util.MyDate;
+import comptes.util.log.LogOperation;
 import comptes.util.log.Logger;
 
 public class OperationFacade {
@@ -43,7 +44,7 @@ public class OperationFacade {
 	}
 
 	public void initOperation() {
-		System.out.println("Début init operation");
+		LogOperation.logInfo("Début init operation");
 		int nbLines = 0;
 		DAO<Operation> myOperationDAO = new OperationDAO();
 		TiersFacade myTiersFacade = new TiersFacade();
@@ -81,9 +82,9 @@ public class OperationFacade {
 			myTiers.setLibTiers(moneyParser.getString("Payee"));
 			myTiers.setDerCategDeTiers(moneyParser.getString("Category"));
 			myTiersFacade.update(myTiers);
-			System.out.println("Creation Operation dans Operation Facade : NB Lines" + nbLines);
+			LogOperation.logDebug("Creation Operation dans Operation Facade : NB Lines" + nbLines);
 			nbLines++;
 		}
-		System.out.println("Creation Operation dans Operation Facade : TOTAL LINES: " + nbLines);
+		LogOperation.logInfo("Creation Operation dans Operation Facade : TOTAL LINES: " + nbLines);
 	}
 }

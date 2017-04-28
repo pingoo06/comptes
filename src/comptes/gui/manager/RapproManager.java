@@ -23,6 +23,9 @@ import comptes.model.facade.OperationFacade;
 import comptes.model.facade.TiersFacade;
 import comptes.model.services.OperationUtil;
 import comptes.util.MyDate;
+import comptes.util.log.LogBnp;
+import comptes.util.log.LogMatching;
+import comptes.util.log.LogOperation;
 import comptes.util.log.LogRappro;
 
 public class RapproManager {
@@ -212,33 +215,6 @@ public class RapproManager {
 		amexManager.uncheckRapproAmex(ope, myOngletRappro);
 	}
 
-	/**
-	 * Creation d'une opération quand on coche la colonne "creation" dans le
-	 * tableau BNP de l onglet rappro
-	 */
-	public void createOpeFromBnpNr() {
-		boolean tiersReconnu = false;
-		BnpNrTableau myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
-		tabSelectedCreationCheckBnp = myBnpNrTableau.getTabSelectedCreationCheck();
-		selectedBnp = myBnpListNr.get(tabSelectedCreationCheckBnp);
-		transcoTiers(selectedBnp);
-		String libOpeBnp = selectedBnp.getLibOpeBnp().toUpperCase();
-		ArrayList<Tiers> myTiersList = myTiersFacade.findAll();
-		for (Tiers tiers : myTiersList) {
-			if (libOpeBnp.contains(tiers.getLibTiers().toUpperCase()) && !"Virement".equals(tiers.getLibTiers())) {
-				myOperation = bnpToOpe(selectedBnp, tiers);
-				tiersReconnu = true;
-				myOperationFacade.create(myOperation);
-				bnpListNrToRapproTableau(selectedBnp, myOperation, tiers.getLibTiers());
-			}
-		}
-		if (!tiersReconnu) {
-			myTiers = myTiersFacade.find(myTiersFacade.findLib("?"));
-			myOperation = bnpToOpe(selectedBnp, myTiers);
-			myOngletRappro.getPanelCreationOperation()
-					.fillFieldFromOpeDto(myOperationUtil.opeToDtoOperation(myOperation));
-		}
-	}
 
 	/**
 	 * Après création de l'operation à partir du BNP, ajoute l'élément dans la
@@ -260,25 +236,68 @@ public class RapproManager {
 		myBnpNrTableau.fireTableDataChanged();
 	}
 
+	
+	/**
+	 * Creation d'une opération quand on coche la colonne "creation" dans le
+	 * tableau BNP de l onglet rappro
+	 */
+	public void createOpeFromBnpNr() {
+		int nbTiersReconnu = 0;
+		String svLibTiers = "";
+		BnpNrTableau myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
+		tabSelectedCreationCheckBnp = myBnpNrTableau.getTabSelectedCreationCheck();
+		selectedBnp = myBnpListNr.get(tabSelectedCreationCheckBnp);
+		transcoTiers(selectedBnp);
+		String libOpeBnp = selectedBnp.getLibOpeBnp().toUpperCase();
+		ArrayList<Tiers> myTiersList = myTiersFacade.findAll();
+		for (Tiers tiers : myTiersList) {
+			if (libOpeBnp.contains(tiers.getLibTiers().toUpperCase()) && !"Virement".equals(tiers.getLibTiers())) {
+				myOperation = bnpToOpe(selectedBnp, tiers);
+				svLibTiers = tiers.getLibTiers();
+				nbTiersReconnu ++; 
+			}
+		}
+		if (nbTiersReconnu == 1) {
+		myOperationFacade.create(myOperation);
+		bnpListNrToRapproTableau(selectedBnp, myOperation, svLibTiers);
+		}
+		else {
+			myTiers = myTiersFacade.find(myTiersFacade.findLib("?"));
+			myOperation = bnpToOpe(selectedBnp, myTiers);
+			myOngletRappro.getPanelCreationOperation()
+					.fillFieldFromOpeDto(myOperationUtil.opeToDtoOperation(myOperation));
+		}
+	}
+
+	/**
+	 * A partir de la liste initiale de BNP, recherche les tiers puis écrit
+	 * automatiquement les opérations correspondantes si tiers trouvés
+	 */
 	public void ecritOpeCredit() {
-		/**
-		 * A partir de la liste initiale de BNP, recherche les tiers puis écrit
-		 * automatiquement les opérations correspondantes si tiers trouvés
-		 */
+		String svLibTiers = "";
+		int nbTiersReconnus = 0;
+		LogOperation.logInfo("Début ecritOpeCredit ");
 		ArrayList<Bnp> myBnpList = myBnpFacade.findAll();
 		transcoTiers(myBnpList);
 		ArrayList<Tiers> myTiersList = myTiersFacade.findAll();
 		for (Bnp bnp : myBnpList) {
 			if (bnp.getMontantBnp() > 0) {
+				nbTiersReconnus = 0;
 				for (Tiers tiers : myTiersList) {
 					if (bnp.getLibOpeBnp().toUpperCase().contains(tiers.getLibTiers().toUpperCase())
 							&& !"Virement".equals(tiers.getLibTiers())) {
 						myOperation = bnpToOpe(bnp, tiers);
-						myOperationFacade.create(myOperation);
-
+						svLibTiers = tiers.getLibTiers();
+						nbTiersReconnus ++; 
 						LogRappro.logDebug("pour bnp " + bnp);
 						LogRappro.logDebug("trouve tiers " + tiers);
 					}
+				}
+				if (nbTiersReconnus == 1) {
+					myOperationFacade.create(myOperation);
+				}
+				if (nbTiersReconnus > 1) {
+					LogBnp.logInfo("tiers en double " + svLibTiers);
 				}
 			}
 		}
@@ -302,14 +321,18 @@ public class RapproManager {
 	}
 
 	public void transcoTiers(ArrayList<Bnp> myBnpList) {
+		LogOperation.logInfo("Début transcoTiers ");
 		for (Bnp bnp : myBnpList) {
 			transcoTiers(bnp);
 		}
 	}
 
 	public void transcoTiers(Bnp myBnp) {
-		ArrayList<Matching> myMatchingList = myMatchingFacade.findAll();
+		ArrayList<Matching> myMatchingList = new ArrayList<Matching>();
+		myMatchingList = myMatchingFacade.findAll();
 		for (Matching matching : myMatchingList) {
+			LogMatching.logDebug("myBnp : " + myBnp);
+			LogMatching.logDebug("myBnp.getLibOpeBnp() : " + myBnp.getLibOpeBnp());
 			if (myBnp.getLibOpeBnp().toUpperCase().contains(matching.getlibBnp())) {
 				myBnp.setLibOpeBnp(matching.getlibTiers());
 			}
@@ -334,7 +357,7 @@ public class RapproManager {
 	 * Lance le rapprochement auto puis crée les listes des non rapprochés
 	 */
 	public void prepaRappro() {
-		LogRappro.logDebug("arrive dans preparappro");
+		LogRappro.logInfo("arrive dans preparappro");
 		myRapproBOList = myRapproDAO.rapproAuto();
 		ArrayList<Operation> myOpeListRappro = new ArrayList<Operation>();
 		ArrayList<Bnp> myBnpListRappro = new ArrayList<Bnp>();

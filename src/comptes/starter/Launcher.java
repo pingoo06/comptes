@@ -26,8 +26,8 @@ public class Launcher {
 //		initEcheancier();
 //		initOperation();
 //		initBnp();
-		EchToOpe echToOpe = new EchToOpe();
-//		initDerRappro();
+//		EchToOpe echToOpe = new EchToOpe();
+//	initDerRappro();
 		
 		new Fenetre();
 

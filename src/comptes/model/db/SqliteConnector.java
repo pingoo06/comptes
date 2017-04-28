@@ -103,7 +103,7 @@ public class SqliteConnector {
 			// creation table der_rappro
 						statement.executeUpdate("drop table if exists der_rappro");
 						statement.executeUpdate(
-								"create table der_rappro (id integer primary key autoincrement, derSolde double, dateDerRappro String, dateDerRapproLong long");
+								"create table der_rappro (id integer primary key autoincrement, derSolde double, dateDerRappro String, dateDerRapproLong long)");
 						statement.close();
 						Logger.logInfo("table der_rappro creee");
 		} catch (SQLException e) {

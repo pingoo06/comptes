@@ -22,9 +22,6 @@ public class DerRapproFacade {
 		return derRapproDao.find(id);
 	}
 
-	//	public ArrayList<DerRappro> findAll() {
-	//	}
-
 	public void update(DerRappro derRappro) {
 		derRapproDao.update(derRappro);
 	}
@@ -37,7 +34,7 @@ public class DerRapproFacade {
 		LogRappro.logInfo(" init de la table DerRapro");
 		DAO<DerRappro> myDerRapproDAO = new DerRapproDAO();
 		DerRappro myDerRappro;
-		MyDate dateDerRappro = new MyDate("2015-01-01");
+		MyDate dateDerRappro = new MyDate("2017-02-24");
 		myDerRappro = new DerRappro (0,(double) 0, dateDerRappro,dateDerRappro.toLongValue());
 		LogRappro.logDebug(myDerRappro.toString());
 		myDerRapproDAO.create(myDerRappro);

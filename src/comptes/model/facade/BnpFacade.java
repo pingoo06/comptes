@@ -59,7 +59,7 @@ public class BnpFacade {
 			Bnp myBnp;
 			int nbLines = 0;
 			while (myBnpParser.next()) {
-				LogBnp.logInfo("myBnpParser.getString(0)" + myBnpParser.getString(0) + " - myBnpParser.getString(1)"
+				LogBnp.logDebug("myBnpParser.getString(0)" + myBnpParser.getString(0) + " - myBnpParser.getString(1)"
 						+ myBnpParser.getString(1) + " - myBnpParser.getString(2)" + myBnpParser.getString(2));
 				myBnp = new Bnp(0, new MyDate(myBnpParser.getString(0)), myBnpParser.getString(1),
 						myBnpParser.getString(2), myBnpParser.getString(3), myBnpParser.getDouble(4), "NR");

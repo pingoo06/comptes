@@ -63,7 +63,7 @@ public class CategorieDAO extends DAO<Categorie> {
 				// System.out.println("id = " + id );
 			}
 		} catch (SQLException e) {
-			LogCategorie.logError("findlib categ KO", e);
+			LogCategorie.logError("findlib categ KO libCateg = '" + libCateg , e);
 		}
 		return id;
 	}
