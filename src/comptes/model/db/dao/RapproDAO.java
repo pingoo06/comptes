@@ -9,6 +9,7 @@ import comptes.model.bo.RapproBO;
 import comptes.model.db.entity.Bnp;
 import comptes.model.db.entity.Bnp.OperationType;
 import comptes.model.db.entity.Operation;
+import comptes.util.DoubleFormater;
 import comptes.util.MyDate;
 import comptes.util.log.LogOperation;
 import comptes.util.log.LogRappro;
@@ -17,20 +18,19 @@ public class RapproDAO extends DAO<RapproBO> {
 	public ArrayList<RapproBO> rapproAuto() {
 		LogOperation.logInfo("Debut constructeur rapprochement");
 		ArrayList<RapproBO> myRapproBOList = new ArrayList<>();
-		rapproche(myRapproBOList, "avecTiers",
+		rapproche(myRapproBOList, "avecNotExists",
 				"b.typeOpeBnp in ('ECH_PRET', 'PRLV', 'DEPOT','REMISE_CHQ','VIR_RECU') and  o.typeOpe = b.typeOpeBnp and o.montantOpe=b.montantBnp",
 				"b2.typeOpeBnp in ('ECH_PRET', 'PRLV', 'DEPOT','REMISE_CHQ','VIR_RECU') and  o2.typeOpe = b2.typeOpeBnp and o2.montantOpe=b2.montantBnp");
-		rapproche(myRapproBOList, "avecTiers",
+		rapproche(myRapproBOList, "avecNotExists",
 				"b.typeOpeBnp in ('VIR_EMIS', 'CB','RETRAIT') and  o.typeOpe = b.typeOpeBnp and o.montantOpe=b.montantBnp and b.dateBnpCalc = o.dateOpeLong",
 				"b2.typeOpeBnp in ('VIR_EMIS', 'CB','RETRAIT') and  o2.typeOpe = b2.typeOpeBnp and o2.montantOpe=b2.montantBnp and b2.dateBnpCalc = o2.dateOpeLong");
-		rapproche(myRapproBOList, "avecTiers",
+		rapproche(myRapproBOList, "avecNotExists",
 				"b.typeOpeBnp ='CHQ' and b.chqNumberBnp= o.typeOpe and  o.montantOpe=b.montantBnp",
 				"b2.typeOpeBnp ='CHQ' and b2.chqNumberBnp= o2.typeOpe and  o2.montantOpe=b2.montantBnp");
-		rapproche(myRapproBOList, "sansTiers",
-				"b.libCourtBnp='CHQ NO' and b.chqNumberBnp = o.typeOpe and o.montantOpe=b.montantBnp","");
+//		rapproche(myRapproBOList, "sansNotExists",
+//				"b.libCourtBnp='CHQ NO' and b.chqNumberBnp = o.typeOpe and o.montantOpe=b.montantBnp","");
 
-		return myRapproBOList;
-	}
+		return myRapproBOList;	}
 
 	private void rapproche(ArrayList<RapproBO> myRapproBOList, String typeReq, String whereClause, String whereClause2){
 		Statement statement;
@@ -41,11 +41,11 @@ public class RapproDAO extends DAO<RapproBO> {
 			String myLibTiers="";
 			LogRappro.logInfo("TypeReq : " + typeReq);
 			ResultSet rs ;
-			if ("avecTiers".equals(typeReq)) {
+			if ("avecNotExists".equals(typeReq)) {
 				rs = statement.executeQuery("SELECT * FROM  operation as o INNER JOIN bnp as b INNER JOIN tiers as t  on o.tiersId=t.id and o.etatOpe='NR' and " + whereClause + 
 						" and not exists (select 1 from  (SELECT * FROM  operation as o2 INNER JOIN bnp as b2 INNER JOIN tiers as t2  on o2.tiersId=t2.id and o2.etatOpe='NR' and b.id = b2.id and o.id != o2.id and " + whereClause2 + "));");
 			} else {
-				rs = statement.executeQuery("SELECT * FROM  operation as o INNER JOIN bnp as b on  o.etatOpe='NR' and " + whereClause + ";");
+				rs = statement.executeQuery("SELECT * FROM  operation as o INNER JOIN bnp as b INNER JOIN tiers as t  on  o.tiersId=t.id and o.etatOpe='NR' and " + whereClause + ";");
 			}
 			while (rs.next()) {
 				myOperation = OperationDAO.operationFromRow(rs);
@@ -58,11 +58,11 @@ public class RapproDAO extends DAO<RapproBO> {
 			}
 		} catch (SQLException e) {
 			LogRappro.logError("Fail rapproche", e);
-			if ("avecTiers".equals(typeReq)) {
+			if ("avecNotExists".equals(typeReq)) {
 			LogRappro.logError("SELECT * FROM  operation as o INNER JOIN bnp as b INNER JOIN tiers as t  on o.tiersId=t.id and o.etatOpe='NR' and " + whereClause + 
 					" and not exists (select 1 from  (SELECT * FROM  operation as o2 INNER JOIN bnp as b2 INNER JOIN tiers as t2  on o2.tiersId=t2.id and o2.etatOpe='NR' and b.id = b2.id and o.id != o2.id and " + whereClause2 + "));");
 		} else 
-			LogRappro.logError("SELECT * FROM  operation as o INNER JOIN bnp as b on  o.etatOpe='NR' and " + whereClause + ";");
+			LogRappro.logError("SELECT * FROM  operation as o INNER JOIN bnp as b INNER JOIN tiers as t  on  o.tiersId=t.id and o.etatOpe='NR' and " + whereClause + ";");
 		}
 	}
 

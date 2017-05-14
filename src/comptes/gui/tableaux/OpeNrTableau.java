@@ -2,6 +2,7 @@ package comptes.gui.tableaux;
 
 import comptes.gui.manager.RapproManager;
 import comptes.model.db.entity.Operation;
+import comptes.model.facade.OperationFacade;
 import comptes.util.log.LogRappro;
 
 public class OpeNrTableau extends CheckableTableau {
@@ -60,7 +61,16 @@ public class OpeNrTableau extends CheckableTableau {
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		LogRappro.logInfo("Début : Set ValueAt de OpeNR Tableau");
-		if (columnIndex == 3) {
+		Operation current = myRapproMngr.getMyOpeListNr().get(rowIndex);
+		OperationFacade operationFacade = new OperationFacade();
+		switch (columnIndex) {
+		case 2 :
+			current.setMontantOpe((Double) aValue);
+			operationFacade.update(current);
+			fireTableDataChanged();
+			break;
+		case 3 :
+		
 			boolean checked = (boolean) aValue;
 			if (checked) {
 				tabSelectedRapproManu.add(rowIndex);
@@ -69,8 +79,8 @@ public class OpeNrTableau extends CheckableTableau {
 				myRapproMngr.uncheckOperation(rowIndex);
 				tabSelectedRapproManu.remove(new Integer(rowIndex));
 			}
-		}
 		fireTableDataChanged();
+		}
 	}
 
 	// Retourne le type de chaque colonne
@@ -91,7 +101,7 @@ public class OpeNrTableau extends CheckableTableau {
 	// seule la colonne avec la checkBox est modifiable
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return columnIndex == 3;
+		return (columnIndex == 2 || columnIndex ==3);
 	}
 
 	// supression de ligne

@@ -22,6 +22,7 @@ import comptes.model.facade.MatchingFacade;
 import comptes.model.facade.OperationFacade;
 import comptes.model.facade.TiersFacade;
 import comptes.model.services.OperationUtil;
+import comptes.util.DoubleFormater;
 import comptes.util.MyDate;
 import comptes.util.log.LogBnp;
 import comptes.util.log.LogMatching;
@@ -132,10 +133,10 @@ public class RapproManager {
 		myRapproBOList.add(myRapproBo);
 	}
 
-
 	/**
-	 * Fonction appelée lorsque la colonne check du tableau des rapprochée est décochée
-	 * Elle gère les dérapprochements
+	 * Fonction appelée lorsque la colonne check du tableau des rapprochée est
+	 * décochée Elle gère les dérapprochements
+	 * 
 	 * @param rowIndex
 	 */
 	public void uncheckRappro(int rowIndex) {
@@ -165,12 +166,13 @@ public class RapproManager {
 	}
 
 	/**
-		 * Rafraichissement des tableaux de l'onglet rappro
-		 */
-		public void rapproRefreshTableaux() {
-	//		ajout 26/03
-	//		 myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
-			//fin ajout 2603
+	 * Rafraichissement des tableaux de l'onglet rappro
+	 */
+	public void rapproRefreshTableaux() {
+		// ajout 26/03
+		// myRapproTableau = (RapproTableau)
+		// myOngletRappro.getTableRappro().getModel();
+		// fin ajout 2603
 		myBnpNrTableau.resetTabSelected();
 		myOpeNrTableau.resetTabSelected();
 		myRapproTableau.fireTableDataChanged();
@@ -178,11 +180,12 @@ public class RapproManager {
 		myOpeNrTableau.fireTableDataChanged();
 	}
 
-		/**
-			 * Met à jour les opérations dans la base avec le code X : rapproché
-			 *  lorsque le rapprochement est terminé
-			 */
+	/**
+	 * Met à jour les opérations dans la base avec le code X : rapproché lorsque
+	 * le rapprochement est terminé
+	 */
 	public void finaliseRappro() {
+		LogRappro.logInfo("finalise rappro");
 		OperationFacade myOperationFacade = new OperationFacade();
 		Operation myOperation = new Operation();
 		Iterator<RapproBO> it = myRapproBOList.iterator();
@@ -192,11 +195,22 @@ public class RapproManager {
 			myOperation = rapproBo.getOperation();
 			myOperation.setEtatOpe("X");
 			myOperationFacade.update(myOperation);
+			it.remove();
 		}
+		myOngletRappro.getPanelRappro().getJtfDateRappro();
+		DerRappro myDerRappro = new DerRappro();
+		DerRapproFacade myDerRapproFacade = new DerRapproFacade();
+		myDerRappro = myDerRapproFacade.find(1);
+		myDerRappro.setDateDerRappro(new MyDate(myOngletRappro.getPanelRappro().getJtfDateRappro().getText()));
+		myDerRappro.setDerSolde(Double.parseDouble(myOngletRappro.getPanelRappro().getJtfMtFinal().getText()));
+		myDerRapproFacade.update(myDerRappro);
+		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
+		myRapproTableau.fireTableDataChanged();
 	}
 
 	/**
 	 * Retourne vrai si on a coché la ligne AMEX dans BNP
+	 * 
 	 * @param bnp
 	 * @return
 	 */
@@ -214,7 +228,6 @@ public class RapproManager {
 		// Operation ope = myOpeListNr.remove(rowIndex);
 		amexManager.uncheckRapproAmex(ope, myOngletRappro);
 	}
-
 
 	/**
 	 * Après création de l'operation à partir du BNP, ajoute l'élément dans la
@@ -236,7 +249,6 @@ public class RapproManager {
 		myBnpNrTableau.fireTableDataChanged();
 	}
 
-	
 	/**
 	 * Creation d'une opération quand on coche la colonne "creation" dans le
 	 * tableau BNP de l onglet rappro
@@ -254,14 +266,13 @@ public class RapproManager {
 			if (libOpeBnp.contains(tiers.getLibTiers().toUpperCase()) && !"Virement".equals(tiers.getLibTiers())) {
 				myOperation = bnpToOpe(selectedBnp, tiers);
 				svLibTiers = tiers.getLibTiers();
-				nbTiersReconnu ++; 
+				nbTiersReconnu++;
 			}
 		}
 		if (nbTiersReconnu == 1) {
-		myOperationFacade.create(myOperation);
-		bnpListNrToRapproTableau(selectedBnp, myOperation, svLibTiers);
-		}
-		else {
+			myOperationFacade.create(myOperation);
+			bnpListNrToRapproTableau(selectedBnp, myOperation, svLibTiers);
+		} else {
 			myTiers = myTiersFacade.find(myTiersFacade.findLib("?"));
 			myOperation = bnpToOpe(selectedBnp, myTiers);
 			myOngletRappro.getPanelCreationOperation()
@@ -288,7 +299,7 @@ public class RapproManager {
 							&& !"Virement".equals(tiers.getLibTiers())) {
 						myOperation = bnpToOpe(bnp, tiers);
 						svLibTiers = tiers.getLibTiers();
-						nbTiersReconnus ++; 
+						nbTiersReconnus++;
 						LogRappro.logDebug("pour bnp " + bnp);
 						LogRappro.logDebug("trouve tiers " + tiers);
 					}
@@ -305,6 +316,7 @@ public class RapproManager {
 
 	/**
 	 * Crée une opération saisie dans le panel Operation de l'onglet rappro
+	 * 
 	 * @param myOperationDTO
 	 */
 	public void createNewOpe(OperationDTO myOperationDTO) {
@@ -388,30 +400,6 @@ public class RapproManager {
 				it2.remove();
 			}
 		}
-	}
-/**
- * Passe les opération rapprochées à l'état X
- */
-	public void validateRappro() {
-		// ajouter un test sur solde = 0
-		RapproBO rapproBo = new RapproBO();
-		Iterator<RapproBO> it = myRapproBOList.iterator();
-		while (it.hasNext()) {
-			rapproBo = it.next();
-			myOperation = rapproBo.getOperation();
-			myOperation.setEtatOpe("X");
-			myOperationFacade.update(myOperation);
-			it.remove();
-		}
-		myOngletRappro.getPanelRappro().getJtfDateRappro();
-		DerRappro myDerRappro = new DerRappro();
-		DerRapproFacade myDerRapproFacade = new DerRapproFacade();
-		myDerRappro = myDerRapproFacade.find(1);
-		myDerRappro.setDateDerRappro(new MyDate(myOngletRappro.getPanelRappro().getJtfDateRappro().getText()));
-		myDerRappro.setDerSolde(Double.parseDouble(myOngletRappro.getPanelRappro().getJtfMtFinal().getText()));
-		myDerRapproFacade.update(myDerRappro);
-		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
-		myRapproTableau.fireTableDataChanged();
 	}
 
 	public void updateTableaux() {

@@ -9,7 +9,8 @@ public class RapproSommesManager {
 	private double sumDebBnp;
 	private double sumCredBnp;
 	private double resteAPointer;
-	private PanelRappro panelRappro;
+//	private PanelRappro panelRappro;
+	private java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 	
 
 
@@ -25,7 +26,9 @@ public class RapproSommesManager {
  * @return true si resteAPointer = 0
  */
 	public boolean isCompleteRappro() {
-		return resteAPointer == 0;
+		LogRappro.logInfo("reste à pointer" + resteAPointer);
+		return "0".equals(String.valueOf(df.format(resteAPointer)));
+//		return resteAPointer == 0;
 	}
 
 	
@@ -36,12 +39,12 @@ public class RapproSommesManager {
 	}
 	
 	public void addRappro(double mtRappro){
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		if (mtRappro < 0) {
 			sumDebBnp += mtRappro;
 			myOngletRappro.getPanelRappro().getJtfSommeDeb().setText(String.valueOf(df.format(sumDebBnp * -1)));
 			LogRappro.logDebug("ajoute dans somme deb : " + sumDebBnp + "; mt rappro : " + mtRappro);
 		} else {
+			LogRappro.logInfo("avant ajoute dans somme cred : " + sumCredBnp + "mtRappro" + mtRappro);
 			sumCredBnp += mtRappro;
 			myOngletRappro.getPanelRappro().getJtfSommeCred().setText(String.valueOf(df.format(sumCredBnp)));
 			LogRappro.logInfo("ajoute dans somme cred : " + sumCredBnp);
@@ -73,7 +76,7 @@ public class RapproSommesManager {
 
 
 	public void setSumDebBnp(double sumDebBnp) {
-		this.sumDebBnp = sumDebBnp;
+		this.sumDebBnp=sumDebBnp ;
 	}
 
 
@@ -87,7 +90,7 @@ public class RapproSommesManager {
 
 
 	public void setSumCredBnp(double sumCredBnp) {
-		this.sumCredBnp = sumCredBnp;
+		this.sumCredBnp=sumCredBnp ;
 	}
 
 
@@ -101,7 +104,7 @@ public class RapproSommesManager {
 
 
 	public void setResteAPointer(double resteAPointer) {
-		this.resteAPointer = resteAPointer;
+		this.resteAPointer = resteAPointer ;
 	}
 
 

@@ -55,7 +55,6 @@ public class OngletRappro extends JSplitPane {
 		panelRappro = new PanelRappro();
 		panelCreationOperation = new PanelCreationOperation();
 		vTopR.add(panelRappro, BorderLayout.NORTH);
-		panelRappro.getBoutonValidRappro().addActionListener(new BoutonValidRapproListener());
 		panelRappro.getBoutonAnnulRappro().addActionListener(new BoutonAnnulRapproListener());
 		panelRappro.getBoutonStartRappro().addActionListener(new BoutonRapprocherListener(this));
 		myRapproSommesManager = new RapproSommesManager(this);
@@ -138,11 +137,6 @@ public class OngletRappro extends JSplitPane {
 		}
 	}
 
-	class BoutonValidRapproListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			myRapproMngr.validateRappro();
-		}
-	}
 
 	class BoutonAnnulRapproListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
