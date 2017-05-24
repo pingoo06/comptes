@@ -9,7 +9,7 @@ import javax.swing.JComboBox;
 public class TypeEchCombo extends JComboBox<String> implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-		private static final String[] typeStrings = { "Prelevement","Debit", "Credit"};
+		private static final String[] typeStrings = {"Prelevement","Virement"};
 
 		public TypeEchCombo() {
 			super(typeStrings);

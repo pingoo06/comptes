@@ -11,12 +11,6 @@ import comptes.model.services.EchToOpe;
 
 public class Launcher {
 	
-////AVANT TOUT :
-//modifier tous les caractères pourris
-//Mettre NR sur toutes les lignes d'opération non pointées
-//Enlever les apostrophes des Tiers et des categories
-//Initialiser le dernier solde pointé dans la table rappro
-//vérifier s'il y a des tiers vides
 	
 	public static void main(String[] args) {
 
@@ -26,7 +20,7 @@ public class Launcher {
 //		initEcheancier();
 //		initOperation();
 //		initBnp();
-//		EchToOpe echToOpe = new EchToOpe();
+		EchToOpe echToOpe = new EchToOpe();
 //	initDerRappro();
 		
 		new Fenetre();

@@ -9,11 +9,8 @@ public class RapproSommesManager {
 	private double sumDebBnp;
 	private double sumCredBnp;
 	private double resteAPointer;
-//	private PanelRappro panelRappro;
 	private java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 	
-
-
 	public RapproSommesManager(OngletRappro myOngletRappro) {
 	super();
 	this.myOngletRappro=myOngletRappro;
@@ -27,7 +24,7 @@ public class RapproSommesManager {
  */
 	public boolean isCompleteRappro() {
 		LogRappro.logInfo("reste à pointer" + resteAPointer);
-		return "0".equals(String.valueOf(df.format(resteAPointer)));
+		return ("0".equals(String.valueOf(df.format(resteAPointer)))||"-0".equals(String.valueOf(df.format(resteAPointer))));
 //		return resteAPointer == 0;
 	}
 

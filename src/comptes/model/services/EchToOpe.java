@@ -19,15 +19,15 @@ public class EchToOpe {
 	private MyDate dateEchSuiv;
 
 	public EchToOpe () {
-		LogEcheancier.logInfo("Début echToOpe");
+		LogEcheancier.logDebug("Début echToOpe");
 		ArrayList<EcheancierBO> listEcheancierBO = new EcheancierDAO().findAllEchBO();
 		EcheancierBO myEcheancierBO = new EcheancierBO();
 		dateJour = new MyDate();
 		for (int i = 0; i < listEcheancierBO.size(); i++) {
 			myEcheancierBO = listEcheancierBO.get(i);
 			int nbEch=myEcheancierBO.getNbEch();
-			LogEcheancier.logInfo("Dans EchToOpe run : dateJourLong " + dateJour.toLongValue());
-			LogEcheancier.logInfo("Dans EchToOpe run : myEcheancierBO.getDateEchLong() " + myEcheancierBO.getDateEch().toLongValue());
+			LogEcheancier.logDebug("Dans EchToOpe run : dateJourLong " + dateJour.toLongValue());
+			LogEcheancier.logDebug("Dans EchToOpe run : myEcheancierBO.getDateEchLong() " + myEcheancierBO.getDateEch().toLongValue());
 			
 		if (myEcheancierBO.getDateEch().toLongValue() <= dateJour.toLongValue() && nbEch > 0) {
 //			if (myEcheancierBO.getDateEch().compareTo(dateJour) <= 0 && nbEch > 0) {
@@ -42,6 +42,10 @@ public class EchToOpe {
 				String typeEch = myEcheancierBO.getTypeEch();
 				if (typeEch == "Prelevement"){
 					typeEch = "PRLV";
+				} else {
+					if (typeEch == "Virenment"){
+						typeEch = "VIR_EMIS";
+					}
 				}
 				myOperation.setTypeOpe(myEcheancierBO.getTypeEch());
 				OperationFacade myOperationFacade = new OperationFacade();
@@ -51,10 +55,10 @@ public class EchToOpe {
 				Echeancier myEcheancier=new Echeancier();
 				myEcheancierBO.setNbEch(nbEch - 1);
 				
-				LogEcheancier.logInfo("Dans EchToOpe run : dateEch " + myEcheancierBO.getDateEch());
+				LogEcheancier.logDebug("Dans EchToOpe run : dateEch " + myEcheancierBO.getDateEch());
 				dateEchSuiv = myEcheancierBO.getDateEch();
 				dateEchSuiv.plusMonth(1);
-				LogEcheancier.logInfo("Dans EchToOpe : dateEchSuiv " + dateEchSuiv);
+				LogEcheancier.logDebug("Dans EchToOpe : dateEchSuiv " + dateEchSuiv);
 				myEcheancierBO.setDateEch(dateEchSuiv);
 				myEcheancier=EcheancierUtil.boToEcheancier(myEcheancierBO);
 				myEcheancierFacade.update(myEcheancier);

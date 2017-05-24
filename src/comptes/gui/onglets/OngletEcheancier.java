@@ -43,9 +43,6 @@ public class OngletEcheancier extends JSplitPane {
 	// Pour echeancier
 	private MyJTextField jtfDateEch;
 	private MyJTextField jtfNbEch;
-	private MyJTextField jtfTypeEch;
-	private MyJTextField jtfCategEch;
-	private MyJTextField jtfTiersEch;
 	private MyJTextField jtfMontantEch;
 
 	private JLabel labelTypeEch;
@@ -74,9 +71,6 @@ public class OngletEcheancier extends JSplitPane {
 		saisieEchPan = new JPanel();
 		jtfDateEch = new MyJTextField(new MyDate().toString());
 		jtfNbEch = new MyJTextField("");
-		jtfTypeEch = new MyJTextField("Prelevement");
-		jtfCategEch = new MyJTextField("");
-		jtfTiersEch = new MyJTextField("");
 		jtfMontantEch = new MyJTextField("");
 
 		labelTypeEch = new JLabel("TypeEch");
@@ -141,30 +135,36 @@ public class OngletEcheancier extends JSplitPane {
 		comboTiersE.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				jtfTiersEch.setText(comboTiersE.getSelectedItem().toString());
 				TiersFacade myTiersFacade = new TiersFacade();
 				int idTiers = myTiersFacade.findLib(comboTiersE.getSelectedItem().toString());
-				Tiers myTiers = myTiersFacade.find(idTiers);
-				jtfCategEch.setText(myTiers.getDerCategDeTiers());
-				jtfDateEch.requestFocus();
+				if (idTiers != 0) {
+					Tiers myTiers = new Tiers();
+					myTiers = myTiersFacade.find(idTiers);
+					String derCategDeTiers = myTiers.getDerCategDeTiers();
+					comboCategorieE.setSelectedItem(derCategDeTiers);
+//					jtfDateEch.requestFocus();
+				}else {
+					comboCategorieE.setSelectedIndex(0);
+				}
 			}
-		});
-		comboTypeEch.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				jtfTypeEch.setText(comboTypeEch.getSelectedItem().toString());
-			}
-		});
+		}
+			)
+		;
+//		comboTypeEch.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//			}
+//		});
 
-		comboCategorieE.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				jtfCategEch.setText(comboCategorieE.getSelectedItem().toString());
-				// System.out.println("dans combo categE add action table
-				// selected item : "
-				// + comboCategorie.getSelectedItem().toString());
-			}
-		});
+//		comboCategorieE.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				jtfCategEch.setText(comboCategorieE.getSelectedItem().toString());
+//				// System.out.println("dans combo categE add action table
+//				// selected item : "
+//				// + comboCategorie.getSelectedItem().toString());
+//			}
+//		});
 
 		// AJOUT TESTS SUR DATECH
 		jtfDateEch.addPropertyChangeListener(new PropertyChangeListener() {
@@ -177,21 +177,12 @@ public class OngletEcheancier extends JSplitPane {
 
 		Font police = new Font("Arial", Font.BOLD, 12);
 
-		jtfTypeEch.setFont(police);
-		jtfTypeEch.setPreferredSize(new Dimension(100, 20));
-		jtfTypeEch.setForeground(Color.BLUE);
-		jtfTiersEch.setFont(police);
-		jtfTiersEch.setPreferredSize(new Dimension(100, 20));
-		jtfTiersEch.setForeground(Color.BLUE);
-		jtfCategEch.setFont(police);
-		jtfCategEch.setPreferredSize(new Dimension(100, 20));
-		jtfCategEch.setForeground(Color.BLUE);
 		jtfMontantEch.setFont(police);
 		jtfMontantEch.setPreferredSize(new Dimension(100, 20));
 		jtfMontantEch.setForeground(Color.BLUE);
 		jtfDateEch.setFont(police);
 		jtfDateEch.setPreferredSize(new Dimension(100, 20));
-		jtfDateEch.setForeground(Color.GREEN);
+		jtfDateEch.setForeground(Color.BLUE);
 		jtfDateEch.setFont(police);
 		jtfNbEch.setPreferredSize(new Dimension(100, 20));
 		jtfNbEch.setFont(police);
@@ -199,13 +190,10 @@ public class OngletEcheancier extends JSplitPane {
 
 		saisieEchPan.add(labelTypeEch);
 		saisieEchPan.add(comboTypeEch);
-		saisieEchPan.add(jtfTypeEch);
 		saisieEchPan.add(labelTiers);
 		saisieEchPan.add(comboTiersE);
-		saisieEchPan.add(jtfTiersEch);
 		saisieEchPan.add(labelCategOpe);
 		saisieEchPan.add(comboCategorieE);
-		saisieEchPan.add(jtfCategEch);
 		saisieEchPan.add(labelDateEch);
 		saisieEchPan.add(jtfDateEch);
 		saisieEchPan.add(labelMontantEch);
@@ -227,9 +215,9 @@ public class OngletEcheancier extends JSplitPane {
 			} else {
 				EcheancierDTO myEcheancierDTO = new EcheancierDTO();
 				myEcheancierDTO.setId(0);
-				myEcheancierDTO.setTypeEch(jtfTypeEch.getText());
-				myEcheancierDTO.setCategEch(jtfCategEch.getText());
-				myEcheancierDTO.setTiersEch(jtfTiersEch.getText());
+				myEcheancierDTO.setTypeEch(comboTypeEch.getSelectedItem().toString());
+				myEcheancierDTO.setCategEch(comboCategorieE.getSelectedItem().toString());
+				myEcheancierDTO.setTiersEch(comboTiersE.getSelectedItem().toString());
 				myEcheancierDTO.setMontantEch(Double.parseDouble(jtfMontantEch.getText()));
 				myEcheancierDTO.setDateEch(jtfDateEch.getText());
 				myEcheancierDTO.setNbEch(Integer.parseUnsignedInt(jtfNbEch.getText()));
@@ -259,19 +247,18 @@ public class OngletEcheancier extends JSplitPane {
 			}
 		}
 
-		if (jtfTypeEch.getText().length() == 0) {
-			res = "Saisir un type d'opération";
+		if (comboTypeEch.getSelectedItem().toString().length() == 0) {
+			res = "Saisir un type d'échancier";
 		}
 
 		// Tiers choisi
-		if (jtfTiersEch.getText().length() == 0) {
+		if (comboTiersE.getSelectedItem().toString().length() == 0
+				|| comboTiersE.getSelectedItem().toString() == "Tout") {
 			res = "Saisir un tiers";
 		}
 
 		// categorie choisie
-		String test = jtfCategEch.toString();
-		LogEcheancier.logInfo("test : " + test);
-		if (jtfCategEch.getText().length() == 0) {
+		if (comboCategorieE.getSelectedItem().toString().length() == 0) {
 			res = "Saisir une categorie";
 		}
 
@@ -298,13 +285,7 @@ public class OngletEcheancier extends JSplitPane {
 		comboTypeEch.setSelectedIndex(0);
 		comboTiersE.requestFocus();
 		jtfDateEch.setText("");
-		jtfTiersEch.setText("");
 		jtfNbEch.setText("");
-		jtfTypeEch.setText("Prelevement");
-		jtfCategEch.setText("");
-		String essai;
-		essai = jtfCategEch.getText();
-		LogEcheancier.logInfo("essai : " + essai);
 		jtfMontantEch.setText("");
 	}
 }

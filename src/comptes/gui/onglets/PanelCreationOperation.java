@@ -106,7 +106,8 @@ public class PanelCreationOperation extends Box {
 				}
 
 			}
-		});
+		}
+		);
 		comboTypeOpe.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
