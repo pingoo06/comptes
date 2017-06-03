@@ -62,13 +62,13 @@ public class RapproAmexManager {
 	}
 
 	public void reset(OngletRappro myOngletRappro) {
-		mtAmexBnp = 0;
-		sumOpeAmex = 0;
 		if (!isComplete()) {
 			for (Operation ope : getMyOpeAmexList()) {
 				myOngletRappro.getMyRapproSommesManager().minusRappro(ope.getMontantOpe());
 			}
 		}
+		mtAmexBnp = 0;
+		sumOpeAmex = 0;
 		myOpeAmexList.clear();
 	}
 

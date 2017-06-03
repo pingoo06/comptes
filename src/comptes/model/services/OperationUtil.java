@@ -25,7 +25,6 @@ public class OperationUtil {
 	}
 
 	public void create(OperationDTO myOperationDTO) {
-
 		Logger.logDebug("Début create operation DTO");
 		myOperationFacade.create(dtoToOperation(myOperationDTO));
 	}

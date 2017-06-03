@@ -57,7 +57,6 @@ public class OpeNrTableau extends CheckableTableau {
 
 	}
 
-	// A implementer
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		LogRappro.logInfo("Début : Set ValueAt de OpeNR Tableau");
@@ -70,7 +69,6 @@ public class OpeNrTableau extends CheckableTableau {
 			fireTableDataChanged();
 			break;
 		case 3 :
-		
 			boolean checked = (boolean) aValue;
 			if (checked) {
 				tabSelectedRapproManu.add(rowIndex);
@@ -98,7 +96,7 @@ public class OpeNrTableau extends CheckableTableau {
 		return val.getClass();
 	}
 
-	// seule la colonne avec la checkBox est modifiable
+	// seules les colonnes checkBox et montant sont modifiables
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return (columnIndex == 2 || columnIndex ==3);

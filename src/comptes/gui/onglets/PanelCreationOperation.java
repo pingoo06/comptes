@@ -81,7 +81,6 @@ public class PanelCreationOperation extends Box {
 		labelCategOpe = new JLabel("Categorie");
 		labelDetailOpe = new JLabel("DetailOpe");
 
-		// boutonPan = new JPanel();
 		boutonAnnulOpe = new JButton("Annuler");
 		boutonOKOpe = new JButton("Valider");
 

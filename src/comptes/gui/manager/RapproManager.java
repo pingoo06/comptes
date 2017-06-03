@@ -134,7 +134,7 @@ public class RapproManager {
 	}
 
 	/**
-	 * Fonction appelée lorsque la colonne check du tableau des rapprochée est
+	 * Fonction appelée lorsque la colonne check du tableau des rapprochés est
 	 * décochée Elle gère les dérapprochements
 	 * 
 	 * @param rowIndex
@@ -169,10 +169,6 @@ public class RapproManager {
 	 * Rafraichissement des tableaux de l'onglet rappro
 	 */
 	public void rapproRefreshTableaux() {
-		// ajout 26/03
-		// myRapproTableau = (RapproTableau)
-		// myOngletRappro.getTableRappro().getModel();
-		// fin ajout 2603
 		myBnpNrTableau.resetTabSelected();
 		myOpeNrTableau.resetTabSelected();
 		myRapproTableau.fireTableDataChanged();
@@ -223,9 +219,7 @@ public class RapproManager {
 	}
 
 	public void uncheckOperation(int rowIndex) {
-		// Modif 17/3
 		Operation ope = myOpeListNr.get(rowIndex);
-		// Operation ope = myOpeListNr.remove(rowIndex);
 		amexManager.uncheckRapproAmex(ope, myOngletRappro);
 	}
 
@@ -404,8 +398,11 @@ public class RapproManager {
 
 	public void updateTableaux() {
 		myOpeNrTableau = (OpeNrTableau) myOngletRappro.getTableOpeNr().getModel();
+		myOpeNrTableau.fireTableDataChanged();
 		myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
+		myBnpNrTableau.fireTableDataChanged();
 		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
+		myRapproTableau.fireTableDataChanged();
 	}
 
 	public OngletRappro getMyOngletRappro() {

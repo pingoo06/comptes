@@ -17,47 +17,6 @@ public class MyCsvParser {
 	private BufferedReader br;
 	private String currentLine;
 	
-//	//AVANT DE PARSER :
-//	modifier tous les caractères pourris
-//	Mettre NR sur toutes les lignes d'opération non pointées
-	
-	
-	
-	
-// arriver à extraire la date de libOpeBnp
-//	public static void main(String[] args) {
-//		MyCsvParser bnpParser = getBnpParser("res/bnp.csv");
-//		int nbLines = 0;
-//		while(bnpParser.next()){
-//			System.out.println(bnpParser.getString(0));
-//			System.out.println(bnpParser.getString(1));
-//			System.out.println(bnpParser.getString(2));
-//			System.out.println(bnpParser.getString(3));
-//			System.out.println(bnpParser.getDouble(4));
-//			nbLines++;
-//		}
-//		System.out.println("TOTAL LINES: "+nbLines);
-//		try {
-//			Thread.sleep(2000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-//		System.out.println("-------------------------------");
-//		nbLines=0;
-//		MyCsvParser moneyParser = getMoneyParser("res/money.csv");
-//		while(moneyParser.next()) {
-//			System.out.println("date : " + moneyParser.getString("Date"));
-//			System.out.println("Payee : " + moneyParser.getString("Payee"));
-//			System.out.println("Payment : " + moneyParser.getDouble("Payment"));
-//			System.out.println("Deposit : " + moneyParser.getDouble("Deposit"));
-//			System.out.println("Memo : " + moneyParser.getString("Memo"));
-//			System.out.println("Category : " + moneyParser.getString("Category"));
-//			System.out.println("Unknown : " + moneyParser.getString("Unknown"));
-//			nbLines++;
-//		}
-//		System.out.println("TOTAL LINES: "+nbLines);
-//	}
-
 	public MyCsvParser(boolean containsHeaders, int lineToSkip, String separator, String filePath) {
 		super();
 		this.separator = separator;
