@@ -124,7 +124,7 @@ public class PanelCreationOperation extends Box {
 					OperationFacade myOperationFacade = new OperationFacade();
 					String tmp = new Long(myOperationFacade.findDerChq() + 1).toString();
 					jtfNumChq.setText(tmp);
-					jtfCredit.requestFocus();
+					jtfDebit.requestFocus();
 				}
 			}
 		});

@@ -41,10 +41,10 @@ public class RapproSommesManager {
 			myOngletRappro.getPanelRappro().getJtfSommeDeb().setText(String.valueOf(df.format(sumDebBnp * -1)));
 			LogRappro.logDebug("ajoute dans somme deb : " + sumDebBnp + "; mt rappro : " + mtRappro);
 		} else {
-			LogRappro.logInfo("avant ajoute dans somme cred : " + sumCredBnp + "mtRappro" + mtRappro);
+			LogRappro.logDebug("avant ajoute dans somme cred : " + sumCredBnp + "mtRappro" + mtRappro);
 			sumCredBnp += mtRappro;
 			myOngletRappro.getPanelRappro().getJtfSommeCred().setText(String.valueOf(df.format(sumCredBnp)));
-			LogRappro.logInfo("ajoute dans somme cred : " + sumCredBnp);
+			LogRappro.logDebug("ajoute dans somme cred : " + sumCredBnp);
 		}
 		resteAPointer += mtRappro;
 		myOngletRappro.getPanelRappro().getJtfDiff().setText(String.valueOf(df.format(resteAPointer)));

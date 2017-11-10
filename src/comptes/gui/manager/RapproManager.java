@@ -100,6 +100,7 @@ public class RapproManager {
 				amexManager.reset(myOngletRappro);
 				if (!opeNrSelected.isEmpty()) {
 					Operation myOperation = myOpeListNr.get(opeNrSelected.get(0));
+					//ici mettre le controle sur le montant ope doit être égal au montant bnp et décocher l'opération
 					doRappro(myBnp, myOperation);
 					myOngletRappro.getMyRapproSommesManager().addRappro(myOperation.getMontantOpe());
 					rapproRefreshTableaux();
@@ -190,6 +191,7 @@ public class RapproManager {
 			rapproBo = it.next();
 			myOperation = rapproBo.getOperation();
 			myOperation.setEtatOpe("X");
+			LogRappro.logInfo("myOperation " + myOperation);
 			myOperationFacade.update(myOperation);
 			it.remove();
 		}
@@ -223,25 +225,7 @@ public class RapproManager {
 		amexManager.uncheckRapproAmex(ope, myOngletRappro);
 	}
 
-	/**
-	 * Après création de l'operation à partir du BNP, ajoute l'élément dans la
-	 * liste et dans le tableau des rappprochés
-	 * 
-	 * @param myBnp
-	 * @param myOperation
-	 * @param libTiers
-	 */
-	public void bnpListNrToRapproTableau(Bnp myBnp, Operation myOperation, String libTiers) {
-		RapproBO myRapproBo = new RapproBO(myBnp, myOperation, libTiers);
-		myRapproBOList.add(myRapproBo);
-		myOngletRappro.getMyRapproSommesManager().addRappro(myOperation.getMontantOpe());
-		myBnpListNr.remove(tabSelectedCreationCheckBnp);
-		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
-		myRapproTableau.fireTableDataChanged();
-		BnpNrTableau myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
-		myBnpNrTableau.resetTabSelectedCreationCheck();
-		myBnpNrTableau.fireTableDataChanged();
-	}
+	
 
 	/**
 	 * Creation d'une opération quand on coche la colonne "creation" dans le
@@ -264,8 +248,14 @@ public class RapproManager {
 			}
 		}
 		if (nbTiersReconnu == 1) {
-			myOperationFacade.create(myOperation);
+			int idOpeCree = myOperationFacade.createReturnId(myOperation);
+			myOperation.setId(idOpeCree);
 			bnpListNrToRapproTableau(selectedBnp, myOperation, svLibTiers);
+			//ICI ajout 13 juin
+			if (myOngletRappro.getMyRapproSommesManager().isCompleteRappro()) {
+				finaliseRappro();
+			}
+				//fin ajout
 		} else {
 			myTiers = myTiersFacade.find(myTiersFacade.findLib("?"));
 			myOperation = bnpToOpe(selectedBnp, myTiers);
@@ -274,6 +264,27 @@ public class RapproManager {
 		}
 	}
 
+	
+	/**
+	 * Après création de l'operation à partir du BNP, ajoute l'élément dans la
+	 * liste et dans le tableau des rappprochés
+	 * 
+	 * @param myBnp
+	 * @param myOperation
+	 * @param libTiers
+	 */
+	public void bnpListNrToRapproTableau(Bnp myBnp, Operation myOperation, String libTiers) {
+		RapproBO myRapproBo = new RapproBO(myBnp, myOperation, libTiers);
+		myRapproBOList.add(myRapproBo);
+		myOngletRappro.getMyRapproSommesManager().addRappro(myOperation.getMontantOpe());
+		myBnpListNr.remove(tabSelectedCreationCheckBnp);
+		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
+		myRapproTableau.fireTableDataChanged();
+		BnpNrTableau myBnpNrTableau = (BnpNrTableau) myOngletRappro.getTableBnpNr().getModel();
+		myBnpNrTableau.resetTabSelectedCreationCheck();
+		myBnpNrTableau.fireTableDataChanged();
+	}
+	
 	/**
 	 * A partir de la liste initiale de BNP, recherche les tiers puis écrit
 	 * automatiquement les opérations correspondantes si tiers trouvés
@@ -299,7 +310,8 @@ public class RapproManager {
 					}
 				}
 				if (nbTiersReconnus == 1) {
-					myOperationFacade.create(myOperation);
+					int idOpeCree = myOperationFacade.createReturnId(myOperation);
+					myOperation.setId(idOpeCree);
 				}
 				if (nbTiersReconnus > 1) {
 					LogBnp.logInfo("tiers en double " + svLibTiers);
@@ -315,11 +327,19 @@ public class RapproManager {
 	 */
 	public void createNewOpe(OperationDTO myOperationDTO) {
 		myOperationUtil = new OperationUtil();
-		myOperationUtil.create(myOperationDTO);
+		int idOpeCree = myOperationUtil.createReturnId(myOperationDTO);
+		myOperationDTO.setId(idOpeCree);
+		LogOperation.logInfo("myOperationDTO" + myOperationDTO);
 		Operation ope = myOperationUtil.dtoToOperation(myOperationDTO);
+		LogOperation.logInfo("ope" + ope);
 		tabSelectedCreationCheckBnp = myBnpNrTableau.getTabSelectedCreationCheck();
 		if (tabSelectedCreationCheckBnp != -1) {
 			bnpListNrToRapproTableau(selectedBnp, ope, myOperationDTO.getTiers());
+//			Ajout 13 juin		
+			if (myOngletRappro.getMyRapproSommesManager().isCompleteRappro()) {
+			finaliseRappro();
+		}
+	// fin ajout
 		} else {
 			myOpeListNr.add(ope);
 			updateTableaux();
@@ -347,16 +367,17 @@ public class RapproManager {
 
 	public Operation bnpToOpe(Bnp bnp, Tiers tiers) {
 		CategorieFacade myCategorieFacade = new CategorieFacade();
-		myOperation.setId(0);
-		myOperation.setTiersId(tiers.getId());
-		myOperation.setCategOpeId(myCategorieFacade.findLib(tiers.getDerCategDeTiers()));
-		myOperation.setDateOpe(bnp.getDateBnp());
-		myOperation.setDetailOpe(null);
-		myOperation.setEchId(0);
-		myOperation.setEtatOpe("NR");
-		myOperation.setMontantOpe(bnp.getMontantBnp());
-		myOperation.setTypeOpe(bnp.getTypeOpeBnp().toString());
-		return myOperation;
+		Operation op = new Operation();
+		op.setId(0);
+		op.setTiersId(tiers.getId());
+		op.setCategOpeId(myCategorieFacade.findLib(tiers.getDerCategDeTiers()));
+		op.setDateOpe(bnp.getDateBnp());
+		op.setDetailOpe(null);
+		op.setEchId(0);
+		op.setEtatOpe("NR");
+		op.setMontantOpe(bnp.getMontantBnp());
+		op.setTypeOpe(bnp.getTypeOpeBnp().toString());
+		return op;
 	}
 
 	/**

@@ -30,54 +30,66 @@ public class OperationDAO extends DAO<Operation> {
 			statement.setString(7, myOperation.getDetailOpe());
 			statement.setString(8, myOperation.getEtatOpe());
 			statement.setInt(9, myOperation.getEchId());
+			LogOperation.logDebug("myOperation.getEchId() " + myOperation.getEchId());
 			statement.setLong(10, myOperation.getDateOpe().toLongValue());
 			statement.executeUpdate();
-			// System.out.println("dans Operation DAO create arrive après
-			// execute statement de create operation");
 		} catch (SQLException e) {
-			System.out.println("SQL Exception dans Operation DAO create ");
-			e.printStackTrace();
+			LogOperation.logError("SQL Exception dans Operation DAO create ",e);
 		} finally {
 			try {
 				statement.close();
 			} catch (SQLException e) {
-				System.out.println("SQL Exception dans Operation DAO create sur le statement Close ");
-				e.printStackTrace();
+				LogOperation.logError("SQL Exception dans Operation DAO create sur le statement Close ",e);
 			}
 		}
 	}
 
-	
+		public int createReturnId (Operation myOperation) {
+			LogOperation.logDebug("Début createReturnId");
+			create(myOperation) ;
+			return findLastId();
+		}
+		
+		
 	public Operation find(int id) {
 		Operation myOperation = null;
 		try {
-			// System.out.println("debut try find operation");
-			// System.out.println("select unique Operation début try");
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT * FROM operation WHERE id = '" + id + "'");
-			// System.out.println("rs = " + rs.getInt("id"));
 			if (rs.next()) {
 				myOperation = operationFromRow(rs);
 			}
 		} catch (SQLException e) {
-			System.out.println("SQL Exception dans Operation DAO find  ");
-			e.printStackTrace();
+			LogOperation.logError("SQL Exception dans Operation DAO find  ",e);
 		}
 		return myOperation;
 	}
-	//
 
+	public int findLastId () {
+		int derOpeId = 0;
+		try {
+			LogOperation.logInfo("Début");
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery("SELECT max(id) FROM operation ");
+			if (rs.next()) {
+				derOpeId = rs.getInt(1);
+				LogOperation.logDebug("derOpeId" + derOpeId);
+			}
+		} catch (SQLException e) {
+			LogOperation.logError("FindLastID Operation KO", e);
+		}
+		return derOpeId;
+	}
+	
 	public ArrayList<Operation> findAll() {
 		Operation myOperation;
 		ArrayList<Operation> myOperationList = null;
 		try {
 			myOperationList = new ArrayList<Operation>();
-			// System.out.println("select all Operation début try");
+			LogOperation.logDebug("select all Operation début try");
 			Statement statement = connection.createStatement();
-			// ResultSet rs = statement.executeQuery("SELECT * FROM operation
-			// where dateOpeLong > 14609");
 			ResultSet rs = statement.executeQuery("SELECT * FROM operation ");
-			// System.out.println("rs = " + rs.getInt("id"));
+			LogOperation.logDebug("rs = " + rs.getInt("id"));
 			while (rs.next()) {
 				myOperation = operationFromRow(rs);
 				myOperationList.add(myOperation);
@@ -85,8 +97,7 @@ public class OperationDAO extends DAO<Operation> {
 			statement.close();
 
 		} catch (SQLException e) {
-			System.out.println("SQL Exception dans Operation DAO findAll ");
-			e.printStackTrace();
+			LogOperation.logError("SQL Exception dans Operation DAO findAll ",e);
 		}
 		return myOperationList;
 	}
@@ -125,7 +136,6 @@ public class OperationDAO extends DAO<Operation> {
 		return derNumChqLong;
 	}
 
-	// nico est ce ici qu'il fallait créer cette fonction ?
 	public ArrayList<OperationBO> findAllOpeBO() {
 		OperationBO myOperationBO = null;
 		Operation myOperation = null;
@@ -134,7 +144,7 @@ public class OperationDAO extends DAO<Operation> {
 		ArrayList<OperationBO> myOperationBOList = null;
 		try {
 			myOperationBOList = new ArrayList<OperationBO>();
-			// System.out.println("select all Operation début try");
+			LogOperation.logDebug("select all Operation début try");
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(
 					"SELECT * FROM operation as o INNER JOIN tiers as t on o.tiersId = t.id INNER JOIN categorie as c on o.categOpeId = c.id");
@@ -149,8 +159,7 @@ public class OperationDAO extends DAO<Operation> {
 			}
 			statement.close();
 		} catch (SQLException e) {
-			System.out.println("SQL Exception dans Operation DAO findAllOpeBO ");
-			e.printStackTrace();
+			LogOperation.logError("SQL Exception dans Operation DAO findAllOpeBO ",e);
 		}
 		return myOperationBOList;
 	}
@@ -163,31 +172,22 @@ public class OperationDAO extends DAO<Operation> {
 		ArrayList<OperationBO> myOperationBOList = null;
 		try {
 			myOperationBOList = new ArrayList<OperationBO>();
-			// System.out.println("select all Operation début try");
 			Statement statement = connection.createStatement();
-			// System.out.println("dans operationDAO findOpeBOFiltre : la where
-			// clause : "+ whereClause );
 			ResultSet rs = statement.executeQuery("SELECT * FROM operation as o INNER JOIN tiers as t on o.tiersId "
 					+ "= t.id INNER JOIN categorie as c on o.categOpeId = c.id " + whereClause);
-			// System.out.println("rs = " + rs.getInt("id"));
 			while (rs.next()) {
 				myOperation = operationFromRow(rs);
 				myOperationBO = new OperationBO(myOperation);
 				myTiers = new Tiers(rs.getInt(11), rs.getString(12), rs.getString(13));
 				myOperationBO.setTiersBO(myTiers);
-				// System.out.println("dans operationDAO findOpeBOFiltre : le
-				// tiers : " + myTiers);
 				myCategorie = new Categorie(rs.getInt(14), rs.getString(15));
-				// System.out.println("dans operationDAO findOpeBOFiltre : la
-				// categorie : " + myCategorie);
 				myOperationBO.setCategorieBo(myCategorie);
 				myOperationBOList.add(myOperationBO);
 			}
 			statement.close();
 
 		} catch (SQLException e) {
-			System.out.println("dans operationDAO findOpeBOFiltre : findOpeBOFiltre KO");
-			e.printStackTrace();
+			LogOperation.logError("dans operationDAO findOpeBOFiltre : findOpeBOFiltre KO",e);
 		}
 		return myOperationBOList;
 	}
@@ -195,27 +195,21 @@ public class OperationDAO extends DAO<Operation> {
 	public void update(Operation myOperation) {
 		Statement statement = null;
 		try {
-			// System.out.println("debut try update operation");
+			LogOperation.logDebug("debut try update operation");
 			statement = connection.createStatement();
 			statement.executeUpdate("UPDATE operation SET typeOpe='" + myOperation.getTypeOpe() + "',dateOpe='"
 					+ myOperation.getDateOpe().toDbFormat() + "',montantOpe=" + myOperation.getMontantOpe() + ",categOpeId="
 					+ myOperation.getCategOpeId() + ",tiersID=" + myOperation.getTiersId() + ", detailOpe='"
 					+ myOperation.getDetailOpe() + "',etatOpe='" + myOperation.getEtatOpe() + "', echId="
-					+ myOperation.getEchId() + myOperation.getDateOpe().toLongValue() + " where Id=" + myOperation.getId());
-			// System.out.println("Dans update operation dateOpe= " +
-			// myOperation.getDateOpe());
-			// System.out.println("Dans update operation dateOpelong = " +
-			// myOperation.getDateOpeLong());
+					+ myOperation.getEchId() + myOperation.getEchId() + " where Id=" + myOperation.getId());
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogOperation.logError("update operation KO",e);
 		} finally {
 			try {
 				statement.close();
-				// connection.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogOperation.logError("close statement KO dans update operation",e);
 			}
 		}
 	}
@@ -226,12 +220,12 @@ public class OperationDAO extends DAO<Operation> {
 			statement = connection.createStatement();
 			statement.executeUpdate("Delete from operation where Id=" + myOperation.getId());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogOperation.logError("delete operation KO ",e);
 		} finally {
 			try {
 				statement.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LogOperation.logError("close statement KO dans delete operation",e);
 			}
 		}
 
@@ -247,4 +241,6 @@ public class OperationDAO extends DAO<Operation> {
 			return null;
 		}
 	}
+	
+	
 }

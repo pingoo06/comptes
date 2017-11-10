@@ -218,14 +218,14 @@ public class OngletEcheancier extends JSplitPane {
 				myEcheancierDTO.setTypeEch(comboTypeEch.getSelectedItem().toString());
 				myEcheancierDTO.setCategEch(comboCategorieE.getSelectedItem().toString());
 				myEcheancierDTO.setTiersEch(comboTiersE.getSelectedItem().toString());
-				myEcheancierDTO.setMontantEch(Double.parseDouble(jtfMontantEch.getText()));
+				myEcheancierDTO.setMontantEch(Double.parseDouble(jtfMontantEch.getText())*-1);
 				myEcheancierDTO.setDateEch(jtfDateEch.getText());
 				myEcheancierDTO.setNbEch(Integer.parseUnsignedInt(jtfNbEch.getText()));
 				EcheancierUtil myGestionEcheancier = new EcheancierUtil();
 				myGestionEcheancier.create(myEcheancierDTO);
 				clearSaisieEch();
 				EcheancierBO myEcheancierBO = myGestionEcheancier.buildEcheancierBo(myEcheancierDTO);
-				System.out.println("dans BoutonOKEchListener tableEcheancier : " + tableEcheancier);
+				LogEcheancier.logDebug("dans BoutonOKEchListener tableEcheancier : " + tableEcheancier);
 				EcheancierTableau model = ((EcheancierTableau) tableEcheancier.getModel());
 				model.getListEcheancierBO().add(myEcheancierBO);
 				model.fireTableDataChanged();

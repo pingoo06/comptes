@@ -16,7 +16,7 @@ import comptes.util.log.LogRappro;
 
 public class RapproDAO extends DAO<RapproBO> {
 	public ArrayList<RapproBO> rapproAuto() {
-		LogOperation.logInfo("Debut constructeur rapprochement");
+		LogOperation.logDebug("Debut constructeur rapprochement");
 		ArrayList<RapproBO> myRapproBOList = new ArrayList<>();
 		rapproche(myRapproBOList, "avecNotExists",
 				"b.typeOpeBnp in ('ECH_PRET', 'PRLV', 'DEPOT','REMISE_CHQ','VIR_RECU') and  o.typeOpe = b.typeOpeBnp and o.montantOpe=b.montantBnp",
@@ -39,7 +39,7 @@ public class RapproDAO extends DAO<RapproBO> {
 			Operation myOperation;
 			Bnp myBnp;
 			String myLibTiers="";
-			LogRappro.logInfo("TypeReq : " + typeReq);
+			LogRappro.logDebug("TypeReq : " + typeReq);
 			ResultSet rs ;
 			if ("avecNotExists".equals(typeReq)) {
 				rs = statement.executeQuery("SELECT * FROM  operation as o INNER JOIN bnp as b INNER JOIN tiers as t  on o.tiersId=t.id and o.etatOpe='NR' and " + whereClause + 

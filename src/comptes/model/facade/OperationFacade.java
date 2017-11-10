@@ -42,6 +42,9 @@ public class OperationFacade {
 	public ArrayList<Operation> findOpeNr() {
 		return operationDAO.findOpeNr();
 	}
+	public int createReturnId(Operation myOperation) {
+		return operationDAO.createReturnId(myOperation);
+	}
 
 	public void initOperation() {
 		LogOperation.logInfo("Début init operation");

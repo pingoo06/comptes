@@ -25,9 +25,7 @@ public class Bnp {
 	private MyDate dateBnpCalc;
 	private String chqNumberBnp;
 
-	// public Bnp(int id,java.sql.dateBnpCalc dateBnp, String libCourtBnp
-	// ,String libTypeOpeBnp ,
-	// String libOpeBnp , double montantBnp ) {
+
 
 	public Bnp() {
 
@@ -110,8 +108,8 @@ public class Bnp {
 			typeOpeBnp = OperationType.ECH_PRET;
 			dateBnpCalc = dateBnp;
 		}
-		// DEPOT A REVOIR QUAND J EN AURAI FAIT UN
-		else if (libTypeOpeBnp.equals("DEPOT")) {
+		// DEPOT d ESPECES
+		else if (libTypeOpeBnp.equals("VRST ESPECES AUTOMATE")) {
 			typeOpeBnp = OperationType.DEPOT;
 			dateBnpCalc = dateBnp;
 		}

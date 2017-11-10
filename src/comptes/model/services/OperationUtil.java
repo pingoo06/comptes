@@ -28,7 +28,11 @@ public class OperationUtil {
 		Logger.logDebug("Début create operation DTO");
 		myOperationFacade.create(dtoToOperation(myOperationDTO));
 	}
-	
+	public int createReturnId (OperationDTO myOperationDTO) {
+		Logger.logDebug("Début create operation DTO");
+		int idOpeCree = myOperationFacade.createReturnId(dtoToOperation(myOperationDTO));
+		return idOpeCree;
+	}
 
 	public Operation dtoToOperation(OperationDTO myOperationDTO) {
 		Logger.logDebug("Début dtoToOperation");
@@ -74,7 +78,7 @@ public class OperationUtil {
 		myOperation.setDetailOpe(myOperationDTO.getDetailOpe());
 		myOperation.setEtatOpe(myOperationDTO.getEtatOpe());
 		myOperation.setEchId(0);
-
+		LogOperation.logInfo("myOperation " + myOperation);
 		return myOperation;
 	}
 	

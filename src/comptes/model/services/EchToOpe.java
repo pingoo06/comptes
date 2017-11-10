@@ -30,7 +30,6 @@ public class EchToOpe {
 			LogEcheancier.logDebug("Dans EchToOpe run : myEcheancierBO.getDateEchLong() " + myEcheancierBO.getDateEch().toLongValue());
 			
 		if (myEcheancierBO.getDateEch().toLongValue() <= dateJour.toLongValue() && nbEch > 0) {
-//			if (myEcheancierBO.getDateEch().compareTo(dateJour) <= 0 && nbEch > 0) {
 				Operation myOperation = new Operation();
 				myOperation.setCategOpeId(myEcheancierBO.getCategorieBo().getId());
 				myOperation.setDateOpe(myEcheancierBO.getDateEch());
