@@ -90,4 +90,16 @@ public class OperationFacade {
 		}
 		LogOperation.logInfo("Creation Operation dans Operation Facade : TOTAL LINES: " + nbLines);
 	}
+	
+	public double sumOperationUntil(MyDate endDate) {
+		return operationDAO.sumOperationUntil(endDate);
+	}
+	
+	public double sumOperation() {
+		return operationDAO.sumOperation();
+	}
+
+	public double sumOperationPointe() {
+		return operationDAO.sumOperationPointe();
+	}
 }

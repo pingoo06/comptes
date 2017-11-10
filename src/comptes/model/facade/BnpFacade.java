@@ -40,6 +40,9 @@ public class BnpFacade {
 	public void delete(Bnp myBnp) {
 		bnpDao.delete(myBnp);
 	}
+	public void truncate() {
+		bnpDao.truncate();
+	}
 
 	public boolean isFull() {
 		return bnpDao.isFull();

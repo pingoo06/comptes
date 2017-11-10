@@ -35,9 +35,10 @@ public class Fenetre extends JFrame {
 		onglets = new JTabbedPane(JTabbedPane.LEFT);
 
 		OngletOperation operationPanel = new OngletOperation();
+		OngletRappro rapprochementPanel = new OngletRappro();
 		onglets.add("Opérations", operationPanel);
 		onglets.add("Echeancier", getEcheancierPanel());
-		onglets.add("Rappro", getRapproPanel());
+		onglets.add("Rappro", rapprochementPanel);
 		onglets.add("Matching", getMatchingPanel());
 //		onglets.add("Categorie", getRapproPanel());
 //		onglets.add("Tiers", getRapproPanel());
@@ -48,6 +49,8 @@ public class Fenetre extends JFrame {
 				int index = sourceTabbedPane.getSelectedIndex();
 				if(index==0) {
 					operationPanel.refresh();
+				}if(index == 2){
+					rapprochementPanel.refresh();
 				}
 			}
 		};

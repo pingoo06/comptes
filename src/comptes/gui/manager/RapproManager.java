@@ -1,13 +1,23 @@
 package comptes.gui.manager;
 
+import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.swing.JOptionPane;
+
+import com.sun.glass.ui.Window;
 
 import comptes.gui.dto.OperationDTO;
 import comptes.gui.onglets.OngletRappro;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
 import comptes.gui.tableaux.RapproTableau;
+import comptes.model.Application;
 import comptes.model.bo.RapproBO;
 import comptes.model.db.dao.RapproDAO;
 import comptes.model.db.entity.Bnp;
@@ -184,6 +194,7 @@ public class RapproManager {
 	public void finaliseRappro() {
 		LogRappro.logInfo("finalise rappro");
 		OperationFacade myOperationFacade = new OperationFacade();
+		BnpFacade bnpFacade = new BnpFacade();
 		Operation myOperation = new Operation();
 		Iterator<RapproBO> it = myRapproBOList.iterator();
 		RapproBO rapproBo;
@@ -200,10 +211,27 @@ public class RapproManager {
 		DerRapproFacade myDerRapproFacade = new DerRapproFacade();
 		myDerRappro = myDerRapproFacade.find(1);
 		myDerRappro.setDateDerRappro(new MyDate(myOngletRappro.getPanelRappro().getJtfDateRappro().getText()));
-		myDerRappro.setDerSolde(Double.parseDouble(myOngletRappro.getPanelRappro().getJtfMtFinal().getText()));
+		String mntFinal = myOngletRappro.getPanelRappro().getJtfMtFinal().getText();
+		myDerRappro.setDerSolde(Double.parseDouble(mntFinal));
 		myDerRapproFacade.update(myDerRappro);
 		myRapproTableau = (RapproTableau) myOngletRappro.getTableRappro().getModel();
 		myRapproTableau.fireTableDataChanged();
+		this.myOngletRappro.refresh();
+		
+		String soldePointe = DoubleFormater.formatDouble(Application.getSoldePointe());
+		LogRappro.logInfo("compare solde pointe %"+soldePointe+"% avec mnt final %"+mntFinal+"%");
+		if(soldePointe.equals(mntFinal.replace(".", ","))){
+			try {
+				String fileName = "bnp."+new MyDate(myOngletRappro.getPanelRappro().getJtfDateRappro().getText()).format(MyDate.DB_FORMAT)+".csv";
+				Files.move(Paths.get("res/bnp.csv"), Paths.get("C:\\Users\\miche.MICROBE\\Documents\\Pour comptes\\Fichiers pointés ok\\"+fileName), StandardCopyOption.ATOMIC_MOVE);
+			} catch (IOException e) {
+				LogRappro.logError("Impossible de déplacer le fichier bnp.csv", e);
+			}
+			bnpFacade.truncate();
+		}else {
+			JOptionPane frame = new JOptionPane();
+			JOptionPane.showMessageDialog(frame, "montant pointé différent de montant final", "Validation Pointage KO", JOptionPane.WARNING_MESSAGE);
+		}
 	}
 
 	/**

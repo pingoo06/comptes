@@ -17,6 +17,7 @@ import comptes.gui.manager.RapproSommesManager;
 import comptes.gui.tableaux.BnpNrTableau;
 import comptes.gui.tableaux.OpeNrTableau;
 import comptes.gui.tableaux.RapproTableau;
+import comptes.model.Application;
 import comptes.model.facade.BnpFacade;
 import comptes.model.services.OperationUtil;
 
@@ -90,7 +91,6 @@ public class OngletRappro extends JSplitPane {
 	// Execution du bouton OK Operation
 	class BoutonOKListener implements ActionListener {
 		private OperationDTO myOperationDTO;
-		private OperationUtil myOperationUtil;
 
 		public void actionPerformed(ActionEvent e) {
 			myOperationDTO = panelCreationOperation.createOpeDtoFromField();
@@ -102,6 +102,7 @@ public class OngletRappro extends JSplitPane {
 			} else {
 				myRapproMngr.createNewOpe(myOperationDTO);
 				panelCreationOperation.clearSaisieOpe();
+				Application.getInstance().updateSolde();
 			}
 		}
 	}
@@ -178,6 +179,11 @@ public class OngletRappro extends JSplitPane {
 
 	public RapproSommesManager getMyRapproSommesManager() {
 		return myRapproSommesManager;
+	}
+
+
+	public void refresh() {
+		panelRappro.updateLabelSoldePointe();
 	}
 
 }

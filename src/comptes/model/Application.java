@@ -5,6 +5,8 @@ import comptes.model.facade.CategorieFacade;
 import comptes.model.facade.MatchingFacade;
 import comptes.model.facade.OperationFacade;
 import comptes.model.facade.TiersFacade;
+import comptes.model.services.OperationUtil;
+import comptes.util.MyDate;
 
 public class Application {
 
@@ -14,38 +16,72 @@ public class Application {
 	private OperationFacade operationFacade;
 	private TiersFacade tiersFacade;
 
+	private double solde;
+	private double soldeADate;
+	private double soldePointe;
 	private static Application instance;
-	
+
 	private Application() {
 		bnpFacade = new BnpFacade();
 		categorieFacade = new CategorieFacade();
 		matchingFacade = new MatchingFacade();
 		operationFacade = new OperationFacade();
 		tiersFacade = new TiersFacade();
+		updateSolde();
+		updateSoldeADate(new MyDate());
+		updateSoldePointe();
 	}
-	
-	private static Application getInstance() {
-		if(instance == null) {
+
+	public static Application getInstance() {
+		if (instance == null) {
 			instance = new Application();
 		}
 		return instance;
 	}
-	
+
 	public static BnpFacade getBnpFacade() {
-		return getInstance().bnpFacade; 
+		return getInstance().bnpFacade;
 	}
 
 	public static CategorieFacade getCategorieFacade() {
-		return getInstance().categorieFacade; 
+		return getInstance().categorieFacade;
 	}
+
 	public static MatchingFacade getMatchingFacade() {
-		return getInstance().matchingFacade; 
+		return getInstance().matchingFacade;
 	}
+
 	public static OperationFacade getOperationFacade() {
-		return getInstance().operationFacade; 
+		return getInstance().operationFacade;
 	}
+
 	public static TiersFacade getTiersFacade() {
-		return getInstance().tiersFacade; 
+		return getInstance().tiersFacade;
 	}
-	
+
+	public static double getSolde() {
+		return getInstance().solde;
+	}
+
+	public void updateSolde() {
+		solde = new OperationUtil().sumOperation();
+	}
+
+	public void updateSoldePointe() {
+		soldePointe = new OperationUtil().sumOperationPointe();
+	}
+
+	public void updateSoldeADate(MyDate myDate) {
+		soldeADate = new OperationUtil().sumOperationUntil(myDate);
+
+	}
+
+	public static double getSoldeADate() {
+		return getInstance().soldeADate;
+	}
+
+	public static double getSoldePointe() {
+		return getInstance().soldePointe;
+	}
+
 }

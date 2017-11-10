@@ -3,9 +3,14 @@ package comptes.gui.onglets;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Properties;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -13,13 +18,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
 import comptes.gui.combo.FiltreDateCombo;
 import comptes.gui.combo.FiltreRapproCombo;
 import comptes.gui.combo.TiersCombo;
 import comptes.gui.dto.OperationDTO;
 import comptes.gui.tableaux.OperationTableau;
+import comptes.model.Application;
 import comptes.model.services.OperationUtil;
 import comptes.util.DateUtil;
+import comptes.util.DoubleFormater;
+import comptes.util.MyDate;
 import comptes.util.log.LogOperation;
 
 public class OngletOperation extends JSplitPane {
@@ -45,10 +57,12 @@ public class OngletOperation extends JSplitPane {
 	private JLabel labelTiers = new JLabel("Tiers");
 	private JLabel labelDuree = new JLabel("Duree");
 	private JLabel labelRappro = new JLabel("Rapprochement");
-
+	private JLabel soldeGlobal;
+	private JLabel soldeADate;
 	private String valFiltreTiers = "";
 	private String valFiltreDuree = "";
 	private String valFiltreRappro = "";
+	private JDatePickerImpl datePourSolde;
 	private OperationTableau operationTableau;
 	String whereClause = "";
 
@@ -60,6 +74,21 @@ public class OngletOperation extends JSplitPane {
 		setBottomComponent(vBottom);
 		setOrientation(JSplitPane.VERTICAL_SPLIT);
 
+		UtilDateModel model = new UtilDateModel();
+		Properties p = new Properties();
+		p.put("text.today", "Today");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+		datePourSolde = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+		datePourSolde.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateSoldeADate();
+				updateSoldeLabel();
+			}
+		});
 		boutonFiltreOpe = new JButton("Filtrer");
 
 		// Pour operation
@@ -70,6 +99,13 @@ public class OngletOperation extends JSplitPane {
 		pFilters.add(labelTiers);
 		pFilters.add(comboFiltreTiers);
 		pFilters.add(boutonFiltreOpe);
+		soldeGlobal = new JLabel();
+		soldeADate = new JLabel();
+		pFilters.add(soldeGlobal);
+		pFilters.add(datePourSolde);
+		pFilters.add(soldeADate);
+		
+		updateSoldeLabel();
 		vTop.setLayout(new BorderLayout());
 		boutonFiltreOpe.addActionListener(new BoutonFiltreListener());
 
@@ -113,6 +149,9 @@ public class OngletOperation extends JSplitPane {
 				int modelIdx = tableOperation.convertRowIndexToModel(tableIdx);
 				OperationTableau model = ((OperationTableau) tableOperation.getModel());
 				model.deleteRow(modelIdx);
+				Application.getInstance().updateSolde();
+				updateSoldeADate();
+				updateSoldeLabel();
 			}
 		});
 	}
@@ -134,6 +173,9 @@ public class OngletOperation extends JSplitPane {
 				panelCreationOperation.clearSaisieOpe();
 				OperationTableau model = ((OperationTableau) tableOperation.getModel());
 				model.filters(whereClause);
+				Application.getInstance().updateSolde();
+				updateSoldeADate();
+				updateSoldeLabel();
 			}
 
 		}
@@ -241,6 +283,39 @@ public class OngletOperation extends JSplitPane {
 	public void refresh() {
 		LogOperation.logInfo("refresh operation tableau avec la whereclause= " + whereClause);
 		operationTableau.filters(whereClause);
+		updateSoldeLabel();
 	}
+	
+	private void updateSoldeADate() {
+		MyDate date = new MyDate(datePourSolde.getJFormattedTextField().getText(), MyDate.DB_FORMAT);
+		Application.getInstance().updateSoldeADate(date);
+	}
+	
+	public void updateSoldeLabel(){
+		soldeGlobal.setText("Solde global : " +DoubleFormater.formatDouble(Application.getSolde()));
+		soldeADate.setText("Solde a date : " +DoubleFormater.formatDouble(Application.getSoldeADate()));
+	}
+
+}
+
+class DateLabelFormatter extends AbstractFormatter {
+
+    private String datePattern = "yyyy-MM-dd";
+    private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+
+    @Override
+    public Object stringToValue(String text) throws ParseException {
+        return dateFormatter.parseObject(text);
+    }
+
+    @Override
+    public String valueToString(Object value) throws ParseException {
+        if (value != null) {
+            Calendar cal = (Calendar) value;
+            return dateFormatter.format(cal.getTime());
+        }
+
+        return "";
+    }
 
 }

@@ -121,6 +121,22 @@ public class BnpDAO extends DAO<Bnp> {
 		}
 	}
 	
+	public void truncate() {
+		Statement statement = null;
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate("Delete from bnp");
+		} catch (SQLException e) {
+			LogBnp.logError("failed to truncate Table BNP", e);
+		} finally {
+			try {
+				statement.close();
+			} catch (SQLException e) {
+				LogBnp.logError("failed to truncate BNP", e);
+			}
+		}
+	}
+	
 
 	public boolean isFull() {
 		int res=0;

@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
 import comptes.model.bo.OperationBO;
 import comptes.model.db.entity.Categorie;
@@ -240,6 +241,60 @@ public class OperationDAO extends DAO<Operation> {
 			LogOperation.logError("Error while building operation from resulset", e);
 			return null;
 		}
+	}
+	
+	/**
+	 * 
+	 * @param somme les montants jusqu'a endDate 
+	 * @return le solde a cette date, 0 sinon
+	 */
+	public double sumOperationUntil(MyDate endDate) {
+		Statement statement = null;
+		try {
+			LogOperation.logDebug("debut calcule solde jusqu'au : "+endDate);
+			statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery("select sum(montantOpe) from operation where dateOpe <='"
+					+ endDate.toDbFormat() + "'");
+			return rs.getDouble(1);
+
+		} catch (SQLException e) {
+			LogOperation.logError("Fail calcul du solde",e);
+		} finally {
+			try {
+				statement.close();
+			} catch (SQLException e) {
+				LogOperation.logError("close statement KO dans solde operation",e);
+			}
+		}
+		return 0;
+	}
+	
+	/**
+	 * 
+	 * @return le solde jusqu'a aujourd'hui
+	 */
+	public double sumOperation() {
+		return sumOperationUntil(new MyDate());
+	}
+
+	public double sumOperationPointe() {
+		Statement statement = null;
+		try {
+			LogOperation.logDebug("debut calcule solde pointé");
+			statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery("select sum(montantOpe) from operation where etatOpe = 'X'");
+			return rs.getDouble(1);
+
+		} catch (SQLException e) {
+			LogOperation.logError("Fail calcul du solde pointé",e);
+		} finally {
+			try {
+				statement.close();
+			} catch (SQLException e) {
+				LogOperation.logError("close statement KO dans solde operation poité",e);
+			}
+		}
+		return 0;
 	}
 	
 	

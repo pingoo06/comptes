@@ -124,4 +124,16 @@ public class OperationUtil {
 			return "";
 		}
 	}
+	
+	public double sumOperationUntil(MyDate endDate) {
+		return myOperationFacade.sumOperationUntil(endDate);
+	}
+	
+	public double sumOperation() {
+		return myOperationFacade.sumOperation();
+	}
+
+	public double sumOperationPointe() {
+		return myOperationFacade.sumOperationPointe();
+	}
 }
