@@ -19,8 +19,10 @@ public class RapproDAO extends DAO<RapproBO> {
 		LogOperation.logDebug("Debut constructeur rapprochement");
 		ArrayList<RapproBO> myRapproBOList = new ArrayList<>();
 		rapproche(myRapproBOList, "avecNotExists",
-				"b.typeOpeBnp in ('ECH_PRET', 'PRLV', 'DEPOT','REMISE_CHQ','VIR_RECU') and  o.typeOpe = b.typeOpeBnp and o.montantOpe=b.montantBnp",
-				"b2.typeOpeBnp in ('ECH_PRET', 'PRLV', 'DEPOT','REMISE_CHQ','VIR_RECU') and  o2.typeOpe = b2.typeOpeBnp and o2.montantOpe=b2.montantBnp");
+				"b.typeOpeBnp in ('ECH_PRET', 'PRLV', 'DEPOT','REMISE_CHQ','VIR_RECU') "
+				+ "and substr(o.dateOpe,6,2) = substr(b.dateBnp,6,2) "
+				+ "and  o.typeOpe = b.typeOpeBnp and o.montantOpe=b.montantBnp",
+				"o2.typeOpe = b2.typeOpeBnp and o2.montantOpe=b2.montantBnp and substr(o2.dateOpe,6,2) = substr(b2.dateBnp,6,2)");
 		rapproche(myRapproBOList, "avecNotExists",
 				"b.typeOpeBnp in ('VIR_EMIS', 'CB','RETRAIT') and  o.typeOpe = b.typeOpeBnp and o.montantOpe=b.montantBnp and b.dateBnpCalc = o.dateOpeLong",
 				"b2.typeOpeBnp in ('VIR_EMIS', 'CB','RETRAIT') and  o2.typeOpe = b2.typeOpeBnp and o2.montantOpe=b2.montantBnp and b2.dateBnpCalc = o2.dateOpeLong");
@@ -42,8 +44,12 @@ public class RapproDAO extends DAO<RapproBO> {
 			LogRappro.logDebug("TypeReq : " + typeReq);
 			ResultSet rs ;
 			if ("avecNotExists".equals(typeReq)) {
-				rs = statement.executeQuery("SELECT * FROM  operation as o INNER JOIN bnp as b INNER JOIN tiers as t  on o.tiersId=t.id and o.etatOpe='NR' and " + whereClause + 
-						" and not exists (select 1 from  (SELECT * FROM  operation as o2 INNER JOIN bnp as b2 INNER JOIN tiers as t2  on o2.tiersId=t2.id and o2.etatOpe='NR' and b.id = b2.id and o.id != o2.id and " + whereClause2 + "));");
+				String query = "SELECT * FROM  operation as o INNER JOIN bnp as b INNER JOIN tiers as t  on o.tiersId=t.id and o.etatOpe='NR' "
+						+ "and " + whereClause + "  and not exists ("
+								+ "select 1 from  (SELECT * FROM  operation as o2 INNER JOIN bnp as b2 INNER JOIN tiers as t2  on o2.tiersId=t2.id "
+								+ "and o2.etatOpe='NR' and b.id = b2.id and o.id != o2.id and " + whereClause2 + "));";
+				LogRappro.logDebug("query for rappro:\n"+query);
+				rs = statement.executeQuery(query);
 			} else {
 				rs = statement.executeQuery("SELECT * FROM  operation as o INNER JOIN bnp as b INNER JOIN tiers as t  on  o.tiersId=t.id and o.etatOpe='NR' and " + whereClause + ";");
 			}

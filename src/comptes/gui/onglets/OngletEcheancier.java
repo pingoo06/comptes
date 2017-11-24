@@ -215,7 +215,7 @@ public class OngletEcheancier extends JSplitPane {
 			} else {
 				EcheancierDTO myEcheancierDTO = new EcheancierDTO();
 				myEcheancierDTO.setId(0);
-				myEcheancierDTO.setTypeEch(comboTypeEch.getSelectedItem().toString());
+				myEcheancierDTO.setTypeEch(comboTypeEch.getMySelectedItem());
 				myEcheancierDTO.setCategEch(comboCategorieE.getSelectedItem().toString());
 				myEcheancierDTO.setTiersEch(comboTiersE.getSelectedItem().toString());
 				myEcheancierDTO.setMontantEch(Double.parseDouble(jtfMontantEch.getText())*-1);
