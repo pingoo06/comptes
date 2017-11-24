@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.swing.JButton;
@@ -75,6 +76,7 @@ public class OngletOperation extends JSplitPane {
 		setOrientation(JSplitPane.VERTICAL_SPLIT);
 
 		UtilDateModel model = new UtilDateModel();
+		model.setValue(new Date());
 		Properties p = new Properties();
 		p.put("text.today", "Today");
 		p.put("text.month", "Month");

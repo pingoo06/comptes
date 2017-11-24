@@ -2,6 +2,8 @@ package comptes.gui.onglets;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
@@ -24,6 +26,7 @@ import comptes.model.facade.TiersFacade;
 import comptes.util.DateUtil;
 import comptes.util.log.LogOperation;
 import comptes.util.log.LogRappro;
+import javafx.scene.input.KeyCode;
 
 public class PanelCreationOperation extends Box {
 
@@ -127,6 +130,38 @@ public class PanelCreationOperation extends Box {
 					jtfDebit.requestFocus();
 				}
 			}
+		});
+
+		jtfDebit.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(e.getKeyChar() == '\n') {
+					boutonOKOpe.doClick();
+				}
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {}
+		});
+		
+		jtfCredit.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(e.getKeyChar() == '\n') {
+					boutonOKOpe.doClick();
+				}
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {}
 		});
 
 		jtfDateOpe.addPropertyChangeListener(new PropertyChangeListener() {
