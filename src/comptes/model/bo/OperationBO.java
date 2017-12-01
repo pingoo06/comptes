@@ -20,6 +20,8 @@ public class OperationBO extends Operation {
 		super.detailOpe = "";
 		super.etatOpe = "";
 		super.echId = 0;
+		super.dateSaisieOpe = null;
+		super.dateRapproOpe = "";
 		debitBO = 0;
 		creditBO = 0;
 		if (montantOpe < 0) {
@@ -30,7 +32,6 @@ public class OperationBO extends Operation {
 	}
 
 	public OperationBO(Operation ope) {
-		// TODO Auto-generated constructor stub
 		id = ope.getId();
 		super.typeOpe = ope.getTypeOpe();
 		super.dateOpe = ope.getDateOpe();
@@ -40,6 +41,8 @@ public class OperationBO extends Operation {
 		super.detailOpe = ope.getDetailOpe();
 		super.etatOpe = ope.getEtatOpe();
 		super.echId = ope.getEchId();
+		super.dateSaisieOpe = ope.getDateSaisie();
+		super.dateRapproOpe = ope.getDateRapproOpe();
 		debitBO = 0;
 		creditBO = 0;
 		if (montantOpe < 0) {

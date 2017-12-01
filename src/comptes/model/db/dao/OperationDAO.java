@@ -22,7 +22,7 @@ public class OperationDAO extends DAO<Operation> {
 		try {
 			Logger.logDebug("Dans try dans create operation dans DAO operation");
 			statement = connection.prepareStatement(
-					"INSERT INTO operation (id,  typeOpe,  dateOpe,  montantOpe,  categOpeId, tiersId, detailOpe, etatOpe, echID, dateOpeLong)VALUES(?,?,?,?,?,?,?,?,?,?)");
+					"INSERT INTO operation (id,  typeOpe,  dateOpe,  montantOpe,  categOpeId, tiersId, detailOpe, etatOpe, echID, dateOpeLong, dateSaisieOpe, dateRapproOpe)VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
 			statement.setString(2, myOperation.getTypeOpe());
 			statement.setString(3, myOperation.getDateOpe().toDbFormat());
 			statement.setDouble(4, myOperation.getMontantOpe());
@@ -31,8 +31,9 @@ public class OperationDAO extends DAO<Operation> {
 			statement.setString(7, myOperation.getDetailOpe());
 			statement.setString(8, myOperation.getEtatOpe());
 			statement.setInt(9, myOperation.getEchId());
-			LogOperation.logDebug("myOperation.getEchId() " + myOperation.getEchId());
 			statement.setLong(10, myOperation.getDateOpe().toLongValue());
+			statement.setString(11, new MyDate().format(MyDate.DB_FORMAT));
+			statement.setString(12, null);
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			LogOperation.logError("SQL Exception dans Operation DAO create ",e);
@@ -202,7 +203,7 @@ public class OperationDAO extends DAO<Operation> {
 					+ myOperation.getDateOpe().toDbFormat() + "',montantOpe=" + myOperation.getMontantOpe() + ",categOpeId="
 					+ myOperation.getCategOpeId() + ",tiersID=" + myOperation.getTiersId() + ", detailOpe='"
 					+ myOperation.getDetailOpe() + "',etatOpe='" + myOperation.getEtatOpe() + "', echId="
-					+ myOperation.getEchId() + myOperation.getEchId() + " where Id=" + myOperation.getId());
+					+ myOperation.getEchId() + myOperation.getEchId() + myOperation.getDateSaisie().toDbFormat() + myOperation.getDateRapproOpe() + " where Id=" + myOperation.getId());
 
 		} catch (SQLException e) {
 			LogOperation.logError("update operation KO",e);
@@ -236,7 +237,8 @@ public class OperationDAO extends DAO<Operation> {
 		try {
 			return new Operation(rs.getInt("id"), rs.getString("typeOpe"), new MyDate(rs.getString("dateOpe")),
 					rs.getDouble("montantOpe"), rs.getInt("categOpeId"), rs.getInt("tiersId"),
-					rs.getString("detailOpe"), rs.getString("etatOpe"), rs.getInt("echId"));
+					rs.getString("detailOpe"), rs.getString("etatOpe"), rs.getInt("echId"),
+					new MyDate(rs.getString("dateSaisieOpe")),rs.getString("dateRapproOpe"));
 		} catch (SQLException e) {
 			LogOperation.logError("Error while building operation from resulset", e);
 			return null;

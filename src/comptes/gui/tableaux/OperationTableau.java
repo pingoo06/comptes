@@ -215,12 +215,12 @@ public class OperationTableau extends AbstractTableModel {
 //	}
 	
 	public void filters(String whereClause) {
-		LogOperation.logInfo("Début : filters de Operation Tableau");
-		LogOperation.logInfo("dans operation tableau dans filters : longueur liste avant clear :" +listOperationBO.size()); 
+		LogOperation.logDebug("Début : filters de Operation Tableau");
+		LogOperation.logDebug("dans operation tableau dans filters : longueur liste avant clear :" +listOperationBO.size()); 
 		listOperationBO.clear();
 	//	System.out.println("dans operation tableau dans filters : longueur liste apres clear :" +listOperationBO.size()); 
 		listOperationBO=new OperationDAO().findOpeBOFiltre(whereClause);
-		LogOperation.logInfo("dans operation tableau dans filters : longueur liste aprsè remplissage:" +listOperationBO.size()); 
+		LogOperation.logDebug("dans operation tableau dans filters : longueur liste aprsè remplissage:" +listOperationBO.size()); 
 		this.operationFacade = new OperationFacade();
 		fireTableDataChanged();
 	}

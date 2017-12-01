@@ -12,12 +12,14 @@ public class Operation {
 	protected String detailOpe = "";
 	protected String etatOpe = "";
 	protected int echId = 0;
+	protected MyDate dateSaisieOpe ;
+	protected String dateRapproOpe = "";
 	
 	public Operation(){
 		super();
 	};
 	public Operation(int id, String typeOpe, MyDate dateOpe, double montantOpe,int categOpeId, int tiersId, String detailOpe, String etatOpe,
-			int echId) {
+			int echId, MyDate dateSaisieOpe, String dateRapproOpe) {
 		this.id = id;
 		this.typeOpe = typeOpe;
 		this.dateOpe = dateOpe;
@@ -27,6 +29,8 @@ public class Operation {
 		this.detailOpe = detailOpe;
 		this.etatOpe = etatOpe;
 		this.echId = echId;
+		this.dateSaisieOpe = dateSaisieOpe;
+		this.dateRapproOpe = dateRapproOpe;
 	}
 
 	
@@ -97,20 +101,24 @@ public class Operation {
 	public void setEtatOpe(String etatOpe) {
 		this.etatOpe = etatOpe;
 	}
+	public MyDate getDateSaisie() {
+		return dateSaisieOpe;
+	}
+	public void setDateSaisie(MyDate dateSaisieOpe) {
+		this.dateSaisieOpe = dateSaisieOpe;
+	}
+	public String getDateRapproOpe() {
+		return dateRapproOpe;
+	}
+	public void setDateRapproOpe(String dateRapproOpe) {
+		this.dateRapproOpe = dateRapproOpe;
+	}
+	
+	@Override
 	public String toString() {
-		String str = "\n............Operation.........................\n";
-		 str += "Operation ID : " + this.getId() + "\n";
-		 str += "Operation TypeOpe : " + this.getTypeOpe() + "\n";
-		 str += "Operation dateOpe : " +this.getDateOpe() + "\n";
-		 str += "Operation montantOpe : " +this.getMontantOpe() + "\n";
-		 str += "OperationgetCategOpeId : " +this.getCategOpeId() + "\n";
-		 str += "OperationgetTiersId : " +this.getTiersId() + "\n";
-		 str += "Operation EtatOpe : " +this.getEtatOpe() + "\n";
-		 str += "Operation EchId : " +this.getEchId() + "\n";
-		 
-		// str += this.langage.toString();
-		str += "\n.....................................\n";
-		return str;
+		return "Operation [id=" + id + ", typeOpe=" + typeOpe + ", dateOpe=" + dateOpe + ", montantOpe=" + montantOpe
+				+ ", categOpeId=" + categOpeId + ", tiersId=" + tiersId + ", detailOpe=" + detailOpe + ", etatOpe="
+				+ etatOpe + ", echId=" + echId + ", dateSaisieOpe=" + dateSaisieOpe + ", dateRapproOpe=" + dateRapproOpe + "]";
 	}
 	@Override
 	public int hashCode() {
@@ -122,6 +130,8 @@ public class Operation {
 		result = prime * result + echId;
 		result = prime * result + ((etatOpe == null) ? 0 : etatOpe.hashCode());
 		result = prime * result + id;
+		result = prime * result + ((dateSaisieOpe == null) ? 0 : dateSaisieOpe.hashCode());
+		result = prime * result + ((dateRapproOpe == null) ? 0 : dateRapproOpe.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(montantOpe);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -168,7 +178,18 @@ public class Operation {
 				return false;
 		} else if (!typeOpe.equals(other.typeOpe))
 			return false;
+		if (dateSaisieOpe == null) {
+			if (other.dateSaisieOpe != null)
+				return false;
+		} else if (!dateSaisieOpe.equals(other.dateSaisieOpe))
+			return false;
+		if (dateRapproOpe == null) {
+			if (other.dateRapproOpe != null)
+				return false;
+		} else if (!dateRapproOpe.equals(other.dateRapproOpe))
+			return false;
 		return true;
 	}
+
 	
 }

@@ -40,6 +40,7 @@ public class OperationUtil {
 		myOperation.setId(myOperationDTO.getId());
 		myOperation.setTypeOpe(myOperationDTO.getTypeOpe());
 		myOperation.setDateOpe(new MyDate(myOperationDTO.getDateOpe()));
+		
 		Logger.logDebug("dans dtoToOperation de Gestion Operation : date dto" + myOperationDTO.getDateOpe());
 		Logger.logDebug("dans dtoToOperation de Gestion Operation : myOperation.getDateOpe" + myOperation.getDateOpe());
 
@@ -61,7 +62,6 @@ public class OperationUtil {
 		// Tiers ID
 		String libTiers = myOperationDTO.getTiers();
 		int idTiers = myTiersFacade.findLib(libTiers);
-		System.out.println("dans dtoToOperation : id Tiers après le findLib" + idTiers);
 		Tiers myTiers = new Tiers(0, null, null);
 		myTiers.setLibTiers(myOperationDTO.getTiers());
 		myTiers.setDerCategDeTiers(myOperationDTO.getCategOpe());
@@ -78,7 +78,7 @@ public class OperationUtil {
 		myOperation.setDetailOpe(myOperationDTO.getDetailOpe());
 		myOperation.setEtatOpe(myOperationDTO.getEtatOpe());
 		myOperation.setEchId(0);
-		LogOperation.logInfo("myOperation " + myOperation);
+		LogOperation.logDebug("myOperation " + myOperation);
 		return myOperation;
 	}
 	

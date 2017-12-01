@@ -202,6 +202,7 @@ public class RapproManager {
 			rapproBo = it.next();
 			myOperation = rapproBo.getOperation();
 			myOperation.setEtatOpe("X");
+			myOperation.setDateRapproOpe((new MyDate(myOngletRappro.getPanelRappro().getJtfDateRappro().getText())).toString());
 			LogRappro.logInfo("myOperation " + myOperation);
 			myOperationFacade.update(myOperation);
 			it.remove();
