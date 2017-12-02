@@ -41,7 +41,7 @@ public class OperationBO extends Operation {
 		super.detailOpe = ope.getDetailOpe();
 		super.etatOpe = ope.getEtatOpe();
 		super.echId = ope.getEchId();
-		super.dateSaisieOpe = ope.getDateSaisie();
+		super.dateSaisieOpe = ope.getDateSaisieOpe();
 		super.dateRapproOpe = ope.getDateRapproOpe();
 		debitBO = 0;
 		creditBO = 0;

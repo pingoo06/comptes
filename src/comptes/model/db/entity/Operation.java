@@ -17,6 +17,8 @@ public class Operation {
 	
 	public Operation(){
 		super();
+		this.dateSaisieOpe = new MyDate();
+		
 	};
 	public Operation(int id, String typeOpe, MyDate dateOpe, double montantOpe,int categOpeId, int tiersId, String detailOpe, String etatOpe,
 			int echId, MyDate dateSaisieOpe, String dateRapproOpe) {
@@ -29,7 +31,7 @@ public class Operation {
 		this.detailOpe = detailOpe;
 		this.etatOpe = etatOpe;
 		this.echId = echId;
-		this.dateSaisieOpe = dateSaisieOpe;
+		this.dateSaisieOpe = new MyDate();
 		this.dateRapproOpe = dateRapproOpe;
 	}
 
@@ -101,10 +103,10 @@ public class Operation {
 	public void setEtatOpe(String etatOpe) {
 		this.etatOpe = etatOpe;
 	}
-	public MyDate getDateSaisie() {
+	public MyDate getDateSaisieOpe() {
 		return dateSaisieOpe;
 	}
-	public void setDateSaisie(MyDate dateSaisieOpe) {
+	public void setDateSaisieOpe(MyDate dateSaisieOpe) {
 		this.dateSaisieOpe = dateSaisieOpe;
 	}
 	public String getDateRapproOpe() {

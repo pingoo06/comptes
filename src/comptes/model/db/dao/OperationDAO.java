@@ -32,7 +32,11 @@ public class OperationDAO extends DAO<Operation> {
 			statement.setString(8, myOperation.getEtatOpe());
 			statement.setInt(9, myOperation.getEchId());
 			statement.setLong(10, myOperation.getDateOpe().toLongValue());
-			statement.setString(11, new MyDate().format(MyDate.DB_FORMAT));
+			MyDate dateSaisieOpe = myOperation.getDateSaisieOpe();
+			if(null == dateSaisieOpe){
+				dateSaisieOpe = new MyDate();
+			}
+			statement.setString(11, dateSaisieOpe.format(MyDate.DB_FORMAT));
 			statement.setString(12, null);
 			statement.executeUpdate();
 		} catch (SQLException e) {
@@ -70,7 +74,8 @@ public class OperationDAO extends DAO<Operation> {
 	public int findLastId () {
 		int derOpeId = 0;
 		try {
-			LogOperation.logInfo("Début");
+			LogOperation.logDebug
+			("Début");
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT max(id) FROM operation ");
 			if (rs.next()) {
@@ -153,9 +158,9 @@ public class OperationDAO extends DAO<Operation> {
 			while (rs.next()) {
 				myOperation = operationFromRow(rs);
 				myOperationBO = new OperationBO(myOperation);
-				myTiers = new Tiers(rs.getInt(11), rs.getString(12), rs.getString(13));
+				myTiers = new Tiers(rs.getInt(13), rs.getString(14), rs.getString(15));
 				myOperationBO.setTiersBO(myTiers);
-				myCategorie = new Categorie(rs.getInt(14), rs.getString(15));
+				myCategorie = new Categorie(rs.getInt(16), rs.getString(17));
 				myOperationBO.setCategorieBo(myCategorie);
 				myOperationBOList.add(myOperationBO);
 			}
@@ -180,9 +185,9 @@ public class OperationDAO extends DAO<Operation> {
 			while (rs.next()) {
 				myOperation = operationFromRow(rs);
 				myOperationBO = new OperationBO(myOperation);
-				myTiers = new Tiers(rs.getInt(11), rs.getString(12), rs.getString(13));
+				myTiers = new Tiers(rs.getInt(13), rs.getString(14), rs.getString(15));
 				myOperationBO.setTiersBO(myTiers);
-				myCategorie = new Categorie(rs.getInt(14), rs.getString(15));
+				myCategorie = new Categorie(rs.getInt(16), rs.getString(17));
 				myOperationBO.setCategorieBo(myCategorie);
 				myOperationBOList.add(myOperationBO);
 			}
@@ -202,11 +207,21 @@ public class OperationDAO extends DAO<Operation> {
 			statement.executeUpdate("UPDATE operation SET typeOpe='" + myOperation.getTypeOpe() + "',dateOpe='"
 					+ myOperation.getDateOpe().toDbFormat() + "',montantOpe=" + myOperation.getMontantOpe() + ",categOpeId="
 					+ myOperation.getCategOpeId() + ",tiersID=" + myOperation.getTiersId() + ", detailOpe='"
-					+ myOperation.getDetailOpe() + "',etatOpe='" + myOperation.getEtatOpe() + "', echId="
-					+ myOperation.getEchId() + myOperation.getEchId() + myOperation.getDateSaisie().toDbFormat() + myOperation.getDateRapproOpe() + " where Id=" + myOperation.getId());
-
+					+ myOperation.getDetailOpe() + "',etatOpe='" + myOperation.getEtatOpe() + "', echId='"
+					+ myOperation.getEchId()+ "',dateSaisieOpe='" + myOperation.getDateSaisieOpe().toDbFormat() 
+					+ "',dateRapproOpe='" + myOperation.getDateRapproOpe() + "' where Id=" + myOperation.getId());
+			
 		} catch (SQLException e) {
-			LogOperation.logError("update operation KO",e);
+			LogOperation.logError("update operation KO " + myOperation ,e);
+			LogOperation.logError("date saisie : " + myOperation.getDateSaisieOpe().toDbFormat());
+			LogOperation.logError("date rappro : " + myOperation.getDateRapproOpe());
+			LogOperation.logError("update : UPDATE operation SET typeOpe='" + myOperation.getTypeOpe() + "',dateOpe='"
+					+ myOperation.getDateOpe().toDbFormat() + "',montantOpe=" + myOperation.getMontantOpe() + ",categOpeId="
+					+ myOperation.getCategOpeId() + ",tiersID=" + myOperation.getTiersId() + ", detailOpe='"
+					+ myOperation.getDetailOpe() + "',etatOpe='" + myOperation.getEtatOpe() + "', echId="
+					+ myOperation.getEchId()+ "',dateOpe='" + myOperation.getDateSaisieOpe().toDbFormat() 
+					+ "',dateRapproOpe='" + myOperation.getDateRapproOpe() + " where Id=" + myOperation.getId());
+			
 		} finally {
 			try {
 				statement.close();

@@ -223,7 +223,7 @@ public class RapproManager {
 		LogRappro.logInfo("compare solde pointe %"+soldePointe+"% avec mnt final %"+mntFinal+"%");
 		if(soldePointe.equals(mntFinal.replace(".", ","))){
 			try {
-				String fileName = "bnp."+new MyDate(myOngletRappro.getPanelRappro().getJtfDateRappro().getText()).format(MyDate.DB_FORMAT)+".csv";
+				String fileName = "bnp "+new MyDate(myOngletRappro.getPanelRappro().getJtfDateRappro().getText()).format(MyDate.DB_FORMAT)+".csv";
 				Files.move(Paths.get("res/bnp.csv"), Paths.get("C:\\Users\\miche.MICROBE\\Documents\\Pour comptes\\Fichiers pointés ok\\"+fileName), StandardCopyOption.ATOMIC_MOVE);
 			} catch (IOException e) {
 				LogRappro.logError("Impossible de déplacer le fichier bnp.csv", e);
